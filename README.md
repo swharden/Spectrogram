@@ -1,6 +1,10 @@
 # Spectrogram
 .NET library for creating spectrograms
 
+Spectrogram is written in C# (.NET Core 3.0) but compiled for net45 too.
+
+https://www.nuget.org/packages/Spectrogram/
+
 **WARNING: This software project is pre-alpha! This repo is just a place to collect ideas and resources.**
 
 ## Feature Ideas
