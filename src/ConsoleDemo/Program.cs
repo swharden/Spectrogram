@@ -11,14 +11,9 @@ namespace ConsoleDemo
         static void Main(string[] args)
         {
             var spec = new Spectrogram.Spectrogram();
-
-            double[] values = Spectrogram.Tools.generateFakeSignal();
-            double[] fft = Spectrogram.Tools.FFT(values);
-
-            Spectrogram.Tools.plotValues(values);
-            Spectrogram.Tools.plotFFT(fft);
-
-            Console.WriteLine("DONE");
+            float[] values = Spectrogram.WavFile.Read("mozart.wav");
+            spec.Add(values);
+            spec.SaveBitmap();
         }
     }
 }
