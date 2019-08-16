@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29209.62
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleDemo", "ConsoleDemo\ConsoleDemo.csproj", "{DA5009A8-9036-4BDA-B591-3244DEB759E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spectrogram", "Spectrogram\Spectrogram.csproj", "{F4814553-C114-4DF7-B0F7-6512796247C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spectrogram", "Spectrogram\Spectrogram.csproj", "{8717F4CE-4497-4EAA-B95D-0F7A04FB397D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{DA5009A8-9036-4BDA-B591-3244DEB759E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA5009A8-9036-4BDA-B591-3244DEB759E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA5009A8-9036-4BDA-B591-3244DEB759E9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F4814553-C114-4DF7-B0F7-6512796247C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F4814553-C114-4DF7-B0F7-6512796247C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F4814553-C114-4DF7-B0F7-6512796247C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F4814553-C114-4DF7-B0F7-6512796247C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8717F4CE-4497-4EAA-B95D-0F7A04FB397D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8717F4CE-4497-4EAA-B95D-0F7A04FB397D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8717F4CE-4497-4EAA-B95D-0F7A04FB397D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8717F4CE-4497-4EAA-B95D-0F7A04FB397D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

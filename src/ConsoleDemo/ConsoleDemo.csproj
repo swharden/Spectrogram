@@ -53,7 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Spectrogram\Spectrogram.csproj">
-      <Project>{f4814553-c114-4df7-b0f7-6512796247c7}</Project>
+      <Project>{8717f4ce-4497-4eaa-b95d-0f7a04fb397d}</Project>
       <Name>Spectrogram</Name>
     </ProjectReference>
   </ItemGroup>

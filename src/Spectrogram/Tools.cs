@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Spectrogram
 {
+
     public static class Tools
     {
         public static double[] FFT(double[] values, bool useHammingWindow = true)

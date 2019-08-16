@@ -10,6 +10,8 @@ namespace ConsoleDemo
     {
         static void Main(string[] args)
         {
+            var spec = new Spectrogram.Spectrogram();
+
             double[] values = Spectrogram.Tools.generateFakeSignal();
             double[] fft = Spectrogram.Tools.FFT(values);
 
