@@ -3,6 +3,13 @@
 
 **WARNING: This software project is pre-alpha! This repo is just a place to collect ideas and resources.**
 
+## Feature Ideas
+* ability to display vertical (waterfall) or horizontal
+* optional display of scalebars
+* ability to suck in a WAV and output a bitmap
+* ability to create bitmaps in realtime from audio data
+* advanced color (LUT) and data scaling options (e.g., nonlinear brightness transformation)
+
 ## Primary Classes
 * `Spectrogram` - the core class to turn time-series data (`double[]`) into a spectrogram (`Bitmap`)
 * `AudioSpectrogram` - an extended `Spectrogram` which continuously gets incoming data from the sound card
