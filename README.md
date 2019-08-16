@@ -13,8 +13,6 @@
 * [microphone spectrograph in C#](https://github.com/swharden/Csharp-Data-Visualization/tree/master/projects/18-01-11_microphone_spectrograph)
 * [QRSS Spectrograph in C#](https://github.com/swharden/Csharp-Data-Visualization/tree/master/projects/18-01-14_qrss)
 
-## QRSS-Related Resources
-
 ### Introduction to QRSS
   * [What is QRSS?](https://www.qsl.net/m0ayf/What-is-QRSS.html)
   * [QRSS and you](http://www.ka7oei.com/qrss1.html)
