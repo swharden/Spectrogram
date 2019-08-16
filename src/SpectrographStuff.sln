@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29209.62
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleDemo", "ConsoleDemo\ConsoleDemo.csproj", "{DA5009A8-9036-4BDA-B591-3244DEB759E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spectrogram", "Spectrogram\Spectrogram.csproj", "{F4814553-C114-4DF7-B0F7-6512796247C7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DA5009A8-9036-4BDA-B591-3244DEB759E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA5009A8-9036-4BDA-B591-3244DEB759E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA5009A8-9036-4BDA-B591-3244DEB759E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA5009A8-9036-4BDA-B591-3244DEB759E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4814553-C114-4DF7-B0F7-6512796247C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4814553-C114-4DF7-B0F7-6512796247C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4814553-C114-4DF7-B0F7-6512796247C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4814553-C114-4DF7-B0F7-6512796247C7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7D18DDFF-2D40-4E8A-9EA7-3F7B658062D3}
+	EndGlobalSection
+EndGlobal
