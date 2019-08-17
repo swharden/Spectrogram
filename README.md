@@ -1,12 +1,7 @@
 # Spectrogram
 .NET library for creating spectrograms
 
-**WARNING: This software project is pre-alpha! This repo is just a place to collect ideas and code.**
-
-
-## Quickstart
-
-This example converts a 3 minute WAV file ([Mozart's Piano Sonata No. 11 in A major](data/mozart.png)) to a spectrograph and saves the output as a JPG. When you know the song, you can recognize the individual notes by looking at the picture.
+**Quickstart:** The following code converts [/data/mozart.wav](/data/mozart.wav) (Mozart's Piano Sonata No. 11 in A major) to a spectrograph and saves the output an image.
 
 ```cs
 var spec = new Spectrogram.Spectrogram();
