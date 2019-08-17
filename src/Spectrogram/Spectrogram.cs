@@ -44,20 +44,17 @@ namespace Spectrogram
             {
                 Array.Copy(values, i * stepSize, latestChunk, 0, fftSize);
                 ffts.Add(Operations.FFT(latestChunk));
+            }
 
-                if (i == 100)
-                    Operations.FFT(latestChunk, plotOutput: true);
+            Console.WriteLine($"Finished adding {values.Length} new values ({stepCount} steps)");
         }
 
-        Console.WriteLine($"Finished adding {values.Length} new values ({stepCount} steps)");
+        public void SaveBitmap(string fileName = "spectrograph.png")
+        {
+            string filePath = System.IO.Path.GetFullPath(fileName);
+            Bitmap bmp = Image.BitmapFromFFTs(ffts);
+            bmp.Save(filePath);
+            Console.WriteLine($"Saved: {filePath}");
         }
-
-    public void SaveBitmap(string fileName = "spectrograph.png")
-    {
-        string filePath = System.IO.Path.GetFullPath(fileName);
-        Bitmap bmp = Image.BitmapFromFFTs(ffts);
-        bmp.Save(filePath);
-        Console.WriteLine($"Saved: {filePath}");
     }
-}
 }

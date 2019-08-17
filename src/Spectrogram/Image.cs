@@ -37,7 +37,7 @@ namespace Spectrogram
             float scaleMax = 0;
             foreach (float value in ffts[ffts.Count / 2])
                 scaleMax = Math.Max(scaleMax, value);
-            //scaleMax *= (float).2;
+            scaleMax *= (float).2;
 
             for (int col = 0; col < ffts.Count; col++)
             {

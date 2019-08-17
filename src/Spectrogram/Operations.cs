@@ -32,7 +32,7 @@ namespace Spectrogram
             return fractionFromEdge;
         }
 
-        public static float[] FFT(float[] values, WindowFunction window = WindowFunction.triangle, bool decibels = true, bool plotOutput = false)
+        public static float[] FFT(float[] values, WindowFunction window = WindowFunction.triangle, bool decibels = false)
         {
             int fftSize = values.Length;
             if (!IsPowerOfTwo(fftSize))
@@ -59,33 +59,19 @@ namespace Spectrogram
                 }
             }
 
-            if (plotOutput)
-            {
-                float[] justX = new float[fft_buffer.Length];
-                for (int i = 0; i < justX.Length; i++)
-                    justX[i] = fft_buffer[i].X;
-                Reports.plot(justX, "windowed.png");
-            }
-
-            // perform the FFT
             NAudio.Dsp.FastFourierTransform.FFT(true, (int)Math.Log(fftSize, 2.0), fft_buffer);
 
-            // a list with FFT values
             float[] fft = new float[fftSize / 2];
-
             for (int i = 0; i < fft.Length; i++)
             {
-                // should this be sqrt(X^2+Y^2)? log10?
+                var fftL = fft_buffer[i];
+                var fftR = fft_buffer[fft_buffer.Length - i - 1];
 
-                var fftPointLeft = fft_buffer[i];
-                var fftPointRight = fft_buffer[fft_buffer.Length - i - 1];
+                // note that this is different than just taking the absolute value
+                float absL = (float)Math.Sqrt(fftL.X * fftL.X + fftL.Y * fftL.Y);
+                float absR = (float)Math.Sqrt(fftR.X * fftR.X + fftR.Y * fftR.Y);
 
-                fft[i] = 0;
-                fft[i] += fftPointLeft.X + fftPointLeft.Y;
-                fft[i] += fftPointRight.X + fftPointRight.Y;
-                fft[i] /= 2;
-
-                fft[i] = Math.Abs(fft[i]);
+                fft[i] = (absL + absR) / 2;
 
                 if (decibels)
                     fft[i] = (float)(Math.Log(fft[i]) * 20);
