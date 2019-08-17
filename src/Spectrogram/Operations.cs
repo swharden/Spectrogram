@@ -32,7 +32,7 @@ namespace Spectrogram
             return fractionFromEdge;
         }
 
-        public static float[] FFT(float[] values, WindowFunction window = WindowFunction.triangle, bool decibels = false)
+        public static float[] FFT(float[] values, WindowFunction window = WindowFunction.hanning, bool decibels = false)
         {
             int fftSize = values.Length;
             if (!IsPowerOfTwo(fftSize))

@@ -26,17 +26,24 @@ namespace Spectrogram
             return null;
         }
 
-        public static float[] Read(string wavFilePath)
+        public static float[] Read(string wavFilePath, int? sampleLimit = null)
         {
             // quick and drity WAV file reader (16-bit signed format)
             string actualPath = FindFile(wavFilePath);
             if (actualPath == null)
                 throw new ArgumentException("file not found: " + actualPath);
             byte[] bytes = System.IO.File.ReadAllBytes(actualPath);
-            float[] pcm = new float[bytes.Length / 2];
+            int sampleCount = bytes.Length / 2;
+            if (sampleLimit != null)
+                sampleCount = Math.Min(sampleCount, (int)sampleLimit);
+            float[] pcm = new float[sampleCount];
             int firstDataByte = 44;
             for (int i = firstDataByte; i < bytes.Length - 2; i += 2)
+            {
+                if (i / 2 >= pcm.Length)
+                    break;
                 pcm[i / 2] = BitConverter.ToInt16(bytes, i);
+            }
             return pcm;
         }
     }

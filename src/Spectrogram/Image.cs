@@ -9,14 +9,6 @@ namespace Spectrogram
 {
     class Image
     {
-        static void ApplyPaletteGrayscale(Bitmap bmp)
-        {
-            ColorPalette pal = bmp.Palette;
-            for (int i = 0; i < 256; i++)
-                pal.Entries[i] = Color.FromArgb(255, i, i, i);
-            bmp.Palette = pal;
-        }
-
         public static Bitmap BitmapFromFFTs(List<float[]> ffts)
         {
 
@@ -27,7 +19,8 @@ namespace Spectrogram
 
             // use indexed colors to make it easy to convert from value to color
             Bitmap bmp = new Bitmap(ffts.Count, ffts[0].Length, PixelFormat.Format8bppIndexed);
-            ApplyPaletteGrayscale(bmp);
+            Palette.ApplyLUT(bmp, Palette.LUT.viridis);
+            
 
             var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
             BitmapData bitmapData = bmp.LockBits(rect, ImageLockMode.ReadOnly, bmp.PixelFormat);
