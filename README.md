@@ -1,5 +1,5 @@
 # Spectrogram
-.NET library for creating spectrograms
+**Spectrogram** is a .NET library which makes it easy to create spectrograms from pre-recorded signals or live audio from the sound card. This library supports .NET Framework (4.5) and .NET Core (3.0).
 
 **Quickstart:** The following code converts [/data/mozart.wav](/data/mozart.wav) (Mozart's Piano Sonata No. 11 in A major) to a spectrograph and saves the output an image.
 
