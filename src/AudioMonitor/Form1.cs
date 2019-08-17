@@ -41,6 +41,7 @@ namespace AudioMonitor
             for (int i = 0; i < buffer.Length; i++)
                 buffer[i] = BitConverter.ToInt16(args.Buffer, i * bytesPerSample);
             spec.SignalExtend(buffer);
+            renderNeeded = true;
         }
 
         private void AudioMonitorInitialize(
@@ -61,9 +62,10 @@ namespace AudioMonitor
             wvin.StartRecording();
         }
 
+        bool renderNeeded = false;
         private void Timer1_Tick(object sender, EventArgs e)
         {
-            if ((spec != null) && (spec.ffts.Count > 0))
+            if ((renderNeeded) && (spec != null) && (spec.ffts.Count > 0))
             {
                 pictureBox1.BackgroundImage = spec.GetBitmap();
                 lblStatus.Text = $"spectrogram has {spec.ffts.Count} FFT columns | last render: {spec.lastRenderMsec} ms";

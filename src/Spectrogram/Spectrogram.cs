@@ -18,7 +18,7 @@ namespace Spectrogram
         public readonly List<float[]> ffts = new List<float[]>();
         public readonly List<float> signal = new List<float>();
 
-        public Spectrogram(int sampleRate = 8000, int fftSize = 512, int stepSize = 50, int? fixedWidth = 600)
+        public Spectrogram(int sampleRate = 8000, int fftSize = 1024, int stepSize = 200, int? fixedWidth = 600)
         {
             if (!Operations.IsPowerOfTwo(fftSize))
                 throw new ArgumentException("FFT Size must be a power of 2");
