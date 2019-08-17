@@ -14,9 +14,11 @@ spec.SaveBitmap("mozart.png");
 
 ## Realtime Audio Monitor
 
-A demo program is included which monitors the sound card and continuously creates spectrograms from microphone input.
+A demo program is included which monitors the sound card and continuously creates spectrograms from microphone input. Because of how WinForms are displayed this looks slightly jerky as it scrolls ascross the screen. It renders very fast though (just a few milliseconds), and the entire bitmap is created from scratch on each render.
 
 ![](data/screenshot3.gif)
+
+Unforunately NAudio's input device is Windows Only, so this demo is restricted to .NET Framework (can't use .NET Core 3.0)
 
 ## TODO:
 * render horizontally or vertically
@@ -26,6 +28,7 @@ A demo program is included which monitors the sound card and continuously create
 * advanced intensity options (nonlinear scaling)
 * create a user control to display a spectrogram
 * create a user control to adjust spectrogram settings
+* options for bitmap to scroll or to staticly repeat
 
 ## Resources
 * [microphone spectrograph in C#](https://github.com/swharden/Csharp-Data-Visualization/tree/master/projects/18-01-11_microphone_spectrograph)
