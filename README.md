@@ -6,22 +6,16 @@
 
 ## Quickstart
 
-This example converts an entire WAV file to a spectrograph image:
+This example converts a 3 minute WAV file ([Mozart's Piano Sonata No. 11 in A major](data/mozart.png)) to a spectrograph and saves the output as a JPG. When you know the song, you can recognize the individual notes by looking at the picture.
 
 ```cs
 var spec = new Spectrogram.Spectrogram();
 float[] values = Spectrogram.WavFile.Read("mozart.wav");
 spec.Add(values);
-spec.SaveBitmap("mozart.png");
+spec.SaveBitmap("mozart.jpg");
 ```
 
-```
-Created image (2897 x 2048) in 143.4841 ms
-```
-
-The signal ([mozart.wav](/data/mozart.wav)) is 3 minutes long and the vertical axis of the spectrograph spans the full time horizontally and spans spans 0-4 kHz vertically.
-
-![](data/mozart.png)
+![](data/mozart.jpg)
 
 ## TODO:
 * render horizontally or vertically
