@@ -18,7 +18,7 @@ namespace Spectrogram
         public readonly List<float[]> ffts = new List<float[]>();
         public readonly List<float> signal = new List<float>();
 
-        public Spectrogram(int sampleRate = 8000, int fftSize = 1024, int stepSize = 200, int? fixedWidth = 600)
+        public Spectrogram(int sampleRate = 8000, int fftSize = 1024, int stepSize = 500, int? fixedWidth = null)
         {
             if (!Operations.IsPowerOfTwo(fftSize))
                 throw new ArgumentException("FFT Size must be a power of 2");
@@ -53,7 +53,7 @@ namespace Spectrogram
             while (signal.Count > fftSize)
             {
                 signal.CopyTo(0, oldestSegment, 0, fftSize);
-                signal.RemoveRange(0, fftSize);
+                signal.RemoveRange(0, stepSize);
                 ffts.Add(Operations.FFT(oldestSegment));
 
                 if ((fixedWidth != null) && (ffts.Count >= fixedWidth))
@@ -72,8 +72,18 @@ namespace Spectrogram
         public void SaveBitmap(string fileName = "spectrograph.png")
         {
             string filePath = System.IO.Path.GetFullPath(fileName);
+            string extension = System.IO.Path.GetExtension(fileName).ToUpper();
+
+            var imageFormat = System.Drawing.Imaging.ImageFormat.Bmp;
+            if (extension == "JPG" || extension == "JPEG")
+                imageFormat = System.Drawing.Imaging.ImageFormat.Jpeg;
+            else if (extension == "PNG")
+                imageFormat = System.Drawing.Imaging.ImageFormat.Png;
+            else if (extension == "TIF" || extension == "TIFF")
+                imageFormat = System.Drawing.Imaging.ImageFormat.Tiff;
+
             Bitmap bmp = GetBitmap();
-            bmp.Save(filePath);
+            bmp.Save(filePath, imageFormat);
             Console.WriteLine($"Saved: {filePath}");
         }
     }

@@ -10,10 +10,10 @@ namespace ConsoleDemo
     {
         static void Main(string[] args)
         {
-            var spec = new Spectrogram.Spectrogram(fftSize: 2048, stepSize: 200);
+            var spec = new Spectrogram.Spectrogram(fftSize: 2048, stepSize: 500);
             float[] values = Spectrogram.WavFile.Read("mozart.wav");
             spec.SignalExtend(values);
-            spec.SaveBitmap("mozart.png");
+            spec.SaveBitmap("mozart.jpg");
         }
     }
 }
