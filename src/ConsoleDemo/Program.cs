@@ -12,7 +12,7 @@ namespace ConsoleDemo
         {
             var spec = new Spectrogram.Spectrogram(fftSize: 2048, stepSize: 200);
             float[] values = Spectrogram.WavFile.Read("mozart.wav");
-            spec.Add(values);
+            spec.SignalExtend(values);
             spec.SaveBitmap("mozart.png");
         }
     }

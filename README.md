@@ -12,6 +12,12 @@ spec.Add(values);
 spec.SaveBitmap("mozart.png");
 ```
 
+## Realtime Audio Monitor
+
+A demo program is included which monitors the sound card and continuously creates spectrograms from microphone input.
+
+![](data/screenshot3.gif)
+
 ## TODO:
 * render horizontally or vertically
 * optional display of axis labels (scales)
