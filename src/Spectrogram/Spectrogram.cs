@@ -39,22 +39,25 @@ namespace Spectrogram
         public void Add(float[] values)
         {
             int stepCount = (values.Length - fftSize) / stepSize;
-            
-            for (int i=0; i<stepCount; i++)
+
+            for (int i = 0; i < stepCount; i++)
             {
                 Array.Copy(values, i * stepSize, latestChunk, 0, fftSize);
                 ffts.Add(Operations.FFT(latestChunk));
-            }
 
-            Console.WriteLine($"Finished adding {values.Length} new values ({stepCount} steps)");
+                if (i == 100)
+                    Operations.FFT(latestChunk, plotOutput: true);
         }
 
-        public void SaveBitmap(string fileName = "spectrograph.png")
-        {
-            string filePath = System.IO.Path.GetFullPath(fileName);
-            Bitmap bmp = Image.BitmapFromFFTs(ffts);
-            bmp.Save(filePath);
-            Console.WriteLine($"Saved: {filePath}");
+        Console.WriteLine($"Finished adding {values.Length} new values ({stepCount} steps)");
         }
+
+    public void SaveBitmap(string fileName = "spectrograph.png")
+    {
+        string filePath = System.IO.Path.GetFullPath(fileName);
+        Bitmap bmp = Image.BitmapFromFFTs(ffts);
+        bmp.Save(filePath);
+        Console.WriteLine($"Saved: {filePath}");
     }
+}
 }

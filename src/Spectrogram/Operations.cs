@@ -9,6 +9,8 @@ namespace Spectrogram
 
     public static class Operations
     {
+        public enum WindowFunction { none, hanning, triangle };
+
         public static bool IsPowerOfTwo(int number)
         {
             for (int i = 0; i < 20; i++)
@@ -21,8 +23,16 @@ namespace Spectrogram
             }
             return false;
         }
-        
-        public static float[] FFT(float[] values, bool useHammingWindow = true)
+
+        public static double TriangleWindow(int n, int frameSize)
+        {
+            int pointsFromCenter = Math.Abs(frameSize / 2 - n);
+            int pointsFromEdge = frameSize / 2 - pointsFromCenter;
+            double fractionFromEdge = (double)pointsFromEdge / (frameSize / 2);
+            return fractionFromEdge;
+        }
+
+        public static float[] FFT(float[] values, WindowFunction window = WindowFunction.triangle, bool decibels = true, bool plotOutput = false)
         {
             int fftSize = values.Length;
             if (!IsPowerOfTwo(fftSize))
@@ -34,8 +44,27 @@ namespace Spectrogram
                 fft_buffer[i].X = (float)values[i];
                 fft_buffer[i].Y = 0;
 
-                if (useHammingWindow)
-                    fft_buffer[i].X *= (float)NAudio.Dsp.FastFourierTransform.HammingWindow(i, fftSize);
+                switch (window)
+                {
+                    case WindowFunction.none:
+                        break;
+                    case WindowFunction.hanning:
+                        fft_buffer[i].X *= (float)NAudio.Dsp.FastFourierTransform.HammingWindow(i, fftSize);
+                        break;
+                    case WindowFunction.triangle:
+                        fft_buffer[i].X *= (float)TriangleWindow(i, fftSize);
+                        break;
+                    default:
+                        throw new NotImplementedException("unsupported window function");
+                }
+            }
+
+            if (plotOutput)
+            {
+                float[] justX = new float[fft_buffer.Length];
+                for (int i = 0; i < justX.Length; i++)
+                    justX[i] = fft_buffer[i].X;
+                Reports.plot(justX, "windowed.png");
             }
 
             // perform the FFT
@@ -57,6 +86,9 @@ namespace Spectrogram
                 fft[i] /= 2;
 
                 fft[i] = Math.Abs(fft[i]);
+
+                if (decibels)
+                    fft[i] = (float)(Math.Log(fft[i]) * 20);
             }
 
             return fft;
