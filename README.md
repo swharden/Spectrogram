@@ -3,7 +3,7 @@
 
 ![](data/mozart.jpg)
 
-**Quickstart:** The code below  converts [/data/mozart.wav](/data/mozart.wav) (Mozart's Piano Sonata No. 11 in A major) to a spectrograph and saves it to produce the image above.
+**Quickstart:** The code below  converts a WAV file ([Mozart's Piano Sonata No. 11 in A major](https://www.youtube.com/watch?v=aeEmGvm7kDk)) to a spectrograph and saves it to produce the image above.
 
 ```cs
 var spec = new Spectrogram.Spectrogram(fftSize: 2048, stepSize: 500);
@@ -26,13 +26,14 @@ This project is still a work in progress.
 
 ### TODO:
 * ~~render horizontally or vertically~~
-* optional display of axis labels (scales)
 * ~~create bitmaps in real time from audio input~~
 * ~~advanced color (LUT) options~~
-* advanced intensity options (nonlinear scaling)
+* ~~advanced intensity options (nonlinear scaling)~~
 * create a user control to display a spectrogram
 * create a user control to adjust spectrogram settings
 * ~~options for bitmap to scroll or to statically repeat~~
+* create a way to convert between frequency and pixel position
+* optional display of axis labels (scales with ticks)
 
 ### Resources
 * [microphone spectrograph in C#](https://github.com/swharden/Csharp-Data-Visualization/tree/master/projects/18-01-11_microphone_spectrograph)
