@@ -57,9 +57,9 @@ namespace WaterfallDemo
             for (int i = 0; i < pointCount; i++)
                 pcm[i] = lastSamples[i];
 
-            scottPlotUC2.plt.PlotSignal(pcm, 1.0 / waterfall1.spec.fftSettings.fftResolution,
+            scottPlotUC2.plt.PlotSignal(pcm, waterfall1.spec.fftSettings.sampleRate,
                 markerSize: 0, color: Color.Black);
-            scottPlotUC1.plt.AxisAuto(0, .01, xExpandOnly: false, yExpandOnly: true);
+            scottPlotUC2.plt.AxisAuto(0, .01, xExpandOnly: false, yExpandOnly: true);
 
             scottPlotUC2.plt.Grid(false);
             scottPlotUC2.plt.Style(dataBg: SystemColors.Control);
