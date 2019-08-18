@@ -28,7 +28,7 @@ namespace Spectrogram
 
         public static float[] Read(string wavFilePath, int? sampleLimit = null)
         {
-            // quick and drity WAV file reader (16-bit signed format)
+            // quick and drity WAV file reader (only for 16-bit signed mono files)
             string actualPath = FindFile(wavFilePath);
             if (actualPath == null)
                 throw new ArgumentException("file not found: " + actualPath);

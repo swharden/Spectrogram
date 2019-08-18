@@ -66,14 +66,20 @@ namespace AudioMonitor
             int bufferMilliseconds = 10
             )
         {
+            int fftSize = 1024;
+            int stepSize = 300;
+            int pixelUpper = 200;
+
             switch (cbDisplay.Text)
             {
                 case "waterfall":
-                    spec = new Spectrogram.Spectrogram(sampleRate, fixedSize: pictureBox1.Height, scroll: true, vertical: true, pixelUpper: 200);
+                    spec = new Spectrogram.Spectrogram(sampleRate, fftSize: fftSize, stepSize: stepSize, pixelUpper: pixelUpper,
+                                                       fixedSize: pictureBox1.Height, scroll: true, vertical: true);
                     break;
 
                 case "horizontal repeat":
-                    spec = new Spectrogram.Spectrogram(sampleRate, fixedSize: pictureBox1.Width, scroll: false, pixelUpper: 200);
+                    spec = new Spectrogram.Spectrogram(sampleRate, fftSize: fftSize, stepSize: stepSize, pixelUpper: pixelUpper,
+                                                       fixedSize: pictureBox1.Width, scroll: false);
                     break;
 
                 default:
@@ -94,7 +100,7 @@ namespace AudioMonitor
         {
             if (!renderNeeded)
                 return;
-            
+
             if ((spec == null) || (spec.ffts.Count == 0))
                 return;
 
