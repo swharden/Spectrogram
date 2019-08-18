@@ -22,6 +22,10 @@ namespace AudioMonitor
             cbMicrophones.Items.AddRange(Listener.GetInputDevices());
             if (cbMicrophones.Items.Count > 0)
                 cbMicrophones.SelectedItem = cbMicrophones.Items[0];
+
+            cbDisplay.Items.Add("waterfall");
+            cbDisplay.Items.Add("horizontal repeat");
+            cbDisplay.SelectedItem = cbDisplay.Items[0];
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -31,7 +35,17 @@ namespace AudioMonitor
 
         private void BtnSetMicrophone_Click(object sender, EventArgs e)
         {
-            AudioMonitorInitialize(DeviceIndex: cbMicrophones.SelectedIndex);
+            if (btnSetMicrophone.Text == "open")
+            {
+                AudioMonitorInitialize(DeviceIndex: cbMicrophones.SelectedIndex);
+                btnSetMicrophone.Text = "close";
+            }
+            else
+            {
+                btnSetMicrophone.Text = "open";
+                wvin.StopRecording();
+                wvin = null;
+            }
         }
 
         private void OnDataAvailable(object sender, NAudio.Wave.WaveInEventArgs args)
@@ -52,7 +66,19 @@ namespace AudioMonitor
             int bufferMilliseconds = 10
             )
         {
-            spec = new Spectrogram.Spectrogram(sampleRate);
+            switch (cbDisplay.Text)
+            {
+                case "waterfall":
+                    spec = new Spectrogram.Spectrogram(sampleRate, fixedSize: pictureBox1.Height, scroll: true, vertical: true, pixelUpper: 200);
+                    break;
+
+                case "horizontal repeat":
+                    spec = new Spectrogram.Spectrogram(sampleRate, fixedSize: pictureBox1.Width, scroll: false, pixelUpper: 200);
+                    break;
+
+                default:
+                    throw new NotImplementedException("unknown display type");
+            }
 
             wvin = new NAudio.Wave.WaveInEvent();
             wvin.DeviceNumber = DeviceIndex;
@@ -65,11 +91,15 @@ namespace AudioMonitor
         bool renderNeeded = false;
         private void Timer1_Tick(object sender, EventArgs e)
         {
-            if ((renderNeeded) && (spec != null) && (spec.ffts.Count > 0))
-            {
-                pictureBox1.BackgroundImage = spec.GetBitmap();
-                lblStatus.Text = $"spectrogram has {spec.ffts.Count} FFT columns | last render: {spec.lastRenderMsec} ms";
-            }
+            if (!renderNeeded)
+                return;
+            
+            if ((spec == null) || (spec.ffts.Count == 0))
+                return;
+
+            pictureBox1.BackgroundImage = spec.GetBitmap();
+            lblStatus.Text = $"spectrogram has {spec.ffts.Count} FFT columns | last render: {spec.lastRenderMsec} ms";
+            renderNeeded = false;
         }
     }
 }

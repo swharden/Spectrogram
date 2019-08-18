@@ -10,10 +10,10 @@ namespace ConsoleDemo
     {
         static void Main(string[] args)
         {
-            var spec = new Spectrogram.Spectrogram(fftSize: 2048, stepSize: 500);
-            float[] values = Spectrogram.WavFile.Read("mozart.wav");
+            var spec = new Spectrogram.Spectrogram(fftSize: 1024, stepSize: 100_000);
+            float[] values = Spectrogram.WavFile.Read(@"C:\Users\scott\Documents\temp\megaDrive.Wav");
             spec.SignalExtend(values);
-            spec.SaveBitmap("mozart.jpg");
+            spec.SaveBitmap("megaDrive.jpg");
         }
     }
 }

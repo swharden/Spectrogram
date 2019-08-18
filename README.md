@@ -3,32 +3,30 @@
 
 ![](data/mozart.jpg)
 
-**Quickstart:** This example program converts [/data/mozart.wav](/data/mozart.wav) (Mozart's Piano Sonata No. 11 in A major) to a spectrograph (above) and saves it as an image file.
+**Quickstart:** The image above was created by this program which which converts [/data/mozart.wav](/data/mozart.wav) (Mozart's Piano Sonata No. 11 in A major) to a spectrograph and saves it as an image.
 
 ```cs
 var spec = new Spectrogram.Spectrogram();
 float[] values = Spectrogram.WavFile.Read("mozart.wav");
 spec.Add(values);
-spec.SaveBitmap("mozart.png");
+spec.SaveBitmap("mozart.jpg");
 ```
 
 ## Realtime Audio Monitor
 
-A demo program is included which monitors the sound card and continuously creates spectrograms from microphone input. Because of how WinForms are displayed this looks slightly jerky as it scrolls ascross the screen. It renders very fast though (just a few milliseconds), and the entire bitmap is created from scratch on each render.
+A demo program is included which monitors the sound card and continuously creates spectrograms from microphone input. It runs fast enough that the entire bitmap can be recreated on each render. This means brightness and color adjustments can be applied to the whole image, not just new parts.
 
-![](data/screenshot3.gif)
+![](data/screenshot4.gif)
 
-Unforunately NAudio's input device is Windows Only, so this demo is restricted to .NET Framework (can't use .NET Core 3.0)
-
-## TODO:
-* render horizontally or vertically
+### TODO:
+* ~~render horizontally or vertically~~
 * optional display of axis labels (scales)
-* create bitmaps in real time from audio input
-* advanced color (LUT) options
+* ~~create bitmaps in real time from audio input~~
+* ~~advanced color (LUT) options~~
 * advanced intensity options (nonlinear scaling)
 * create a user control to display a spectrogram
 * create a user control to adjust spectrogram settings
-* options for bitmap to scroll or to staticly repeat
+* ~~options for bitmap to scroll or to statically repeat~~
 
 ## Resources
 * [microphone spectrograph in C#](https://github.com/swharden/Csharp-Data-Visualization/tree/master/projects/18-01-11_microphone_spectrograph)
@@ -45,9 +43,9 @@ Unforunately NAudio's input device is Windows Only, so this demo is restricted t
 #### Software
 * Argo ([website](http://digilander.libero.it/i2phd/argo/)) - closed-source QRSS viewer for Windows
 * SpectrumLab ([website](http://www.qsl.net/dl4yhf/spectra1.html)) - closed-source spectrum analyzer for Windows 
-* QrssPIG ([gitlab](https://gitlab.com/hb9fxx/qrsspig)) - open-source spectrograph for Raspberry Pi (C++)
+* QrssPIG ([GitLab](https://gitlab.com/hb9fxx/qrsspig)) - open-source spectrograph for Raspberry Pi (C++)
 * Lopora ([website](http://www.qsl.net/pa2ohh/11lop.htm)) - open-source spectrograph (Python 3) 
-* QRSS VD ([github](https://github.com/swharden/QRSS-VD)) - open source spectrograph (Python 2)
+* QRSS VD ([GitHub](https://github.com/swharden/QRSS-VD)) - open source spectrograph (Python 2)
 
 ### Spectrogram vs ~~Spectrograph~~
 * A spectrogram is an image

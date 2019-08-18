@@ -9,26 +9,56 @@ namespace Spectrogram
         public readonly int fftSize;
         public readonly int stepSize;
         public readonly int sampleRate;
-        public readonly int? fixedWidth;
 
-        public readonly float[] latestChunk;
+        public int? fixedSize;
+        public bool vertical;
+        int? pixelLower = null;
+        int? pixelUpper = null;
+
+        public bool scroll;
+        public int nextIndex;
+
+        public readonly float[] latestSegment;
 
         public double lastRenderMsec;
 
         public readonly List<float[]> ffts = new List<float[]>();
         public readonly List<float> signal = new List<float>();
 
-        public Spectrogram(int sampleRate = 8000, int fftSize = 1024, int stepSize = 500, int? fixedWidth = null)
+        public Spectrogram(
+            int sampleRate = 8000, 
+            int fftSize = 1024, 
+            int stepSize = 500, 
+            int? fixedSize = null, 
+            bool vertical = false, 
+            bool scroll = false, 
+            int? pixelLower = null, 
+            int? pixelUpper = null
+            )
         {
             if (!Operations.IsPowerOfTwo(fftSize))
                 throw new ArgumentException("FFT Size must be a power of 2");
 
+            if ((fixedSize != null) && (fixedSize < 1))
+                throw new ArgumentException("size must be at least 1");
+
+            if (scroll && fixedSize == null)
+                throw new ArgumentException("scroll requires a fixed size");
+
             this.sampleRate = sampleRate;
             this.fftSize = fftSize;
             this.stepSize = stepSize;
-            this.fixedWidth = fixedWidth;
+            this.fixedSize = fixedSize;
+            this.vertical = vertical;
+            this.scroll = scroll;
+            this.pixelLower = pixelLower;
+            this.pixelUpper = pixelUpper;
 
-            latestChunk = new float[fftSize];
+            if (fixedSize != null)
+                while (ffts.Count < fixedSize)
+                    ffts.Add(null);
+
+            latestSegment = new float[fftSize];
         }
 
         public override string ToString()
@@ -36,35 +66,54 @@ namespace Spectrogram
             return $"Spectrogram ({sampleRate} Hz) with {ffts.Count} segments ({fftSize} points each)";
         }
 
-        public void Clear()
-        {
-            ffts.Clear();
-        }
-
-        public void SignalExtend(float[] values)
+        public void SignalExtend(float[] values, bool processToo = true)
         {
             signal.AddRange(values);
-            ProcessFFT();
+            if (processToo)
+                ProcessFFT();
         }
 
         public void ProcessFFT()
         {
             float[] oldestSegment = new float[fftSize];
-            while (signal.Count > fftSize)
+            while (signal.Count > (fftSize + stepSize))
             {
+                int remainingSegments = (signal.Count - fftSize) / stepSize;
+                //Console.WriteLine($"Processing segment #{ffts.Count + 1} ({remainingSegments} segments remain)");
+
                 signal.CopyTo(0, oldestSegment, 0, fftSize);
                 signal.RemoveRange(0, stepSize);
-                ffts.Add(Operations.FFT(oldestSegment));
 
-                if ((fixedWidth != null) && (ffts.Count >= fixedWidth))
-                    ffts.RemoveRange(0, ffts.Count - (int)fixedWidth);
+                float[] fft = Operations.FFT(oldestSegment);
+
+                if (scroll)
+                {
+                    ffts.Add(fft);
+                    ffts.RemoveAt(0);
+                }
+                else
+                {
+                    ffts[nextIndex] = fft;
+                    nextIndex += 1;
+                    if (nextIndex >= ffts.Count)
+                        nextIndex = 0;
+                }
+
             }
         }
 
         public Bitmap GetBitmap()
         {
+            if (ffts.Count == 0)
+                return null;
+
             System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
-            Bitmap bmp = Image.BitmapFromFFTs(ffts, fixedWidth);
+            int? verticalLine = null;
+            if (!scroll)
+                verticalLine = nextIndex;
+            Bitmap bmp = Image.BitmapFromFFTs(ffts, fixedSize, verticalLine, pixelLower, pixelUpper);
+            if (vertical)
+                bmp = Image.Rotate(bmp);
             lastRenderMsec = stopwatch.ElapsedTicks * 1000.0 / System.Diagnostics.Stopwatch.Frequency;
             return bmp;
         }

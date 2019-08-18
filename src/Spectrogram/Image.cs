@@ -9,15 +9,35 @@ namespace Spectrogram
 {
     class Image
     {
-        public static Bitmap BitmapFromFFTs(List<float[]> ffts, int? fixedWidth = null)
+        public static Bitmap BitmapFromFFTs(List<float[]> ffts, int? fixedWidth = null, int? verticalLine = null, int? pixelLow = null, int? pixelHigh = null)
         {
 
             if (ffts == null || ffts.Count == 0)
                 throw new ArgumentException("ffts must contain float arrays");
 
-            // use indexed colors to make it easy to convert from value to color
             int width = (fixedWidth == null) ? ffts.Count : (int)fixedWidth;
-            Bitmap bmp = new Bitmap(width, ffts[0].Length, PixelFormat.Format8bppIndexed);
+
+            int fftHeight;
+            if (ffts[0] != null)
+                fftHeight = ffts[0].Length;
+            else if (ffts[ffts.Count - 1] != null)
+                fftHeight = ffts[ffts.Count - 1].Length;
+            else
+                return null;
+
+            if (pixelLow == null)
+                pixelLow = 0;
+            else
+                pixelLow = Math.Max((int)pixelLow, 0);
+
+            if (pixelHigh == null)
+                pixelHigh = fftHeight;
+            else
+                pixelHigh = Math.Min((int)pixelHigh, fftHeight);
+
+            int height = (int)pixelHigh - (int)pixelLow;
+
+            Bitmap bmp = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
             Palette.ApplyLUT(bmp, Palette.LUT.viridis);
 
             var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
@@ -26,25 +46,32 @@ namespace Spectrogram
 
             // TODO: smarter intensity scaling (adjustable gain?)
             float scaleMax = 100;
-            /*
-            float scaleMax = 0;
-            foreach (float value in ffts[ffts.Count / 2])
-                scaleMax = Math.Max(scaleMax, value);
-            scaleMax *= (float).2;
-            */
 
-            for (int col = 0; col < ffts.Count; col++)
+            for (int col = 0; col < bmp.Width; col++)
             {
-                if (col < width)
+                if (col >= width)
+                    continue;
+
+                if (ffts[col] == null)
+                    continue;
+
+                for (int row = 0; row < bmp.Height; row++)
                 {
-                    for (int row = 0; row < ffts[col].Length; row++)
+                    int bytePosition = (bmp.Height - 1 - row) * bitmapData.Stride + col;
+                    float pixelValue;
+
+                    if ((verticalLine != null) && (col == verticalLine))
                     {
-                        int bytePosition = (ffts[col].Length - 1 - row) * bitmapData.Stride + col;
-                        float pixelValue = ffts[col][row] / scaleMax * 255;
+                        pixelValue = byte.MaxValue;
+                    }
+                    else
+                    {
+                        pixelValue = ffts[col][row + (int)pixelLow];
+                        pixelValue = pixelValue / scaleMax * 255;
                         pixelValue = Math.Max(0, pixelValue);
                         pixelValue = Math.Min(255, pixelValue);
-                        pixels[bytePosition] = (byte)(pixelValue);
                     }
+                    pixels[bytePosition] = (byte)(pixelValue);
                 }
             }
 
@@ -52,6 +79,23 @@ namespace Spectrogram
             bmp.UnlockBits(bitmapData);
 
             return bmp;
+        }
+
+        public static Bitmap Rotate(Bitmap bmpIn, float angle = 90)
+        {
+            // TODO: this could be faster with byte manipulation since it's 90 degrees
+
+            if (bmpIn == null)
+                return null;
+
+            Bitmap bmp = new Bitmap(bmpIn);
+            Bitmap bmpRotated = new Bitmap(bmp.Height, bmp.Width);
+
+            Graphics gfx = Graphics.FromImage(bmpRotated);
+            gfx.RotateTransform(angle);
+            gfx.DrawImage(bmp, new Point(0, -bmp.Height));
+
+            return bmpRotated;
         }
     }
 }
