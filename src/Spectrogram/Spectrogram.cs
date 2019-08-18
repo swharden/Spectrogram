@@ -68,21 +68,21 @@ namespace Spectrogram
                 signal.CopyTo(0, segment, 0, fftSettings.fftSize);
                 signal.RemoveRange(0, fftSettings.segmentSize);
 
-                float[] fft = Operations.FFT(segment);
+                float[] newFft = Operations.FFT(segment);
 
                 if (fixedSize == null)
-                    FftListExtend(fft);
+                    AddNewFftExtend(newFft);
                 else
-                    FftListFixedSize(fft, (int)fixedSize, scroll);
+                    AddNewFftFixed(newFft, (int)fixedSize, scroll);
             }
         }
 
-        private void FftListExtend(float[] fft)
+        private void AddNewFftExtend(float[] fft)
         {
             fftList.Add(fft);
         }
 
-        private void FftListFixedSize(float[] fft, int fixedSize, bool scroll)
+        private void AddNewFftFixed(float[] fft, int fixedSize, bool scroll)
         {
             while (fftList.Count < fixedSize)
                 fftList.Add(null);
@@ -91,13 +91,11 @@ namespace Spectrogram
 
             if (scroll)
             {
-                // add to the end and remove from the beginning
                 fftList.Add(fft);
                 fftList.RemoveAt(0);
             }
             else
             {
-                // add new FFT at nextIndex
                 nextIndex = Math.Min(nextIndex, fftList.Count - 1);
                 fftList[nextIndex] = fft;
                 nextIndex += 1;
@@ -106,20 +104,13 @@ namespace Spectrogram
             }
         }
 
-        private List<float[]> GetScrolledFFTs()
-        {
-            List<float[]> scrolled = new List<float[]>();
-            scrolled.AddRange(fftList.GetRange(nextIndex, fftList.Count - nextIndex));
-            scrolled.AddRange(fftList.GetRange(0, nextIndex));
-            return scrolled;
-        }
-
         public Bitmap GetBitmap(
             float intensity = 10,
             bool decibels = false,
             double frequencyMin = 0,
             double frequencyMax = double.MaxValue,
-            bool vertical = false
+            bool vertical = false,
+            Colormap colormap = Colormap.viridis
             )
         {
             if (fftList.Count == 0)
@@ -139,7 +130,7 @@ namespace Spectrogram
             Bitmap bmp;
             using (var benchmark = new Benchmark())
             {
-                bmp = Image.BitmapFromFFTs(fftList.ToArray(), pixelLower, pixelUpper, intensity, decibels);
+                bmp = Image.BitmapFromFFTs(fftList.ToArray(), pixelLower, pixelUpper, intensity, decibels, colormap);
                 if (vertical)
                     bmp = Image.Rotate(bmp);
                 displaySettings.lastRenderMsec = benchmark.elapsedMilliseconds;

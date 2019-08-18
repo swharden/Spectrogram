@@ -14,7 +14,8 @@ namespace Spectrogram
             int? pixelLow,
             int? pixelHigh,
             float intensity,
-            bool decibels
+            bool decibels,
+            Colormap colormap
             )
         {
 
@@ -46,7 +47,7 @@ namespace Spectrogram
             int width = ffts.Length;
 
             Bitmap bmp = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
-            Palette.ApplyLUT(bmp, Palette.LUT.viridis);
+            ApplyColormap(bmp, colormap);
 
             var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
             BitmapData bitmapData = bmp.LockBits(rect, ImageLockMode.ReadOnly, bmp.PixelFormat);
@@ -95,6 +96,27 @@ namespace Spectrogram
             gfx.DrawImage(bmp, new Point(0, -bmp.Height));
 
             return bmpRotated;
+        }
+
+        public static void ApplyColormap(Bitmap bmp, Colormap colormap)
+        {
+            switch (colormap)
+            {
+                case Colormap.grayscale:
+                    new Colormaps.Grayscale().Apply(bmp);
+                    break;
+                case Colormap.vdBlue:
+                    new Colormaps.VdBlues().Apply(bmp);
+                    break;
+                case Colormap.vdGreen:
+                    new Colormaps.VdGreens().Apply(bmp);
+                    break;
+                case Colormap.viridis:
+                    new Colormaps.Viridis().Apply(bmp);
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
         }
     }
 }

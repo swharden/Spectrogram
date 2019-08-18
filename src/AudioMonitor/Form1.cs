@@ -26,6 +26,11 @@ namespace AudioMonitor
             cbDisplay.Items.Add("horizontal repeat");
             cbDisplay.Items.Add("waterfall");
             cbDisplay.SelectedItem = cbDisplay.Items[0];
+
+            string[] colormapNames = Enum.GetNames(typeof(Spectrogram.Colormap));
+            Array.Sort(colormapNames);
+            cbColormap.Items.AddRange(colormapNames);
+            cbColormap.SelectedItem = cbColormap.Items[cbColormap.Items.Count - 1];
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -101,12 +106,15 @@ namespace AudioMonitor
             else
                 busyRendering = true;
 
+            Spectrogram.Colormap colormap = (Spectrogram.Colormap)Enum.Parse(typeof(Spectrogram.Colormap), cbColormap.Text);
+
             pictureBox1.BackgroundImage = spec.GetBitmap(
                 intensity: (float)nudIntensity.Value,
                 decibels: cbDecibels.Checked,
                 frequencyMin: 0,
                 frequencyMax: 4000,
-                vertical: waterfall
+                vertical: waterfall,
+                colormap: colormap
                 );
             lblStatus.Text = $"spectrogram contains {spec.fftList.Count} FFT samples | last render: {spec.GetLastRenderTime()} ms";
             renderNeeded = false;

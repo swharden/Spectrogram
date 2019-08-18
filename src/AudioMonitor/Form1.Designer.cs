@@ -42,6 +42,8 @@
             this.cbDecibels = new System.Windows.Forms.CheckBox();
             this.tbIntensity = new System.Windows.Forms.TrackBar();
             this.nudIntensity = new System.Windows.Forms.NumericUpDown();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.cbColormap = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -49,6 +51,7 @@
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbIntensity)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudIntensity)).BeginInit();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -85,9 +88,9 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lblStatus});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 425);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 476);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(709, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1045, 22);
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -106,7 +109,7 @@
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pictureBox1.Location = new System.Drawing.Point(12, 65);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(685, 357);
+            this.pictureBox1.Size = new System.Drawing.Size(1021, 408);
             this.pictureBox1.TabIndex = 3;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Click += new System.EventHandler(this.PictureBox1_Click);
@@ -146,9 +149,9 @@
             this.groupBox3.Controls.Add(this.cbDecibels);
             this.groupBox3.Controls.Add(this.tbIntensity);
             this.groupBox3.Controls.Add(this.nudIntensity);
-            this.groupBox3.Location = new System.Drawing.Point(363, 12);
+            this.groupBox3.Location = new System.Drawing.Point(508, 12);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(334, 47);
+            this.groupBox3.Size = new System.Drawing.Size(525, 47);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Intensity";
@@ -172,7 +175,7 @@
             this.tbIntensity.Location = new System.Drawing.Point(150, 11);
             this.tbIntensity.Maximum = 50;
             this.tbIntensity.Name = "tbIntensity";
-            this.tbIntensity.Size = new System.Drawing.Size(178, 30);
+            this.tbIntensity.Size = new System.Drawing.Size(369, 30);
             this.tbIntensity.TabIndex = 1;
             this.tbIntensity.Value = 10;
             this.tbIntensity.Scroll += new System.EventHandler(this.TbIntensity_Scroll);
@@ -190,12 +193,34 @@
             0,
             0});
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.cbColormap);
+            this.groupBox4.Location = new System.Drawing.Point(363, 12);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(139, 47);
+            this.groupBox4.TabIndex = 7;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Colormap";
+            // 
+            // cbColormap
+            // 
+            this.cbColormap.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbColormap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbColormap.FormattingEnabled = true;
+            this.cbColormap.Location = new System.Drawing.Point(6, 19);
+            this.cbColormap.Name = "cbColormap";
+            this.cbColormap.Size = new System.Drawing.Size(127, 21);
+            this.cbColormap.TabIndex = 0;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.ClientSize = new System.Drawing.Size(709, 447);
+            this.ClientSize = new System.Drawing.Size(1045, 498);
+            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.pictureBox1);
@@ -213,6 +238,7 @@
             this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbIntensity)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudIntensity)).EndInit();
+            this.groupBox4.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -233,6 +259,8 @@
         private System.Windows.Forms.NumericUpDown nudIntensity;
         private System.Windows.Forms.TrackBar tbIntensity;
         private System.Windows.Forms.CheckBox cbDecibels;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.ComboBox cbColormap;
     }
 }
 
