@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demos", "Demos", "{9B6B9DCD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaterfallDemo", "WaterfallDemo\WaterfallDemo.csproj", "{3264BE41-10B0-4121-B837-D7B134BD1A9B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScottPlot", "..\..\ScottPlot\src\ScottPlot\ScottPlot.csproj", "{EE9215C6-01C1-4835-8514-3A708F9291F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{3264BE41-10B0-4121-B837-D7B134BD1A9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3264BE41-10B0-4121-B837-D7B134BD1A9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3264BE41-10B0-4121-B837-D7B134BD1A9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE9215C6-01C1-4835-8514-3A708F9291F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE9215C6-01C1-4835-8514-3A708F9291F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE9215C6-01C1-4835-8514-3A708F9291F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE9215C6-01C1-4835-8514-3A708F9291F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -50,7 +50,7 @@ spec.SaveImage("qrss.jpg");
 ## Waterfall
 This demo program was created to demonstrate Spectrogram and ScottPlot working together.
 
-![](data/screenshot6.gif)
+![](data/screenshot7.gif)
 
 ## Developer Notes
 
