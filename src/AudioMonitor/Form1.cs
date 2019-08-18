@@ -54,7 +54,7 @@ namespace AudioMonitor
             float[] buffer = new float[args.BytesRecorded / bytesPerSample];
             for (int i = 0; i < buffer.Length; i++)
                 buffer[i] = BitConverter.ToInt16(args.Buffer, i * bytesPerSample);
-            spec.SignalExtend(buffer);
+            spec.Add(buffer);
             renderNeeded = true;
         }
 

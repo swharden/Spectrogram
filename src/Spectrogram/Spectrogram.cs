@@ -70,10 +70,10 @@ namespace Spectrogram
             return $"Spectrogram ({sampleRate} Hz) with {ffts.Count} segments ({fftSize} points each)";
         }
 
-        public void SignalExtend(float[] values, bool processToo = true)
+        public void Add(float[] values, bool process = true)
         {
             signal.AddRange(values);
-            if (processToo)
+            if (process)
                 ProcessFFT();
         }
 
@@ -90,17 +90,24 @@ namespace Spectrogram
 
                 float[] fft = Operations.FFT(oldestSegment, decibels: decibels);
 
-                if (scroll)
+                if (fixedSize == null)
                 {
                     ffts.Add(fft);
-                    ffts.RemoveAt(0);
                 }
                 else
                 {
-                    ffts[nextIndex] = fft;
-                    nextIndex += 1;
-                    if (nextIndex >= ffts.Count)
-                        nextIndex = 0;
+                    if (scroll)
+                    {
+                        ffts.Add(fft);
+                        ffts.RemoveAt(0);
+                    }
+                    else
+                    {
+                        ffts[nextIndex] = fft;
+                        nextIndex += 1;
+                        if (nextIndex >= ffts.Count)
+                            nextIndex = 0;
+                    }
                 }
 
             }
@@ -113,7 +120,7 @@ namespace Spectrogram
 
             System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
             int? verticalLine = null;
-            if (!scroll)
+            if (fixedSize != null && !scroll)
                 verticalLine = nextIndex;
             Bitmap bmp = Image.BitmapFromFFTs(ffts, fixedSize, verticalLine, pixelLower, pixelUpper, intensity);
             if (vertical)

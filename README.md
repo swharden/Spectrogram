@@ -6,7 +6,7 @@
 **Quickstart:** The code below  converts [/data/mozart.wav](/data/mozart.wav) (Mozart's Piano Sonata No. 11 in A major) to a spectrograph and saves it to produce the image above.
 
 ```cs
-var spec = new Spectrogram.Spectrogram();
+var spec = new Spectrogram.Spectrogram(fftSize: 2048, stepSize: 500);
 float[] values = Spectrogram.WavFile.Read("mozart.wav");
 spec.Add(values);
 spec.SaveBitmap("mozart.jpg");
