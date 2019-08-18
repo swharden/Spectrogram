@@ -7,8 +7,8 @@ namespace Spectrogram
 {
     public class Spectrogram
     {
-        private readonly Settings.FftSettings fftSettings;
-        private readonly Settings.DisplaySettings displaySettings;
+        public readonly Settings.FftSettings fftSettings;
+        public readonly Settings.DisplaySettings displaySettings;
 
         public List<float[]> fftList = new List<float[]>();
         public List<float> signal = new List<float>();

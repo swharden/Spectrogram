@@ -47,6 +47,11 @@ spec.SaveImage("qrss.jpg");
   * [QRSS and you](http://www.ka7oei.com/qrss1.html)
   * [QRSS (slow CW)](https://sites.google.com/site/qrssinfo/QRSS-Slow-CW)
 
+## Waterfall
+This demo program was created to demonstrate Spectrogram and ScottPlot working together.
+
+![](data/screenshot6.gif)
+
 ## Developer Notes
 
 This project is still a work in progress.
