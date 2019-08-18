@@ -23,14 +23,14 @@ namespace AudioMonitor
             if (cbMicrophones.Items.Count > 0)
                 cbMicrophones.SelectedItem = cbMicrophones.Items[0];
 
-            cbDisplay.Items.Add("waterfall");
             cbDisplay.Items.Add("horizontal repeat");
+            cbDisplay.Items.Add("waterfall");
             cbDisplay.SelectedItem = cbDisplay.Items[0];
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            BtnSetMicrophone_Click(null, null);
         }
 
         private void BtnSetMicrophone_Click(object sender, EventArgs e)
@@ -79,6 +79,7 @@ namespace AudioMonitor
                 default:
                     throw new NotImplementedException("unknown display type");
             }
+            nudIntensity.Value = (decimal)spec.intensity;
 
             wvin = new NAudio.Wave.WaveInEvent();
             wvin.DeviceNumber = DeviceIndex;
@@ -100,6 +101,11 @@ namespace AudioMonitor
             pictureBox1.BackgroundImage = spec.GetBitmap();
             lblStatus.Text = $"spectrogram has {spec.ffts.Count} FFT columns | last render: {spec.lastRenderMsec} ms";
             renderNeeded = false;
+        }
+
+        private void NudIntensity_ValueChanged(object sender, EventArgs e)
+        {
+            spec.intensity = (float)nudIntensity.Value;
         }
     }
 }

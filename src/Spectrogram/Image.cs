@@ -9,7 +9,14 @@ namespace Spectrogram
 {
     class Image
     {
-        public static Bitmap BitmapFromFFTs(List<float[]> ffts, int? fixedWidth = null, int? verticalLine = null, int? pixelLow = null, int? pixelHigh = null)
+        public static Bitmap BitmapFromFFTs(
+            List<float[]> ffts,
+            int? fixedWidth = null,
+            int? verticalLine = null,
+            int? pixelLow = null,
+            int? pixelHigh = null,
+            float intensity = 100
+            )
         {
 
             if (ffts == null || ffts.Count == 0)
@@ -44,9 +51,6 @@ namespace Spectrogram
             BitmapData bitmapData = bmp.LockBits(rect, ImageLockMode.ReadOnly, bmp.PixelFormat);
             byte[] pixels = new byte[bitmapData.Stride * bmp.Height];
 
-            // TODO: smarter intensity scaling (adjustable gain?)
-            float scaleMax = 100;
-
             for (int col = 0; col < bmp.Width; col++)
             {
                 if (col >= width)
@@ -67,7 +71,7 @@ namespace Spectrogram
                     else
                     {
                         pixelValue = ffts[col][row + (int)pixelLow];
-                        pixelValue = pixelValue / scaleMax * 255;
+                        pixelValue = pixelValue * intensity;
                         pixelValue = Math.Max(0, pixelValue);
                         pixelValue = Math.Min(255, pixelValue);
                     }

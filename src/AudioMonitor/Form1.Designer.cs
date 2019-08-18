@@ -38,10 +38,14 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.cbDisplay = new System.Windows.Forms.ComboBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.nudIntensity = new System.Windows.Forms.NumericUpDown();
             this.groupBox1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudIntensity)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -128,12 +132,49 @@
             this.cbDisplay.Size = new System.Drawing.Size(188, 21);
             this.cbDisplay.TabIndex = 0;
             // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.nudIntensity);
+            this.groupBox3.Location = new System.Drawing.Point(424, 12);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(110, 47);
+            this.groupBox3.TabIndex = 6;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Intensity";
+            // 
+            // nudIntensity
+            // 
+            this.nudIntensity.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.nudIntensity.DecimalPlaces = 1;
+            this.nudIntensity.Location = new System.Drawing.Point(6, 19);
+            this.nudIntensity.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nudIntensity.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudIntensity.Name = "nudIntensity";
+            this.nudIntensity.Size = new System.Drawing.Size(98, 20);
+            this.nudIntensity.TabIndex = 0;
+            this.nudIntensity.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudIntensity.ValueChanged += new System.EventHandler(this.NudIntensity_ValueChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.ClientSize = new System.Drawing.Size(709, 447);
+            this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.statusStrip1);
@@ -146,6 +187,8 @@
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupBox2.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.nudIntensity)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -162,6 +205,8 @@
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.ComboBox cbDisplay;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.NumericUpDown nudIntensity;
     }
 }
 

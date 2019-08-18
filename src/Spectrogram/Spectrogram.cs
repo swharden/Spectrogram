@@ -9,6 +9,7 @@ namespace Spectrogram
         public readonly int fftSize;
         public readonly int stepSize;
         public readonly int sampleRate;
+        public float intensity;
 
         public int? fixedSize;
         public bool vertical;
@@ -26,14 +27,15 @@ namespace Spectrogram
         public readonly List<float> signal = new List<float>();
 
         public Spectrogram(
-            int sampleRate = 8000, 
-            int fftSize = 1024, 
-            int stepSize = 500, 
-            int? fixedSize = null, 
-            bool vertical = false, 
-            bool scroll = false, 
-            int? pixelLower = null, 
-            int? pixelUpper = null
+            int sampleRate = 8000,
+            int fftSize = 1024,
+            int stepSize = 500,
+            int? fixedSize = null,
+            bool vertical = false,
+            bool scroll = false,
+            int? pixelLower = null,
+            int? pixelUpper = null,
+            float intensity = 10
             )
         {
             if (!Operations.IsPowerOfTwo(fftSize))
@@ -53,6 +55,7 @@ namespace Spectrogram
             this.scroll = scroll;
             this.pixelLower = pixelLower;
             this.pixelUpper = pixelUpper;
+            this.intensity = intensity;
 
             if (fixedSize != null)
                 while (ffts.Count < fixedSize)
@@ -111,7 +114,7 @@ namespace Spectrogram
             int? verticalLine = null;
             if (!scroll)
                 verticalLine = nextIndex;
-            Bitmap bmp = Image.BitmapFromFFTs(ffts, fixedSize, verticalLine, pixelLower, pixelUpper);
+            Bitmap bmp = Image.BitmapFromFFTs(ffts, fixedSize, verticalLine, pixelLower, pixelUpper, intensity);
             if (vertical)
                 bmp = Image.Rotate(bmp);
             lastRenderMsec = stopwatch.ElapsedTicks * 1000.0 / System.Diagnostics.Stopwatch.Frequency;
