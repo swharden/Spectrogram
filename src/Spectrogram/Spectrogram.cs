@@ -10,6 +10,7 @@ namespace Spectrogram
         public readonly int stepSize;
         public readonly int sampleRate;
         public float intensity;
+        public bool decibels = false;
 
         public int? fixedSize;
         public bool vertical;
@@ -87,7 +88,7 @@ namespace Spectrogram
                 signal.CopyTo(0, oldestSegment, 0, fftSize);
                 signal.RemoveRange(0, stepSize);
 
-                float[] fft = Operations.FFT(oldestSegment);
+                float[] fft = Operations.FFT(oldestSegment, decibels: decibels);
 
                 if (scroll)
                 {

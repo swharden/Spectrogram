@@ -39,12 +39,15 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.cbDisplay = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.tbIntensity = new System.Windows.Forms.TrackBar();
             this.nudIntensity = new System.Windows.Forms.NumericUpDown();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbIntensity)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudIntensity)).BeginInit();
             this.SuspendLayout();
             // 
@@ -118,55 +121,74 @@
             this.groupBox2.Controls.Add(this.cbDisplay);
             this.groupBox2.Location = new System.Drawing.Point(218, 12);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(200, 47);
+            this.groupBox2.Size = new System.Drawing.Size(139, 47);
             this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Display";
             // 
             // cbDisplay
             // 
+            this.cbDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.cbDisplay.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbDisplay.FormattingEnabled = true;
             this.cbDisplay.Location = new System.Drawing.Point(6, 19);
             this.cbDisplay.Name = "cbDisplay";
-            this.cbDisplay.Size = new System.Drawing.Size(188, 21);
+            this.cbDisplay.Size = new System.Drawing.Size(127, 21);
             this.cbDisplay.TabIndex = 0;
             // 
             // groupBox3
             // 
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.checkBox1);
+            this.groupBox3.Controls.Add(this.tbIntensity);
             this.groupBox3.Controls.Add(this.nudIntensity);
-            this.groupBox3.Location = new System.Drawing.Point(424, 12);
+            this.groupBox3.Location = new System.Drawing.Point(363, 12);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(110, 47);
+            this.groupBox3.Size = new System.Drawing.Size(334, 47);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Intensity";
             // 
+            // tbIntensity
+            // 
+            this.tbIntensity.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbIntensity.AutoSize = false;
+            this.tbIntensity.LargeChange = 1;
+            this.tbIntensity.Location = new System.Drawing.Point(150, 11);
+            this.tbIntensity.Maximum = 50;
+            this.tbIntensity.Name = "tbIntensity";
+            this.tbIntensity.Size = new System.Drawing.Size(178, 30);
+            this.tbIntensity.TabIndex = 1;
+            this.tbIntensity.Value = 10;
+            this.tbIntensity.Scroll += new System.EventHandler(this.TbIntensity_Scroll);
+            // 
             // nudIntensity
             // 
-            this.nudIntensity.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.nudIntensity.DecimalPlaces = 1;
             this.nudIntensity.Location = new System.Drawing.Point(6, 19);
-            this.nudIntensity.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.nudIntensity.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
             this.nudIntensity.Name = "nudIntensity";
-            this.nudIntensity.Size = new System.Drawing.Size(98, 20);
+            this.nudIntensity.Size = new System.Drawing.Size(67, 20);
             this.nudIntensity.TabIndex = 0;
             this.nudIntensity.Value = new decimal(new int[] {
-            1,
+            10,
             0,
             0,
             0});
             this.nudIntensity.ValueChanged += new System.EventHandler(this.NudIntensity_ValueChanged);
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(79, 22);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(65, 17);
+            this.checkBox1.TabIndex = 2;
+            this.checkBox1.Text = "decibels";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.CheckBox1_CheckedChanged);
             // 
             // Form1
             // 
@@ -188,6 +210,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbIntensity)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudIntensity)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -207,6 +231,8 @@
         private System.Windows.Forms.ComboBox cbDisplay;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.NumericUpDown nudIntensity;
+        private System.Windows.Forms.TrackBar tbIntensity;
+        private System.Windows.Forms.CheckBox checkBox1;
     }
 }
 

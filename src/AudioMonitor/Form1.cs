@@ -107,5 +107,15 @@ namespace AudioMonitor
         {
             spec.intensity = (float)nudIntensity.Value;
         }
+
+        private void TbIntensity_Scroll(object sender, EventArgs e)
+        {
+            nudIntensity.Value = tbIntensity.Value;
+        }
+
+        private void CheckBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            spec.decibels = checkBox1.Checked;
+        }
     }
 }
