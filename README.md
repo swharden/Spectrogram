@@ -3,7 +3,7 @@
 
 ![](data/mozart.jpg)
 
-**Quickstart:** The code below  converts a WAV file ([Mozart's Piano Sonata No. 11 in A major](https://www.youtube.com/watch?v=aeEmGvm7kDk)) to a spectrograph and saves it to produce the image above.
+**Quickstart:** The code below converts a WAV file to a spectrograph and saves it as an image. This code analyzed [Mozart's Piano Sonata No. 11 in A major](https://www.youtube.com/watch?v=aeEmGvm7kDk) to produce the picture above.
 
 ```cs
 var spec = new Spectrogram.Spectrogram(fftSize: 2048);
