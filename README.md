@@ -18,6 +18,12 @@ A demo program is included which monitors the sound card and continuously create
 
 ![](data/screenshot4.gif)
 
+This demo is available as a click-to-run EXE in [/dev/compiled-demos/](/dev/compiled-demos/)
+
+## Developer Notes
+
+This project is still a work in progress.
+
 ### TODO:
 * ~~render horizontally or vertically~~
 * optional display of axis labels (scales)
@@ -28,19 +34,19 @@ A demo program is included which monitors the sound card and continuously create
 * create a user control to adjust spectrogram settings
 * ~~options for bitmap to scroll or to statically repeat~~
 
-## Resources
+### Resources
 * [microphone spectrograph in C#](https://github.com/swharden/Csharp-Data-Visualization/tree/master/projects/18-01-11_microphone_spectrograph)
 * [QRSS Spectrograph in C#](https://github.com/swharden/Csharp-Data-Visualization/tree/master/projects/18-01-14_qrss)
 * [Simulation of QRSS Signals](https://www.qsl.net/pa2ohh/12qrsssim1.htm)
 
-### QRSS
+#### QRSS
 
-#### Introduction
+##### Introduction
   * [What is QRSS?](https://www.qsl.net/m0ayf/What-is-QRSS.html)
   * [QRSS and you](http://www.ka7oei.com/qrss1.html)
   * [QRSS (slow CW)](https://sites.google.com/site/qrssinfo/QRSS-Slow-CW)
 
-#### Software
+##### Software
 * Argo ([website](http://digilander.libero.it/i2phd/argo/)) - closed-source QRSS viewer for Windows
 * SpectrumLab ([website](http://www.qsl.net/dl4yhf/spectra1.html)) - closed-source spectrum analyzer for Windows 
 * QrssPIG ([GitLab](https://gitlab.com/hb9fxx/qrsspig)) - open-source spectrograph for Raspberry Pi (C++)
