@@ -62,7 +62,7 @@ namespace AudioMonitor
             try
             {
                 if (waterfall)
-                    spec.AddScroll(buffer, fixedSize: pictureBox1.Width);
+                    spec.AddScroll(buffer, fixedSize: pictureBox1.Height);
                 else
                     spec.AddCircular(buffer, fixedSize: pictureBox1.Width);
                 renderNeeded = true;
@@ -114,7 +114,8 @@ namespace AudioMonitor
                 frequencyMin: 0,
                 frequencyMax: 4000,
                 vertical: waterfall,
-                colormap: colormap
+                colormap: colormap,
+                showTicks: cbTicks.Checked
                 );
             lblStatus.Text = $"spectrogram contains {spec.fftList.Count} FFT samples | last render: {spec.GetLastRenderTime()} ms";
             renderNeeded = false;

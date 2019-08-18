@@ -24,7 +24,7 @@ namespace ConsoleDemo
                 float[] values = Spectrogram.WavFile.Read("mozart.wav");
                 spec.AddExtend(values);
 
-                Bitmap bmp = spec.GetBitmap();
+                Bitmap bmp = spec.GetBitmap(frequencyMax: 2500, intensity: 5);
                 spec.SaveBitmap(bmp, "mozart.jpg");
             }
         }

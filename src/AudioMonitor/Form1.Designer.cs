@@ -44,6 +44,8 @@
             this.nudIntensity = new System.Windows.Forms.NumericUpDown();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.cbColormap = new System.Windows.Forms.ComboBox();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.cbTicks = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -52,6 +54,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbIntensity)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudIntensity)).BeginInit();
             this.groupBox4.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -149,9 +152,9 @@
             this.groupBox3.Controls.Add(this.cbDecibels);
             this.groupBox3.Controls.Add(this.tbIntensity);
             this.groupBox3.Controls.Add(this.nudIntensity);
-            this.groupBox3.Location = new System.Drawing.Point(508, 12);
+            this.groupBox3.Location = new System.Drawing.Point(572, 12);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(525, 47);
+            this.groupBox3.Size = new System.Drawing.Size(461, 47);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Intensity";
@@ -175,7 +178,7 @@
             this.tbIntensity.Location = new System.Drawing.Point(150, 11);
             this.tbIntensity.Maximum = 50;
             this.tbIntensity.Name = "tbIntensity";
-            this.tbIntensity.Size = new System.Drawing.Size(369, 30);
+            this.tbIntensity.Size = new System.Drawing.Size(305, 30);
             this.tbIntensity.TabIndex = 1;
             this.tbIntensity.Value = 10;
             this.tbIntensity.Scroll += new System.EventHandler(this.TbIntensity_Scroll);
@@ -214,12 +217,33 @@
             this.cbColormap.Size = new System.Drawing.Size(127, 21);
             this.cbColormap.TabIndex = 0;
             // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.cbTicks);
+            this.groupBox5.Location = new System.Drawing.Point(508, 12);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(58, 47);
+            this.groupBox5.TabIndex = 8;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Misc";
+            // 
+            // cbTicks
+            // 
+            this.cbTicks.AutoSize = true;
+            this.cbTicks.Location = new System.Drawing.Point(6, 21);
+            this.cbTicks.Name = "cbTicks";
+            this.cbTicks.Size = new System.Drawing.Size(48, 17);
+            this.cbTicks.TabIndex = 3;
+            this.cbTicks.Text = "ticks";
+            this.cbTicks.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.ClientSize = new System.Drawing.Size(1045, 498);
+            this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -239,6 +263,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbIntensity)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudIntensity)).EndInit();
             this.groupBox4.ResumeLayout(false);
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -261,6 +287,8 @@
         private System.Windows.Forms.CheckBox cbDecibels;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.ComboBox cbColormap;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.CheckBox cbTicks;
     }
 }
 

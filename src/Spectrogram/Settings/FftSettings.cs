@@ -32,6 +32,7 @@ namespace Spectrogram.Settings
         public double maxFreq { get { return sampleRate / 2; } }
         public int fftOutputPointCount { get { return fftSize / 2; } }
         public double fftResolution { get { return maxFreq / fftOutputPointCount; } }
+        public double segmentsPerSecond { get { return sampleRate / segmentSize; } }
 
         public override string ToString()
         {
@@ -45,10 +46,12 @@ namespace Spectrogram.Settings
 
         public int IndexFromFrequency(double frequency)
         {
-            double maxFreq = sampleRate / 2;
-            int fftOutputPoints = fftSize / 2;
-            double fftResolution = maxFreq / fftOutputPoints;
             return (int)(frequency / fftResolution);
+        }
+
+        public double FrequencyFromIndex(int index)
+        {
+            return index * fftResolution;
         }
     }
 }

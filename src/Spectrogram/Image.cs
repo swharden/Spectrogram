@@ -9,45 +9,14 @@ namespace Spectrogram
 {
     class Image
     {
-        public static Bitmap BitmapFromFFTs(
-            float[][] ffts,
-            int? pixelLow,
-            int? pixelHigh,
-            float intensity,
-            bool decibels,
-            Colormap colormap
-            )
+        public static Bitmap BitmapFromFFTs(float[][] ffts, Settings.DisplaySettings displaySettings)
         {
 
             if (ffts == null || ffts.Length == 0)
                 throw new ArgumentException("ffts must contain float arrays");
 
-            int fftHeight;
-            if (ffts[0] != null)
-                fftHeight = ffts[0].Length;
-            else if (ffts[ffts.Length - 1] != null)
-                fftHeight = ffts[ffts.Length - 1].Length;
-            else
-                return null;
-
-            if (pixelLow == null)
-                pixelLow = 0;
-            else
-                pixelLow = Math.Max((int)pixelLow, 0);
-
-            if (pixelHigh == null)
-                pixelHigh = fftHeight;
-            else
-                pixelHigh = Math.Min((int)pixelHigh, fftHeight);
-
-            if ((int)pixelHigh <= (int)pixelLow)
-                throw new ArgumentException("pixelHigh must be greater than pixelLow");
-
-            int height = (int)pixelHigh - (int)pixelLow;
-            int width = ffts.Length;
-
-            Bitmap bmp = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
-            ApplyColormap(bmp, colormap);
+            Bitmap bmp = new Bitmap(ffts.Length, displaySettings.height, PixelFormat.Format8bppIndexed);
+            ApplyColormap(bmp, displaySettings.colormap);
 
             var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
             BitmapData bitmapData = bmp.LockBits(rect, ImageLockMode.ReadOnly, bmp.PixelFormat);
@@ -55,7 +24,7 @@ namespace Spectrogram
 
             for (int col = 0; col < bmp.Width; col++)
             {
-                if (col >= width)
+                if (col >= bmp.Width)
                     continue;
 
                 if (ffts[col] == null)
@@ -65,10 +34,10 @@ namespace Spectrogram
                 {
                     int bytePosition = (bmp.Height - 1 - row) * bitmapData.Stride + col;
                     float pixelValue;
-                    pixelValue = ffts[col][row + (int)pixelLow];
-                    if (decibels)
+                    pixelValue = ffts[col][row + displaySettings.pixelLower];
+                    if (displaySettings.decibels)
                         pixelValue = (float)(Math.Log10(pixelValue) * 20);
-                    pixelValue = (pixelValue * intensity);
+                    pixelValue = (pixelValue * displaySettings.intensity);
                     pixelValue = Math.Max(0, pixelValue);
                     pixelValue = Math.Min(255, pixelValue);
                     pixels[bytePosition] = (byte)(pixelValue);

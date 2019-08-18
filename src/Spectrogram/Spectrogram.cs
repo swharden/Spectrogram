@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace Spectrogram
 {
@@ -107,36 +108,54 @@ namespace Spectrogram
         public Bitmap GetBitmap(
             float intensity = 10,
             bool decibels = false,
-            double frequencyMin = 0,
-            double frequencyMax = double.MaxValue,
+            double? frequencyMin = null,
+            double? frequencyMax = null,
             bool vertical = false,
-            Colormap colormap = Colormap.viridis
+            Colormap colormap = Colormap.viridis,
+            bool showTicks = false
             )
         {
             if (fftList.Count == 0)
                 return null;
+            if (frequencyMin == null)
+                frequencyMin = 0;
+            if (frequencyMax == null)
+                frequencyMax = fftSettings.maxFreq;
+
             if (frequencyMin < 0)
                 throw new ArgumentException("frequencyMin must be greater than 0");
             if (frequencyMax < frequencyMin)
                 throw new ArgumentException("frequencyMin must be less than frequencyMax");
 
-            int pixelLower = fftSettings.IndexFromFrequency(frequencyMin);
-            int pixelUpper = fftSettings.IndexFromFrequency(frequencyMax);
+            int pixelLower = fftSettings.IndexFromFrequency((double)frequencyMin);
+            int pixelUpper = fftSettings.IndexFromFrequency((double)frequencyMax);
             if (pixelUpper > fftSettings.fftOutputPointCount)
                 pixelUpper = fftSettings.fftOutputPointCount;
             if (pixelUpper - pixelLower < 1)
                 throw new ArgumentException("FFT frequency range is too small");
 
-            Bitmap bmp;
+            displaySettings.pixelLower = pixelLower;
+            displaySettings.pixelUpper = pixelUpper;
+            displaySettings.intensity = intensity;
+            displaySettings.decibels = decibels;
+            displaySettings.colormap = colormap;
+
+            Bitmap bmpIndexed;
+            Bitmap bmpRgb;
+
             using (var benchmark = new Benchmark())
             {
-                bmp = Image.BitmapFromFFTs(fftList.ToArray(), pixelLower, pixelUpper, intensity, decibels, colormap);
+                bmpIndexed = Image.BitmapFromFFTs(fftList.ToArray(), displaySettings);
                 if (vertical)
-                    bmp = Image.Rotate(bmp);
+                    bmpIndexed = Image.Rotate(bmpIndexed);
+                bmpRgb = bmpIndexed.Clone(new Rectangle(0, 0, bmpIndexed.Width, bmpIndexed.Height), PixelFormat.Format32bppPArgb);
                 displaySettings.lastRenderMsec = benchmark.elapsedMilliseconds;
             }
 
-            return bmp;
+            if (showTicks)
+                Annotations.drawTicks(bmpRgb, fftSettings, displaySettings);
+
+            return bmpRgb;
         }
 
         public double GetLastRenderTime()
