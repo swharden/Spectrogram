@@ -79,11 +79,17 @@ namespace Spectrogram
 
         public void ProcessFFT()
         {
+            int segmentsNeedingProcessing = (signal.Count - fftSize) / stepSize;
             float[] oldestSegment = new float[fftSize];
             while (signal.Count > (fftSize + stepSize))
             {
+                
                 int remainingSegments = (signal.Count - fftSize) / stepSize;
-                //Console.WriteLine($"Processing segment #{ffts.Count + 1} ({remainingSegments} segments remain)");
+                if (remainingSegments % 10 == 0)
+                {
+                    Console.WriteLine(string.Format("Processing segment {0} of {1} ({2:0.0}%)",
+                        ffts.Count + 1, segmentsNeedingProcessing, 100.0 * (ffts.Count + 1) / segmentsNeedingProcessing));
+                }
 
                 signal.CopyTo(0, oldestSegment, 0, fftSize);
                 signal.RemoveRange(0, stepSize);
@@ -129,17 +135,17 @@ namespace Spectrogram
             return bmp;
         }
 
-        public void SaveBitmap(string fileName = "spectrograph.png")
+        public void SaveImage(string fileName = "spectrograph.png")
         {
             string filePath = System.IO.Path.GetFullPath(fileName);
             string extension = System.IO.Path.GetExtension(fileName).ToUpper();
 
             var imageFormat = System.Drawing.Imaging.ImageFormat.Bmp;
-            if (extension == "JPG" || extension == "JPEG")
+            if (extension == ".JPG" || extension == ".JPEG")
                 imageFormat = System.Drawing.Imaging.ImageFormat.Jpeg;
-            else if (extension == "PNG")
+            else if (extension == ".PNG")
                 imageFormat = System.Drawing.Imaging.ImageFormat.Png;
-            else if (extension == "TIF" || extension == "TIFF")
+            else if (extension == ".TIF" || extension == ".TIFF")
                 imageFormat = System.Drawing.Imaging.ImageFormat.Tiff;
 
             Bitmap bmp = GetBitmap();
