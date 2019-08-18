@@ -11,18 +11,15 @@ namespace Spectrogram
     {
         public static Bitmap BitmapFromFFTs(
             List<float[]> ffts,
-            int? fixedWidth = null,
-            int? verticalLine = null,
-            int? pixelLow = null,
-            int? pixelHigh = null,
-            float intensity = 100
+            int? pixelLow,
+            int? pixelHigh,
+            float intensity,
+            bool decibels
             )
         {
 
             if (ffts == null || ffts.Count == 0)
                 throw new ArgumentException("ffts must contain float arrays");
-
-            int width = (fixedWidth == null) ? ffts.Count : (int)fixedWidth;
 
             int fftHeight;
             if (ffts[0] != null)
@@ -42,7 +39,11 @@ namespace Spectrogram
             else
                 pixelHigh = Math.Min((int)pixelHigh, fftHeight);
 
+            if ((int)pixelHigh <= (int)pixelLow)
+                throw new ArgumentException("pixelHigh must be greater than pixelLow");
+
             int height = (int)pixelHigh - (int)pixelLow;
+            int width = ffts.Count;
 
             Bitmap bmp = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
             Palette.ApplyLUT(bmp, Palette.LUT.viridis);
@@ -63,18 +64,12 @@ namespace Spectrogram
                 {
                     int bytePosition = (bmp.Height - 1 - row) * bitmapData.Stride + col;
                     float pixelValue;
-
-                    if ((verticalLine != null) && (col == verticalLine))
-                    {
-                        pixelValue = byte.MaxValue;
-                    }
-                    else
-                    {
-                        pixelValue = ffts[col][row + (int)pixelLow];
-                        pixelValue = pixelValue * intensity;
-                        pixelValue = Math.Max(0, pixelValue);
-                        pixelValue = Math.Min(255, pixelValue);
-                    }
+                    pixelValue = ffts[col][row + (int)pixelLow];
+                    if (decibels)
+                        pixelValue = (float)(Math.Log10(pixelValue) * 20);
+                    pixelValue = (pixelValue * intensity);
+                    pixelValue = Math.Max(0, pixelValue);
+                    pixelValue = Math.Min(255, pixelValue);
                     pixels[bytePosition] = (byte)(pixelValue);
                 }
             }

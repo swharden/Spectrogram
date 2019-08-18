@@ -7,21 +7,9 @@ namespace Spectrogram
     public class Spectrogram
     {
         public readonly int fftSize;
-        public readonly int stepSize;
         public readonly int sampleRate;
-        public float intensity;
-        public bool decibels = false;
 
-        public int? fixedSize;
-        public bool vertical;
-        int? pixelLower = null;
-        int? pixelUpper = null;
-
-        public bool scroll;
         public int nextIndex;
-
-        public readonly float[] latestSegment;
-
         public double lastRenderMsec;
 
         public readonly List<float[]> ffts = new List<float[]>();
@@ -30,13 +18,7 @@ namespace Spectrogram
         public Spectrogram(
             int sampleRate = 8000,
             int fftSize = 1024,
-            int stepSize = 500,
-            int? fixedSize = null,
-            bool vertical = false,
-            bool scroll = false,
-            int? pixelLower = null,
-            int? pixelUpper = null,
-            float intensity = 10
+            int? fixedSize = null
             )
         {
             if (!Operations.IsPowerOfTwo(fftSize))
@@ -45,24 +27,12 @@ namespace Spectrogram
             if ((fixedSize != null) && (fixedSize < 1))
                 throw new ArgumentException("size must be at least 1");
 
-            if (scroll && fixedSize == null)
-                throw new ArgumentException("scroll requires a fixed size");
-
             this.sampleRate = sampleRate;
             this.fftSize = fftSize;
-            this.stepSize = stepSize;
-            this.fixedSize = fixedSize;
-            this.vertical = vertical;
-            this.scroll = scroll;
-            this.pixelLower = pixelLower;
-            this.pixelUpper = pixelUpper;
-            this.intensity = intensity;
 
             if (fixedSize != null)
                 while (ffts.Count < fixedSize)
                     ffts.Add(null);
-
-            latestSegment = new float[fftSize];
         }
 
         public override string ToString()
@@ -70,20 +40,49 @@ namespace Spectrogram
             return $"Spectrogram ({sampleRate} Hz) with {ffts.Count} segments ({fftSize} points each)";
         }
 
-        public void Add(float[] values, bool process = true)
+        public string GetConfigDetails()
         {
-            signal.AddRange(values);
-            if (process)
-                ProcessFFT();
+            double maxFreq = sampleRate / 2;
+            int fftOutputPoints = fftSize / 2;
+            double fftResolution = maxFreq / fftOutputPoints;
+
+            string msg = "";
+            msg += $"Sample rate: {sampleRate} Hz\n";
+            msg += $"Maximum visible Frequency: {maxFreq} Hz\n";
+            msg += $"FFT Size: {fftOutputPoints} points\n";
+            msg += $"FFT Resolution: {fftResolution} Hz\n";
+
+            return msg.Trim();
         }
 
-        public void ProcessFFT()
+        public int GetFftIndex(double frequency)
+        {
+            double maxFreq = sampleRate / 2;
+            int fftOutputPoints = fftSize / 2;
+            double fftResolution = maxFreq / fftOutputPoints;
+            return (int)(frequency / fftResolution);
+        }
+
+        public void Add(float[] values, bool process = true, bool scroll = false, int stepSize = 500, int? fixedSize = null)
+        {
+
+            if (scroll && fixedSize == null)
+                throw new ArgumentException("scroll requires a fixed size");
+
+            signal.AddRange(values);
+
+            if (process)
+                ProcessNewSegments(scroll, stepSize, fixedSize);
+        }
+
+        public void ProcessNewSegments(bool scroll, int stepSize, int? fixedSize)
         {
             int segmentsNeedingProcessing = (signal.Count - fftSize) / stepSize;
-            float[] oldestSegment = new float[fftSize];
+            float[] nextSegment = new float[fftSize];
+
             while (signal.Count > (fftSize + stepSize))
             {
-                
+
                 int remainingSegments = (signal.Count - fftSize) / stepSize;
                 if (remainingSegments % 10 == 0)
                 {
@@ -91,24 +90,33 @@ namespace Spectrogram
                         ffts.Count + 1, segmentsNeedingProcessing, 100.0 * (ffts.Count + 1) / segmentsNeedingProcessing));
                 }
 
-                signal.CopyTo(0, oldestSegment, 0, fftSize);
+                signal.CopyTo(0, nextSegment, 0, fftSize);
                 signal.RemoveRange(0, stepSize);
 
-                float[] fft = Operations.FFT(oldestSegment, decibels: decibels);
+                float[] fft = Operations.FFT(nextSegment);
 
                 if (fixedSize == null)
                 {
+                    // extend the collection
                     ffts.Add(fft);
                 }
                 else
                 {
+                    while (ffts.Count < fixedSize)
+                        ffts.Add(null);
+                    while (ffts.Count > fixedSize)
+                        ffts.RemoveAt(ffts.Count - 1);
+
                     if (scroll)
                     {
+                        // add to the end and remove from the beginning
                         ffts.Add(fft);
                         ffts.RemoveAt(0);
                     }
                     else
                     {
+                        // add new FFT at nextIndex
+                        nextIndex = Math.Min(nextIndex, ffts.Count - 1);
                         ffts[nextIndex] = fft;
                         nextIndex += 1;
                         if (nextIndex >= ffts.Count)
@@ -119,23 +127,44 @@ namespace Spectrogram
             }
         }
 
-        public Bitmap GetBitmap()
+        private List<float[]> GetScrolledFFTs()
         {
+            List<float[]> scrolled = new List<float[]>();
+            scrolled.AddRange(ffts.GetRange(nextIndex, ffts.Count - nextIndex));
+            scrolled.AddRange(ffts.GetRange(0, nextIndex));
+            return scrolled;
+        }
+
+        public Bitmap GetBitmap(
+            float intensity = 10,
+            bool decibels = false,
+            int? pixelUpper = null,
+            int? pixelLower = null,
+            bool vertical = false,
+            bool scroll = false
+            )
+        {
+
             if (ffts.Count == 0)
                 return null;
 
-            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
-            int? verticalLine = null;
-            if (fixedSize != null && !scroll)
-                verticalLine = nextIndex;
-            Bitmap bmp = Image.BitmapFromFFTs(ffts, fixedSize, verticalLine, pixelLower, pixelUpper, intensity);
+            var benchmark = new Benchmark();
+
+            List<float[]> fftsToAnalyze = ffts;
+            if (scroll)
+                fftsToAnalyze = GetScrolledFFTs();
+
+            Bitmap bmp = Image.BitmapFromFFTs(fftsToAnalyze, pixelLower, pixelUpper, intensity, decibels);
+
             if (vertical)
                 bmp = Image.Rotate(bmp);
-            lastRenderMsec = stopwatch.ElapsedTicks * 1000.0 / System.Diagnostics.Stopwatch.Frequency;
+
+            lastRenderMsec = benchmark.elapsedMilliseconds;
+
             return bmp;
         }
 
-        public void SaveImage(string fileName = "spectrograph.png")
+        public void SaveBitmap(Bitmap bmp, string fileName = "spectrograph.png")
         {
             string filePath = System.IO.Path.GetFullPath(fileName);
             string extension = System.IO.Path.GetExtension(fileName).ToUpper();
@@ -148,7 +177,6 @@ namespace Spectrogram
             else if (extension == ".TIF" || extension == ".TIFF")
                 imageFormat = System.Drawing.Imaging.ImageFormat.Tiff;
 
-            Bitmap bmp = GetBitmap();
             bmp.Save(filePath, imageFormat);
             Console.WriteLine($"Saved: {filePath}");
         }

@@ -39,7 +39,7 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.cbDisplay = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.cbDecibels = new System.Windows.Forms.CheckBox();
             this.tbIntensity = new System.Windows.Forms.TrackBar();
             this.nudIntensity = new System.Windows.Forms.NumericUpDown();
             this.groupBox1.SuspendLayout();
@@ -109,6 +109,7 @@
             this.pictureBox1.Size = new System.Drawing.Size(685, 357);
             this.pictureBox1.TabIndex = 3;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.Click += new System.EventHandler(this.PictureBox1_Click);
             // 
             // timer1
             // 
@@ -141,7 +142,7 @@
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox3.Controls.Add(this.checkBox1);
+            this.groupBox3.Controls.Add(this.cbDecibels);
             this.groupBox3.Controls.Add(this.tbIntensity);
             this.groupBox3.Controls.Add(this.nudIntensity);
             this.groupBox3.Location = new System.Drawing.Point(363, 12);
@@ -151,16 +152,15 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Intensity";
             // 
-            // checkBox1
+            // cbDecibels
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(79, 22);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(65, 17);
-            this.checkBox1.TabIndex = 2;
-            this.checkBox1.Text = "decibels";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.CheckBox1_CheckedChanged);
+            this.cbDecibels.AutoSize = true;
+            this.cbDecibels.Location = new System.Drawing.Point(79, 22);
+            this.cbDecibels.Name = "cbDecibels";
+            this.cbDecibels.Size = new System.Drawing.Size(65, 17);
+            this.cbDecibels.TabIndex = 2;
+            this.cbDecibels.Text = "decibels";
+            this.cbDecibels.UseVisualStyleBackColor = true;
             // 
             // tbIntensity
             // 
@@ -188,7 +188,6 @@
             0,
             0,
             0});
-            this.nudIntensity.ValueChanged += new System.EventHandler(this.NudIntensity_ValueChanged);
             // 
             // Form1
             // 
@@ -232,7 +231,7 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.NumericUpDown nudIntensity;
         private System.Windows.Forms.TrackBar tbIntensity;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox cbDecibels;
     }
 }
 

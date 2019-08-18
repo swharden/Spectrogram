@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,23 +11,33 @@ namespace ConsoleDemo
     {
         static void Main(string[] args)
         {
-            //DemoMozart();
+            DemoMozart();
             DemoQRSS();
+            DemoTiming();
+        }
+
+        static void DemoTiming()
+        {
+            var spec = new Spectrogram.Spectrogram(sampleRate: 8000, fftSize: 2048);
+
+            float[] values = Spectrogram.WavFile.Read("mozart.wav");
+            spec.Add(values);
+
+            Console.WriteLine(spec);
+            Console.WriteLine(spec.GetConfigDetails());
         }
 
         static void DemoMozart()
         {
             using (var benchmark = new Spectrogram.Benchmark())
             {
-                var spec = new Spectrogram.Spectrogram(
-                    fftSize: 2048, 
-                    stepSize: 500,
-                    pixelUpper: 300, 
-                    intensity: 2
-                    );
+                var spec = new Spectrogram.Spectrogram(sampleRate: 8000, fftSize: 2048);
+
                 float[] values = Spectrogram.WavFile.Read("mozart.wav");
                 spec.Add(values);
-                spec.SaveImage("mozart.jpg");
+
+                Bitmap bmp = spec.GetBitmap();
+                spec.SaveBitmap(bmp, "mozart.jpg");
             }
         }
 
@@ -34,16 +45,16 @@ namespace ConsoleDemo
         {
             using (var benchmark = new Spectrogram.Benchmark())
             {
-                var spec = new Spectrogram.Spectrogram(
-                    fftSize: 8192, 
-                    stepSize: 5000,
-                    intensity: 2, 
-                    pixelLower: 1250, 
-                    pixelUpper: 1500
-                    );
+                var spec = new Spectrogram.Spectrogram(sampleRate: 8000, fftSize: 8192*2);
+
                 float[] values = Spectrogram.WavFile.Read("qrss.wav");
-                spec.Add(values);
-                spec.SaveImage("qrss.jpg");
+                spec.Add(values, stepSize: spec.fftSize/4);
+
+                Bitmap bmp = spec.GetBitmap(intensity: 2,
+                    pixelLower: spec.GetFftIndex(1200),
+                    pixelUpper: spec.GetFftIndex(1500)
+                    );
+                spec.SaveBitmap(bmp, "qrss.jpg");
             }
         }
     }
