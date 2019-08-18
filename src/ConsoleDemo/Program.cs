@@ -12,19 +12,7 @@ namespace ConsoleDemo
         static void Main(string[] args)
         {
             DemoMozart();
-            DemoQRSS();
-            DemoTiming();
-        }
-
-        static void DemoTiming()
-        {
-            var spec = new Spectrogram.Spectrogram(sampleRate: 8000, fftSize: 2048);
-
-            float[] values = Spectrogram.WavFile.Read("mozart.wav");
-            spec.Add(values);
-
-            Console.WriteLine(spec);
-            Console.WriteLine(spec.GetConfigDetails());
+            //DemoQRSS();
         }
 
         static void DemoMozart()
@@ -34,7 +22,7 @@ namespace ConsoleDemo
                 var spec = new Spectrogram.Spectrogram(sampleRate: 8000, fftSize: 2048);
 
                 float[] values = Spectrogram.WavFile.Read("mozart.wav");
-                spec.Add(values);
+                spec.AddExtend(values);
 
                 Bitmap bmp = spec.GetBitmap();
                 spec.SaveBitmap(bmp, "mozart.jpg");
@@ -45,15 +33,11 @@ namespace ConsoleDemo
         {
             using (var benchmark = new Spectrogram.Benchmark())
             {
-                var spec = new Spectrogram.Spectrogram(sampleRate: 8000, fftSize: 8192*2);
+                var spec = new Spectrogram.Spectrogram(sampleRate: 8000, fftSize: 16384, segmentSize: 5000);
 
                 float[] values = Spectrogram.WavFile.Read("qrss.wav");
-                spec.Add(values, stepSize: spec.fftSize/4);
-
-                Bitmap bmp = spec.GetBitmap(intensity: 2,
-                    pixelLower: spec.GetFftIndex(1200),
-                    pixelUpper: spec.GetFftIndex(1500)
-                    );
+                spec.AddExtend(values);
+                Bitmap bmp = spec.GetBitmap(intensity: 2, frequencyMin: 1200, frequencyMax: 1500);
                 spec.SaveBitmap(bmp, "qrss.jpg");
             }
         }

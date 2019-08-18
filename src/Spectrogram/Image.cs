@@ -10,7 +10,7 @@ namespace Spectrogram
     class Image
     {
         public static Bitmap BitmapFromFFTs(
-            List<float[]> ffts,
+            float[][] ffts,
             int? pixelLow,
             int? pixelHigh,
             float intensity,
@@ -18,14 +18,14 @@ namespace Spectrogram
             )
         {
 
-            if (ffts == null || ffts.Count == 0)
+            if (ffts == null || ffts.Length == 0)
                 throw new ArgumentException("ffts must contain float arrays");
 
             int fftHeight;
             if (ffts[0] != null)
                 fftHeight = ffts[0].Length;
-            else if (ffts[ffts.Count - 1] != null)
-                fftHeight = ffts[ffts.Count - 1].Length;
+            else if (ffts[ffts.Length - 1] != null)
+                fftHeight = ffts[ffts.Length - 1].Length;
             else
                 return null;
 
@@ -43,7 +43,7 @@ namespace Spectrogram
                 throw new ArgumentException("pixelHigh must be greater than pixelLow");
 
             int height = (int)pixelHigh - (int)pixelLow;
-            int width = ffts.Count;
+            int width = ffts.Length;
 
             Bitmap bmp = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
             Palette.ApplyLUT(bmp, Palette.LUT.viridis);

@@ -137,6 +137,7 @@
             this.cbDisplay.Name = "cbDisplay";
             this.cbDisplay.Size = new System.Drawing.Size(127, 21);
             this.cbDisplay.TabIndex = 0;
+            this.cbDisplay.SelectedIndexChanged += new System.EventHandler(this.CbDisplay_SelectedIndexChanged);
             // 
             // groupBox3
             // 

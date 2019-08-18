@@ -54,8 +54,18 @@ namespace AudioMonitor
             float[] buffer = new float[args.BytesRecorded / bytesPerSample];
             for (int i = 0; i < buffer.Length; i++)
                 buffer[i] = BitConverter.ToInt16(args.Buffer, i * bytesPerSample);
-            spec.Add(buffer, fixedSize: pictureBox1.Width);
-            renderNeeded = true;
+            try
+            {
+                if (waterfall)
+                    spec.AddScroll(buffer, fixedSize: pictureBox1.Width);
+                else
+                    spec.AddCircular(buffer, fixedSize: pictureBox1.Width);
+                renderNeeded = true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("EXCEPTION: " + ex);
+            }
         }
 
         private void AudioMonitorInitialize(
@@ -66,21 +76,7 @@ namespace AudioMonitor
             int bufferMilliseconds = 10
             )
         {
-            int fftSize = 1024;
-
-            switch (cbDisplay.Text)
-            {
-                case "waterfall":
-                    spec = new Spectrogram.Spectrogram(sampleRate, fftSize);
-                    break;
-
-                case "horizontal repeat":
-                    spec = new Spectrogram.Spectrogram(sampleRate, fftSize);
-                    break;
-
-                default:
-                    throw new NotImplementedException("unknown display type");
-            }
+            spec = new Spectrogram.Spectrogram(sampleRate, 1024);
 
             wvin = new NAudio.Wave.WaveInEvent();
             wvin.DeviceNumber = DeviceIndex;
@@ -91,32 +87,30 @@ namespace AudioMonitor
         }
 
         bool renderNeeded = false;
+        bool busyRendering = false;
         private void Timer1_Tick(object sender, EventArgs e)
         {
             if (!renderNeeded)
                 return;
 
-            if ((spec == null) || (spec.ffts.Count == 0))
+            if ((spec == null) || (spec.fftList.Count == 0))
                 return;
 
-            try
-            {
-                pictureBox1.BackgroundImage = spec.GetBitmap(
-                    intensity: (float)nudIntensity.Value,
-                    decibels: cbDecibels.Checked,
-                    pixelLower: spec.GetFftIndex(0),
-                    pixelUpper: spec.GetFftIndex(4000),
-                    vertical: (cbDisplay.Text == "waterfall"),
-                    scroll: (cbDisplay.Text == "waterfall")
-                    );
-                lblStatus.Text = $"spectrogram contains {spec.ffts.Count} FFT samples | last render: {spec.lastRenderMsec} ms";
-                renderNeeded = false;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                lblStatus.Text = ex.ToString();
-            }
+            if (busyRendering)
+                return;
+            else
+                busyRendering = true;
+
+            pictureBox1.BackgroundImage = spec.GetBitmap(
+                intensity: (float)nudIntensity.Value,
+                decibels: cbDecibels.Checked,
+                frequencyMin: 0,
+                frequencyMax: 4000,
+                vertical: waterfall
+                );
+            lblStatus.Text = $"spectrogram contains {spec.fftList.Count} FFT samples | last render: {spec.GetLastRenderTime()} ms";
+            renderNeeded = false;
+            busyRendering = false;
 
         }
 
@@ -127,7 +121,13 @@ namespace AudioMonitor
 
         private void PictureBox1_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(spec.GetConfigDetails(), "Configuration Details");
+            MessageBox.Show(spec.GetFftInfo(), "Configuration Details");
+        }
+
+        public bool waterfall = false;
+        private void CbDisplay_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            waterfall = (cbDisplay.Text == "waterfall");
         }
     }
 }
