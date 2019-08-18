@@ -3,7 +3,7 @@
 
 ![](data/mozart.jpg)
 
-**Quickstart:** The image above was created by this program which which converts [/data/mozart.wav](/data/mozart.wav) (Mozart's Piano Sonata No. 11 in A major) to a spectrograph and saves it as an image.
+**Quickstart:** The code below  converts [/data/mozart.wav](/data/mozart.wav) (Mozart's Piano Sonata No. 11 in A major) to a spectrograph and saves it to produce the image above.
 
 ```cs
 var spec = new Spectrogram.Spectrogram();
