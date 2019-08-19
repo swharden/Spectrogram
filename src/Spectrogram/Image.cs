@@ -37,7 +37,7 @@ namespace Spectrogram
                     pixelValue = ffts[col][row + displaySettings.pixelLower];
                     if (displaySettings.decibels)
                         pixelValue = (float)(Math.Log10(pixelValue) * 20);
-                    pixelValue = (pixelValue * displaySettings.intensity);
+                    pixelValue = (pixelValue * displaySettings.brightness);
                     pixelValue = Math.Max(0, pixelValue);
                     pixelValue = Math.Min(255, pixelValue);
                     pixels[bytePosition] = (byte)(pixelValue);

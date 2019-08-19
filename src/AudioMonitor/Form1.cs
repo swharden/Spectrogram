@@ -111,8 +111,6 @@ namespace AudioMonitor
             pictureBox1.BackgroundImage = spec.GetBitmap(
                 intensity: (float)nudIntensity.Value,
                 decibels: cbDecibels.Checked,
-                frequencyMin: 0,
-                frequencyMax: 4000,
                 vertical: waterfall,
                 colormap: colormap,
                 showTicks: cbTicks.Checked

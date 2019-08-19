@@ -13,13 +13,20 @@ namespace Spectrogram.Settings
 
         // This class stores settings that control how the Bitmap looks (#2)
 
-        public int pixelLower;
-        public int pixelUpper;
-        public int height { get { return pixelUpper - pixelLower; } }
+        public double fftResolution;
+        public double freqLow;
+        public double freqHigh;
 
-        public float intensity;
+        public int pixelLower { get { return (int)(freqLow / fftResolution); } }
+        public int pixelUpper { get { return (int)(freqHigh / fftResolution); } }
+        public int height { get { return pixelUpper - pixelLower; } }
+        public int width;
+
+        public float brightness = 1;
         public bool decibels;
         public Colormap colormap;
+
+        public bool renderNeeded;
 
         public double lastRenderMsec;
 

@@ -14,11 +14,7 @@ namespace QRSS_Viewer
     {
         private NAudio.Wave.WaveInEvent wvin;
         public Spectrogram.Spectrogram spec;
-        bool renderNeeded;
         bool busyRendering;
-
-        double frequencyMin = 1200;
-        double frequencyMax = 1500;
 
         public SpectrogramViewer()
         {
@@ -39,8 +35,7 @@ namespace QRSS_Viewer
             spec = new Spectrogram.Spectrogram(sampleRate, fftSize, segmentSize);
 
             pbSpec.Width = tenMinutePixelWidth;
-
-            pbSpec.Height = spec.fftSettings.ImageHeight(frequencyMin, frequencyMax);
+            pbSpec.Height = spec.displaySettings.height;
 
             int bitRate = 16;
             int channels = 1;
@@ -59,14 +54,13 @@ namespace QRSS_Viewer
             {
                 float[] values = Spectrogram.WavFile.Read(preLoadWavFile);
                 spec.AddExtend(values);
-                pbSpec.BackgroundImage = spec.GetBitmap(frequencyMin: frequencyMin, frequencyMax: frequencyMax);
             }
         }
 
         public void SetIntensity(float intensity)
         {
-            spec.displaySettings.intensity = intensity;
-            renderNeeded = true;
+            spec.displaySettings.brightness = intensity;
+            spec.displaySettings.renderNeeded = true;
         }
 
         public double lastAmplitudeFrac = 0;
@@ -81,7 +75,6 @@ namespace QRSS_Viewer
             try
             {
                 spec.AddCircular(buffer, fixedSize: pbSpec.Width);
-                renderNeeded = true;
             }
             catch (Exception ex)
             {
@@ -89,26 +82,25 @@ namespace QRSS_Viewer
             }
         }
 
-
         private void Timer1_Tick(object sender, EventArgs e)
         {
 
             pbLevelMask.Height = (int)(panelLevel.Height * (1 - lastAmplitudeFrac));
 
-            if (!renderNeeded)
-                return;
-
             if ((spec == null) || (spec.fftList.Count == 0))
                 return;
 
-            if (busyRendering)
+            if (!spec.displaySettings.renderNeeded)
                 return;
-            else
-                busyRendering = true;
 
-            pbSpec.BackgroundImage = spec.GetBitmap(frequencyMin: frequencyMin, frequencyMax: frequencyMax);
-            renderNeeded = false;
-            busyRendering = false;
+            if (!busyRendering)
+            {
+                busyRendering = true;
+                spec.displaySettings.renderNeeded = false;
+                pbSpec.BackgroundImage = spec.GetBitmap();
+                pbSpec.Size = pbSpec.BackgroundImage.Size;
+                busyRendering = false;
+            }
         }
     }
 }

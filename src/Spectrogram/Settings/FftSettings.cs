@@ -14,7 +14,7 @@ namespace Spectrogram.Settings
 
         public readonly int sampleRate;
         public readonly int fftSize; // todo: change this to fftInputPointCount
-        public int segmentSize;
+        public int step;
 
         public FftSettings(int sampleRate, int fftSize, int segmentSize)
         {
@@ -26,13 +26,13 @@ namespace Spectrogram.Settings
 
             this.sampleRate = sampleRate;
             this.fftSize = fftSize;
-            this.segmentSize = segmentSize;
+            this.step = segmentSize;
         }
 
         public double maxFreq { get { return sampleRate / 2; } }
         public int fftOutputPointCount { get { return fftSize / 2; } }
         public double fftResolution { get { return maxFreq / fftOutputPointCount; } }
-        public double segmentsPerSecond { get { return sampleRate / segmentSize; } }
+        public double segmentsPerSecond { get { return sampleRate / step; } }
 
         public override string ToString()
         {

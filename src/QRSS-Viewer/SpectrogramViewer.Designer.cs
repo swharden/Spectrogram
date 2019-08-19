@@ -42,7 +42,7 @@
             // 
             // pbSpec
             // 
-            this.pbSpec.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.pbSpec.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.pbSpec.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.pbSpec.Location = new System.Drawing.Point(0, 0);
             this.pbSpec.Name = "pbSpec";
@@ -62,6 +62,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelSpec.AutoScroll = true;
+            this.panelSpec.BackColor = System.Drawing.SystemColors.ControlDark;
             this.panelSpec.Controls.Add(this.pbSpec);
             this.panelSpec.Location = new System.Drawing.Point(11, 4);
             this.panelSpec.Name = "panelSpec";

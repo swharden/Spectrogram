@@ -23,8 +23,9 @@ namespace ConsoleDemo
 
                 float[] values = Spectrogram.WavFile.Read("mozart.wav");
                 spec.AddExtend(values);
-
-                Bitmap bmp = spec.GetBitmap(frequencyMax: 2500, intensity: 5);
+                spec.SetDisplayRange(0, 2500);
+                spec.SetBrightness(5);
+                Bitmap bmp = spec.GetBitmap();
                 spec.SaveBitmap(bmp, "mozart.jpg");
             }
         }
@@ -37,7 +38,8 @@ namespace ConsoleDemo
 
                 float[] values = Spectrogram.WavFile.Read("qrss.wav");
                 spec.AddExtend(values);
-                Bitmap bmp = spec.GetBitmap(intensity: 2, frequencyMin: 1200, frequencyMax: 1500);
+                spec.SetDisplayRange(1200, 1500);
+                Bitmap bmp = spec.GetBitmap(intensity: 2);
                 spec.SaveBitmap(bmp, "qrss.jpg");
             }
         }

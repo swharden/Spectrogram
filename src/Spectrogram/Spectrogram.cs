@@ -19,6 +19,8 @@ namespace Spectrogram
         {
             fftSettings = new Settings.FftSettings(sampleRate, fftSize, segmentSize);
             displaySettings = new Settings.DisplaySettings();
+            displaySettings.fftResolution = fftSettings.fftResolution;
+            displaySettings.freqHigh = fftSettings.maxFreq;
         }
 
         public override string ToString()
@@ -31,6 +33,17 @@ namespace Spectrogram
         public string GetFftInfo()
         {
             return fftSettings.ToString();
+        }
+
+        public void SetDisplayRange(double freqLow, double freqHigh)
+        {
+            displaySettings.freqLow = freqLow;
+            displaySettings.freqHigh = freqHigh;
+        }
+
+        public void SetBrightness(float brightness)
+        {
+            displaySettings.brightness = brightness;
         }
 
         public void AddExtend(float[] values)
@@ -53,13 +66,13 @@ namespace Spectrogram
 
         public void ProcessNewSegments(bool scroll, int? fixedSize)
         {
-            int segmentsRemaining = (signal.Count - fftSettings.fftSize) / fftSettings.segmentSize;
+            int segmentsRemaining = (signal.Count - fftSettings.fftSize) / fftSettings.step;
             float[] segment = new float[fftSettings.fftSize];
 
-            while (signal.Count > (fftSettings.fftSize + fftSettings.segmentSize))
+            while (signal.Count > (fftSettings.fftSize + fftSettings.step))
             {
 
-                int remainingSegments = (signal.Count - fftSettings.fftSize) / fftSettings.segmentSize;
+                int remainingSegments = (signal.Count - fftSettings.fftSize) / fftSettings.step;
                 if (remainingSegments % 10 == 0)
                 {
                     Console.WriteLine(string.Format("Processing segment {0} of {1} ({2:0.0}%)",
@@ -67,7 +80,7 @@ namespace Spectrogram
                 }
 
                 signal.CopyTo(0, segment, 0, fftSettings.fftSize);
-                signal.RemoveRange(0, fftSettings.segmentSize);
+                signal.RemoveRange(0, fftSettings.step);
 
                 float[] newFft = Operations.FFT(segment);
 
@@ -76,6 +89,9 @@ namespace Spectrogram
                 else
                     AddNewFftFixed(newFft, (int)fixedSize, scroll);
             }
+
+            displaySettings.width = fftList.Count;
+            displaySettings.renderNeeded = true;
         }
 
         private void AddNewFftExtend(float[] fft)
@@ -108,8 +124,6 @@ namespace Spectrogram
         public Bitmap GetBitmap(
             float? intensity = null,
             bool decibels = false,
-            double? frequencyMin = null,
-            double? frequencyMax = null,
             bool vertical = false,
             Colormap colormap = Colormap.viridis,
             bool showTicks = false
@@ -117,28 +131,12 @@ namespace Spectrogram
         {
             if (fftList.Count == 0)
                 return null;
-            if (frequencyMin == null)
-                frequencyMin = 0;
-            if (frequencyMax == null)
-                frequencyMax = fftSettings.maxFreq;
 
-            if (frequencyMin < 0)
-                throw new ArgumentException("frequencyMin must be greater than 0");
-            if (frequencyMax < frequencyMin)
-                throw new ArgumentException("frequencyMin must be less than frequencyMax");
-
-            int pixelLower = fftSettings.IndexFromFrequency((double)frequencyMin);
-            int pixelUpper = fftSettings.IndexFromFrequency((double)frequencyMax);
-            if (pixelUpper > fftSettings.fftOutputPointCount)
-                pixelUpper = fftSettings.fftOutputPointCount;
-            if (pixelUpper - pixelLower < 1)
+            if (displaySettings.height < 1)
                 throw new ArgumentException("FFT frequency range is too small");
 
-            displaySettings.pixelLower = pixelLower;
-            displaySettings.pixelUpper = pixelUpper;
-
             if (intensity != null)
-                displaySettings.intensity = (float)intensity;
+                displaySettings.brightness = (float)intensity;
 
             displaySettings.decibels = decibels;
             displaySettings.colormap = colormap;

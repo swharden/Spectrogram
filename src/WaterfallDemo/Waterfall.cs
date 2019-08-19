@@ -16,7 +16,6 @@ namespace WaterfallDemo
         public Spectrogram.Spectrogram spec;
         bool renderNeeded;
         bool busyRendering;
-        public float intensity = 2;
 
         public Waterfall()
         {
@@ -26,6 +25,8 @@ namespace WaterfallDemo
         public void StartListening(int deviceIndex = 0, int sampleRate = 8000, int fftSize = 1024)
         {
             spec = new Spectrogram.Spectrogram(sampleRate, fftSize);
+            spec.SetBrightness(2);
+            spec.SetDisplayRange(0, 4000);
 
             int bitRate = 16;
             int channels = 1;
@@ -71,7 +72,7 @@ namespace WaterfallDemo
             else
                 busyRendering = true;
 
-            pictureBox1.BackgroundImage = spec.GetBitmap(intensity: intensity, frequencyMax: 4000, vertical: true);
+            pictureBox1.BackgroundImage = spec.GetBitmap(vertical: true);
             renderNeeded = false;
             busyRendering = false;
         }
