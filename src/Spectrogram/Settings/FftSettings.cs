@@ -53,5 +53,14 @@ namespace Spectrogram.Settings
         {
             return index * fftResolution;
         }
+
+        public int ImageHeight(double? lowerFrequency = null, double? upperFrequency = null)
+        {
+            if (lowerFrequency == null)
+                lowerFrequency = 0;
+            if (upperFrequency == null)
+                upperFrequency = maxFreq;
+            return IndexFromFrequency((double)upperFrequency - (double)lowerFrequency);
+        }
     }
 }

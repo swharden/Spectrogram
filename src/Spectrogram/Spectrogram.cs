@@ -106,7 +106,7 @@ namespace Spectrogram
         }
 
         public Bitmap GetBitmap(
-            float intensity = 10,
+            float? intensity = null,
             bool decibels = false,
             double? frequencyMin = null,
             double? frequencyMax = null,
@@ -136,14 +136,17 @@ namespace Spectrogram
 
             displaySettings.pixelLower = pixelLower;
             displaySettings.pixelUpper = pixelUpper;
-            displaySettings.intensity = intensity;
+
+            if (intensity != null)
+                displaySettings.intensity = (float)intensity;
+
             displaySettings.decibels = decibels;
             displaySettings.colormap = colormap;
 
             Bitmap bmpIndexed;
             Bitmap bmpRgb;
 
-            using (var benchmark = new Benchmark())
+            using (var benchmark = new Benchmark(true))
             {
                 bmpIndexed = Image.BitmapFromFFTs(fftList.ToArray(), displaySettings);
                 if (vertical)
