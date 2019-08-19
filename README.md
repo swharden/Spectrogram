@@ -54,8 +54,6 @@ This demo program was created to demonstrate Spectrogram and ScottPlot working t
 
 ## Developer Notes
 
-This project is still a work in progress.
-
 ![](/dev/graphics/theory-of-operation.png)
 
 ### TODO:
