@@ -56,6 +56,8 @@ This demo program was created to demonstrate Spectrogram and ScottPlot working t
 
 This project is still a work in progress.
 
+![](/dev/graphics/theory-of-operation.png)
+
 ### TODO:
 * ~~render horizontally or vertically~~
 * ~~create bitmaps in real time from audio input~~
