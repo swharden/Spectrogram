@@ -35,6 +35,9 @@
     <Reference Include="NAudio, Version=1.9.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NAudio.1.9.0\lib\net35\NAudio.dll</HintPath>
     </Reference>
+    <Reference Include="ScottPlot, Version=3.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ScottPlot.3.1.1\lib\net45\ScottPlot.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -92,10 +95,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\ScottPlot\src\ScottPlot\ScottPlot.csproj">
-      <Project>{ee9215c6-01c1-4835-8514-3a708f9291f1}</Project>
-      <Name>ScottPlot</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Spectrogram\Spectrogram.csproj">
       <Project>{8717f4ce-4497-4eaa-b95d-0f7a04fb397d}</Project>
       <Name>Spectrogram</Name>
