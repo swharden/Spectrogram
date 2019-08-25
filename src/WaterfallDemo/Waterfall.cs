@@ -24,9 +24,7 @@ namespace WaterfallDemo
 
         public void StartListening(int deviceIndex = 0, int sampleRate = 8000, int fftSize = 1024)
         {
-            spec = new Spectrogram.Spectrogram(sampleRate, fftSize);
-            spec.SetBrightness(2);
-            spec.SetDisplayRange(0, 4000);
+            spec = new Spectrogram.Spectrogram(sampleRate, fftSize, 250);
 
             int bitRate = 16;
             int channels = 1;
@@ -72,7 +70,7 @@ namespace WaterfallDemo
             else
                 busyRendering = true;
 
-            pictureBox1.BackgroundImage = spec.GetBitmap(vertical: true);
+            pictureBox1.BackgroundImage = spec.GetBitmap(vertical: true, intensity: 3, freqHigh: 4000);
             renderNeeded = false;
             busyRendering = false;
         }

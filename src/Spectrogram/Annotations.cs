@@ -1,35 +1,36 @@
 ﻿using Spectrogram.Settings;
+using System;
 using System.Drawing;
 
 namespace Spectrogram
 {
     public class Annotations
     {
-        public static void drawTicks(Bitmap bmp, FftSettings fftSettings, DisplaySettings displaySettings)
+        public static void drawTicks(Bitmap bmp, FftSettings fftSettings, DisplaySettings displaySettings, double tickSpacingHz, double tickSpacingSec)
         {
             Graphics gfx = Graphics.FromImage(bmp);
 
-            double frequency = fftSettings.FrequencyFromIndex(displaySettings.pixelLower);
-            double deltaFreq = 500;
-            frequency += deltaFreq;
-            while (frequency < fftSettings.FrequencyFromIndex(displaySettings.pixelUpper))
+            double horizontalTickSpacing = tickSpacingSec * fftSettings.sampleRate / fftSettings.step;
+
+            double firstFreqTick = fftSettings.FrequencyFromIndex(displaySettings.pixelLower) + tickSpacingHz;
+            double lastFreqTick = fftSettings.FrequencyFromIndex(displaySettings.pixelUpper) - tickSpacingHz;
+
+            for (double frequency = 0; frequency < fftSettings.maxFreq; frequency += tickSpacingHz)
             {
+                if ((frequency < firstFreqTick) || (frequency > lastFreqTick))
+                    continue;
                 int yPosition = bmp.Height - (fftSettings.IndexFromFrequency(frequency) - displaySettings.pixelLower);
                 Point p1 = new Point(bmp.Width - displaySettings.tickSize, yPosition);
                 Point p2 = new Point(bmp.Width, yPosition);
                 DrawLineWithShadow(gfx, p1, p2);
-                DrawTextWithShadow(gfx, frequency.ToString(), p1, displaySettings.tickFont, displaySettings.sfTicksRight);
-                frequency += deltaFreq;
+                DrawTextWithShadow(gfx, Math.Round(frequency).ToString(), p1, displaySettings.tickFont, displaySettings.sfTicksRight);
             }
 
-            double xPx = 0;
-            while (xPx < bmp.Width)
+            for (double xPx = 0; xPx < bmp.Width; xPx += horizontalTickSpacing)
             {
-                xPx += fftSettings.segmentsPerSecond;
                 Point p1 = new Point((int)xPx, bmp.Height);
                 Point p2 = new Point((int)xPx, bmp.Height - displaySettings.tickSize);
                 DrawLineWithShadow(gfx, p1, p2);
-                //DrawTextWithShadow(gfx, xPx.ToString(), p2, displaySettings.tickFont, displaySettings.sfTicksLower);
             }
         }
 

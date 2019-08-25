@@ -12,36 +12,26 @@ namespace ConsoleDemo
         static void Main(string[] args)
         {
             DemoMozart();
-            //DemoQRSS();
+            DemoQRSS();
         }
 
         static void DemoMozart()
         {
-            using (var benchmark = new Spectrogram.Benchmark())
-            {
-                var spec = new Spectrogram.Spectrogram(sampleRate: 8000, fftSize: 2048);
-
-                float[] values = Spectrogram.WavFile.Read("mozart.wav");
-                spec.AddExtend(values);
-                spec.SetDisplayRange(0, 2500);
-                spec.SetBrightness(5);
-                Bitmap bmp = spec.GetBitmap();
-                spec.SaveBitmap(bmp, "mozart.jpg");
-            }
+            var spec = new Spectrogram.Spectrogram(sampleRate: 8000, fftSize: 2048, step: 700);
+            float[] values = Spectrogram.Tools.ReadWav("mozart.wav");
+            spec.AddExtend(values);
+            Bitmap bmp = spec.GetBitmap(intensity: 2, freqHigh: 2500);
+            spec.SaveBitmap(bmp, "mozart.jpg");
         }
 
         static void DemoQRSS()
         {
-            using (var benchmark = new Spectrogram.Benchmark())
-            {
-                var spec = new Spectrogram.Spectrogram(sampleRate: 8000, fftSize: 16384, segmentSize: 5000);
-
-                float[] values = Spectrogram.WavFile.Read("qrss.wav");
-                spec.AddExtend(values);
-                spec.SetDisplayRange(1200, 1500);
-                Bitmap bmp = spec.GetBitmap(intensity: 2);
-                spec.SaveBitmap(bmp, "qrss.jpg");
-            }
+            var spec = new Spectrogram.Spectrogram(sampleRate: 8000, fftSize: 16384, step: 8000);
+            float[] values = Spectrogram.Tools.ReadMp3("qrss-w4hbk.mp3");
+            spec.AddExtend(values);
+            Bitmap bmp = spec.GetBitmap(intensity: 1.5, freqLow: 1100, freqHigh: 1500,
+                showTicks: true, tickSpacingHz: 50, tickSpacingSec: 60);
+            spec.SaveBitmap(bmp, "qrss.png");
         }
     }
 }

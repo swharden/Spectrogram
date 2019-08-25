@@ -16,7 +16,7 @@ namespace Spectrogram.Settings
         public readonly int fftSize; // todo: change this to fftInputPointCount
         public int step;
 
-        public FftSettings(int sampleRate, int fftSize, int segmentSize)
+        public FftSettings(int sampleRate, int fftSize, int step)
         {
             if (sampleRate <= 0)
                 throw new ArgumentException("Sample rate must be greater than 0");
@@ -26,7 +26,7 @@ namespace Spectrogram.Settings
 
             this.sampleRate = sampleRate;
             this.fftSize = fftSize;
-            this.step = segmentSize;
+            this.step = step;
         }
 
         public double maxFreq { get { return sampleRate / 2; } }

@@ -27,6 +27,16 @@ namespace Spectrogram
                 if (col >= bmp.Width)
                     continue;
 
+                if (col == displaySettings.highlightColumn)
+                {
+                    for (int row = 0; row < bmp.Height; row++)
+                    {
+                        int bytePosition = (bmp.Height - 1 - row) * bitmapData.Stride + col;
+                        pixels[bytePosition] = 255;
+                    }
+                    continue;
+                }
+
                 if (ffts[col] == null)
                     continue;
 

@@ -15,9 +15,11 @@ namespace Spectrogram
 
         public int nextIndex;
 
-        public Spectrogram(int sampleRate = 8000, int fftSize = 1024, int segmentSize = 200)
+        public Spectrogram(int sampleRate = 8000, int fftSize = 1024, int? step = null)
         {
-            fftSettings = new Settings.FftSettings(sampleRate, fftSize, segmentSize);
+            if (step == null)
+                step = sampleRate;
+            fftSettings = new Settings.FftSettings(sampleRate, fftSize, (int)step);
             displaySettings = new Settings.DisplaySettings();
             displaySettings.fftResolution = fftSettings.fftResolution;
             displaySettings.freqHigh = fftSettings.maxFreq;
@@ -34,18 +36,7 @@ namespace Spectrogram
         {
             return fftSettings.ToString();
         }
-
-        public void SetDisplayRange(double freqLow, double freqHigh)
-        {
-            displaySettings.freqLow = freqLow;
-            displaySettings.freqHigh = freqHigh;
-        }
-
-        public void SetBrightness(float brightness)
-        {
-            displaySettings.brightness = brightness;
-        }
-
+        
         public void AddExtend(float[] values)
         {
             signal.AddRange(values);
@@ -64,7 +55,7 @@ namespace Spectrogram
             ProcessNewSegments(scroll: true, fixedSize: fixedSize);
         }
 
-        public void ProcessNewSegments(bool scroll, int? fixedSize)
+        private void ProcessNewSegments(bool scroll, int? fixedSize)
         {
             int segmentsRemaining = (signal.Count - fftSettings.fftSize) / fftSettings.step;
             float[] segment = new float[fftSettings.fftSize];
@@ -122,11 +113,16 @@ namespace Spectrogram
         }
 
         public Bitmap GetBitmap(
-            float? intensity = null,
+            double? intensity = null,
             bool decibels = false,
             bool vertical = false,
             Colormap colormap = Colormap.viridis,
-            bool showTicks = false
+            bool showTicks = false,
+            double tickSpacingHz = 500,
+            double tickSpacingSec = 1,
+            double? freqLow = null, 
+            double? freqHigh = null,
+            bool highlightLatestColumn = false
             )
         {
             if (fftList.Count == 0)
@@ -138,8 +134,16 @@ namespace Spectrogram
             if (intensity != null)
                 displaySettings.brightness = (float)intensity;
 
+            
             displaySettings.decibels = decibels;
             displaySettings.colormap = colormap;
+            displaySettings.freqLow = (freqLow == null) ? 0 : (double)freqLow;
+            displaySettings.freqHigh = (freqHigh == null) ? fftSettings.maxFreq : (double)freqHigh;
+
+            if (highlightLatestColumn)
+                displaySettings.highlightColumn = nextIndex;
+            else
+                displaySettings.highlightColumn = null;
 
             Bitmap bmpIndexed;
             Bitmap bmpRgb;
@@ -153,18 +157,14 @@ namespace Spectrogram
                 displaySettings.lastRenderMsec = benchmark.elapsedMilliseconds;
             }
 
+            // TODO: put spacing in displaySettings
             if (showTicks)
-                Annotations.drawTicks(bmpRgb, fftSettings, displaySettings);
+                Annotations.drawTicks(bmpRgb, fftSettings, displaySettings, tickSpacingHz, tickSpacingSec);
 
             return bmpRgb;
         }
 
-        public double GetLastRenderTime()
-        {
-            return displaySettings.lastRenderMsec;
-        }
-
-        public void SaveBitmap(Bitmap bmp, string fileName = "spectrogram.png")
+        public void SaveBitmap(Bitmap bmp, string fileName)
         {
             string filePath = System.IO.Path.GetFullPath(fileName);
             string extension = System.IO.Path.GetExtension(fileName).ToUpper();
@@ -180,5 +180,11 @@ namespace Spectrogram
             bmp.Save(filePath, imageFormat);
             Console.WriteLine($"Saved: {filePath}");
         }
+
+        public double GetLastRenderTime()
+        {
+            return displaySettings.lastRenderMsec;
+        }
+
     }
 }

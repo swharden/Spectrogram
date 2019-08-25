@@ -25,6 +25,7 @@ namespace Spectrogram.Settings
         public float brightness = 1;
         public bool decibels;
         public Colormap colormap;
+        public int? highlightColumn = null;
 
         public bool renderNeeded;
 

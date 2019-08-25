@@ -75,13 +75,15 @@ namespace AudioMonitor
 
         private void AudioMonitorInitialize(
             int DeviceIndex = 0,
-            int sampleRate = 24000,
+            int sampleRate = 8000,
             int bitRate = 16,
             int channels = 1,
-            int bufferMilliseconds = 10
+            int bufferMilliseconds = 10,
+            int fftSize = 1024,
+            int step = 250
             )
         {
-            spec = new Spectrogram.Spectrogram(sampleRate, 1024);
+            spec = new Spectrogram.Spectrogram(sampleRate, fftSize, step);
 
             wvin = new NAudio.Wave.WaveInEvent();
             wvin.DeviceNumber = DeviceIndex;
@@ -113,7 +115,11 @@ namespace AudioMonitor
                 decibels: cbDecibels.Checked,
                 vertical: waterfall,
                 colormap: colormap,
-                showTicks: cbTicks.Checked
+                showTicks: cbTicks.Checked,
+                highlightLatestColumn: (cbDisplay.Text != "waterfall"),
+                freqHigh: 4000,
+                tickSpacingHz: 250,
+                tickSpacingSec: 1
                 );
             lblStatus.Text = $"spectrogram contains {spec.fftList.Count} FFT samples | last render: {spec.GetLastRenderTime()} ms";
             renderNeeded = false;
