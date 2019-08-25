@@ -1,5 +1,5 @@
 # Spectrogram
-**Spectrogram** is a .NET library which makes it easy to create spectrograms from pre-recorded signals or live audio from the sound card. This library supports .NET Framework (4.5) and .NET Core (3.0).
+**Spectrogram** is a .NET library which makes it easy to create spectrograms from pre-recorded signals or live audio from the sound card. This library supports .NET Framework (4.5) and .NET Core (3.0) and can be installed using [NuGet](https://www.nuget.org/packages/Spectrogram/).
 
 ![](data/mozart.jpg)
 
