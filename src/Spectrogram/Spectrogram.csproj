@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45</TargetFrameworks>
+    <TargetFrameworks>net45;netcoreapp3.0</TargetFrameworks>
     <Description>Spectrogram is a .NET library which makes it easy to create spectrograms from pre-recorded signals or live audio from the sound card.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/swharden/Spectrogram</PackageProjectUrl>
@@ -22,6 +22,10 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.0|AnyCPU'">
     <Optimize>false</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net45|AnyCPU'">
+    <DocumentationFile>C:\Users\scott\Documents\GitHub\Spectrogram\src\Spectrogram\Spectrogram.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
