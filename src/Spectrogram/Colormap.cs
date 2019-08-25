@@ -5,5 +5,5 @@ using System.Text;
 
 namespace Spectrogram
 {
-    public enum Colormap { grayscale, viridis, vdGreen, vdBlue }
+    public enum Colormap { grayscale, grayscaleInverted, viridis, vdGreen, vdBlue }
 }

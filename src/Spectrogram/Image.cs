@@ -84,6 +84,9 @@ namespace Spectrogram
                 case Colormap.grayscale:
                     new Colormaps.Grayscale().Apply(bmp);
                     break;
+                case Colormap.grayscaleInverted:
+                    new Colormaps.GrayscaleInverted().Apply(bmp);
+                    break;
                 case Colormap.vdBlue:
                     new Colormaps.VdBlues().Apply(bmp);
                     break;
