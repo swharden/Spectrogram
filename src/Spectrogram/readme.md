@@ -13,7 +13,7 @@ Bitmap bmp = spec.GetBitmap(intensity: 2, freqHigh: 2500);
 spec.SaveBitmap(bmp, "mozart.jpg");
 ```
 
-![](https://raw.githubusercontent.com/swharden/Spectrogram/master/data/mozart.jpg)
+![](https://raw.githubusercontent.com/swharden/Spectrogram/master/data/mozartSmall.jpg)
 
 ### Additional Resources
 Much more is on the Spectrogram project page:\
