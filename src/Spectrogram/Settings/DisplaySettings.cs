@@ -24,8 +24,11 @@ namespace Spectrogram.Settings
 
         public float brightness = 1;
         public bool decibels;
-        public Colormap colormap;
+        public Colormap colormap = Colormap.viridis;
         public int? highlightColumn = null;
+        public bool showTicks = false;
+        public double tickSpacingSec = 1;
+        public double tickSpacingHz = 100;
 
         public bool renderNeeded;
 

@@ -117,10 +117,10 @@ namespace Spectrogram
             double? intensity = null,
             bool decibels = false,
             bool vertical = false,
-            Colormap colormap = Colormap.viridis,
-            bool showTicks = false,
-            double tickSpacingHz = 500,
-            double tickSpacingSec = 1,
+            Colormap? colormap = null,
+            bool? showTicks = null,
+            double? tickSpacingHz = null,
+            double? tickSpacingSec = null,
             double? freqLow = null, 
             double? freqHigh = null,
             bool highlightLatestColumn = false
@@ -135,11 +135,13 @@ namespace Spectrogram
             if (intensity != null)
                 displaySettings.brightness = (float)intensity;
 
-            
             displaySettings.decibels = decibels;
-            displaySettings.colormap = colormap;
+            displaySettings.colormap = (colormap == null) ? displaySettings.colormap : (Colormap)colormap;
             displaySettings.freqLow = (freqLow == null) ? 0 : (double)freqLow;
             displaySettings.freqHigh = (freqHigh == null) ? fftSettings.maxFreq : (double)freqHigh;
+            displaySettings.showTicks = (showTicks == null) ? displaySettings.showTicks : (bool)showTicks;
+            displaySettings.tickSpacingHz = (tickSpacingHz == null) ? displaySettings.tickSpacingHz : (double)tickSpacingHz;
+            displaySettings.tickSpacingSec = (tickSpacingSec == null) ? displaySettings.tickSpacingSec : (double)tickSpacingSec;
 
             if (highlightLatestColumn)
                 displaySettings.highlightColumn = nextIndex;
@@ -159,8 +161,8 @@ namespace Spectrogram
             }
 
             // TODO: put spacing in displaySettings
-            if (showTicks)
-                Annotations.drawTicks(bmpRgb, fftSettings, displaySettings, tickSpacingHz, tickSpacingSec);
+            if (displaySettings.showTicks)
+                Annotations.drawTicks(bmpRgb, fftSettings, displaySettings);
 
             return bmpRgb;
         }

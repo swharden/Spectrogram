@@ -6,9 +6,12 @@ namespace Spectrogram
 {
     public class Annotations
     {
-        public static void drawTicks(Bitmap bmp, FftSettings fftSettings, DisplaySettings displaySettings, double tickSpacingHz, double tickSpacingSec)
+        public static void drawTicks(Bitmap bmp, FftSettings fftSettings, DisplaySettings displaySettings)
         {
             Graphics gfx = Graphics.FromImage(bmp);
+
+            double tickSpacingSec = displaySettings.tickSpacingSec;
+            double tickSpacingHz = displaySettings.tickSpacingHz;
 
             double horizontalTickSpacing = tickSpacingSec * fftSettings.sampleRate / fftSettings.step;
 
