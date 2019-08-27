@@ -14,6 +14,7 @@ namespace Spectrogram
         public List<float> signal = new List<float>();
 
         public int nextIndex;
+        public float[] latestFFT;
 
         public Spectrogram(int sampleRate = 8000, int fftSize = 1024, int? step = null)
         {
@@ -73,12 +74,12 @@ namespace Spectrogram
                 signal.CopyTo(0, segment, 0, fftSettings.fftSize);
                 signal.RemoveRange(0, fftSettings.step);
 
-                float[] newFft = Operations.FFT(segment);
+                latestFFT = Operations.FFT(segment);
 
                 if (fixedSize == null)
-                    AddNewFftExtend(newFft);
+                    AddNewFftExtend(latestFFT);
                 else
-                    AddNewFftFixed(newFft, (int)fixedSize, scroll);
+                    AddNewFftFixed(latestFFT, (int)fixedSize, scroll);
             }
 
             displaySettings.width = fftList.Count;
