@@ -65,7 +65,7 @@ spec.SaveBitmap(bmp, "qrss.png");
 This project comes with a few interactive applications which serve as useful references for some of the ways this Spectrogram library can be used.
 
 ### Download Demo EXE Files
-If you want to see what this library can do without downloading source code, click-to-run (EXE) demos are available in **[SpectrogramDemo.zip](/dev/compiled-demos/SpectrogramDemo.zip)**
+If you want to see what this library can do without downloading source code, click-to-run (EXE) demos are available in **[SpectrogramDemo.zip](https://github.com/swharden/Spectrogram/raw/master/dev/compiled-demos/SpectrogramDemo.zip)**
 
 ### Audio Monitor
 
