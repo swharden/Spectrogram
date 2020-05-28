@@ -6,6 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FftSharp" Version="1.0.3" />
+    <PackageReference Include="MP3Sharp" Version="1.0.5" />
+    <PackageReference Include="ScottPlot" Version="4.0.34" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Spectrogram\Spectrogram.csproj" />
   </ItemGroup>
 
