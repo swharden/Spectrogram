@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Numerics;
+using System.Reflection.Emit;
 
 namespace Spectrogram.Quickstart
 {
@@ -13,16 +14,18 @@ namespace Spectrogram.Quickstart
     {
         static void Main(string[] args)
         {
+            PlotLogCurves();
+
             Console.WriteLine($"Saving output in: {System.IO.Path.GetFullPath("./")}");
-            string audioFilePath = "../../../../../data/Handel - Air and Variations.mp3";
-            //string audioFilePath = "../../../../../data/cant-do-that.mp3";
+            //string audioFilePath = "../../../../../data/Handel - Air and Variations.mp3";
+            string audioFilePath = "../../../../../data/cant-do-that.mp3";
 
             (double[] audio, int sampleRate) = Read.MP3(audioFilePath);
 
             PlotPCM(audio, sampleRate);
 
-            int fftSize = 4096;
-            int stepSize = fftSize / 4;
+            int fftSize = 4096 / 2;
+            int stepSize = fftSize / 5;
 
             int fftCount = (audio.Length - fftSize) / stepSize;
             int[] fftIndexes = new int[fftCount];
@@ -30,8 +33,14 @@ namespace Spectrogram.Quickstart
                 fftIndexes[i] = i * fftSize;
 
             Complex[] buffer = new Complex[fftSize];
-            double[] window = FftSharp.Window.Hamming(fftSize);
+            double[] window = FftSharp.Window.Hanning(fftSize);
             List<float[]> psds = new List<float[]>();
+
+            // only save a range of the FFT
+            int fftKeepIndexStart = 0;
+            int fftKeepIndexEnd = fftSize / 2;
+            fftKeepIndexEnd /= 4;
+            int fftKeepSize = fftKeepIndexEnd - fftKeepIndexStart;
 
             Stopwatch sw = Stopwatch.StartNew();
             for (int fftIndex = 0; fftIndex < fftCount; fftIndex++)
@@ -44,9 +53,10 @@ namespace Spectrogram.Quickstart
                 FftSharp.Transform.FFT(buffer);
 
                 // get the scaled magnitude from the positive FFT
-                float[] psd = new float[fftSize / 2];
-                for (int i = 0; i < buffer.Length / 2; i++)
-                    psd[i] = 20 * (float)Math.Log10(buffer[i].Magnitude);
+                float[] psd = new float[fftKeepSize];
+                for (int i = fftKeepIndexStart; i < fftKeepIndexEnd; i++)
+                    //psd[i] = 20 * (float)Math.Log10(buffer[i].Magnitude); // dB
+                    psd[i] = (float)Math.Sqrt(buffer[i].Magnitude); // alternative
 
                 psds.Add(psd);
             }
@@ -55,10 +65,11 @@ namespace Spectrogram.Quickstart
             sw.Restart();
 
             var cmap = new Colormaps.Viridis();
-            Bitmap bmp = Image.Create(psds, cmap, 10);
+            Bitmap bmp = Image.Create(psds, cmap, 25);
 
             Console.WriteLine($"Created spectrogram {bmp.Size} in {sw.ElapsedMilliseconds} ms");
             bmp.Save("spectrogram.png", ImageFormat.Png);
+            bmp.Save("../../../../../dev/spectrogram.png", ImageFormat.Png);
         }
 
         static void PlotPCM(double[] audio, int sampleRate)
@@ -85,6 +96,16 @@ namespace Spectrogram.Quickstart
             plt.YLabel("Power (dB)");
             plt.AxisAuto(0);
             plt.SaveFig("psd.png");
+        }
+
+        static void PlotLogCurves()
+        {
+            var plt = new ScottPlot.Plot(600, 400);
+            plt.PlotFunction(new Func<double, double?>(x => Math.Log10(x)), label: "Log10");
+            plt.PlotFunction(new Func<double, double?>(x => Math.Sqrt(x)), label: "Sqrt");
+            plt.Axis(0, 10, -2, 5);
+            plt.Legend();
+            plt.SaveFig("log.png");
         }
     }
 }
