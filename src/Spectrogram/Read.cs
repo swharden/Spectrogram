@@ -32,7 +32,7 @@ namespace Spectrogram
             int sampleRate = 44_100;
 
             double durationSec = (double)audio.Length / sampleRate;
-            Console.WriteLine($"Decoded {audio.Length} audio values ({durationSec:N2} sec) in {sw.ElapsedMilliseconds:N0} ms.");
+            Debug.WriteLine($"Decoded {audio.Length} audio values ({durationSec:N2} sec) in {sw.ElapsedMilliseconds:N0} ms.");
             return (audio, sampleRate);
         }
 
@@ -42,7 +42,7 @@ namespace Spectrogram
             if (!System.IO.File.Exists(filePath))
                 throw new ArgumentException($"File does not exist: {filePath}");
 
-            Console.WriteLine($"Decoding '{System.IO.Path.GetFileName(filePath)}'...");
+            Debug.WriteLine($"Decoding '{System.IO.Path.GetFileName(filePath)}'...");
             Stopwatch sw = Stopwatch.StartNew();
             List<double> audio = new List<double>();
 
@@ -67,7 +67,7 @@ namespace Spectrogram
                 for (int i = 0; i < audio.Count; i++)
                     audio[i] /= 1 << 15;
 
-            Console.WriteLine($"Decoded {audio.Count} audio values ({durationSec:N2} sec) in {sw.ElapsedMilliseconds:N0} ms.");
+            Debug.WriteLine($"Decoded {audio.Count} audio values ({durationSec:N2} sec) in {sw.ElapsedMilliseconds:N0} ms.");
             return (audio.ToArray(), sampleRate);
         }
     }
