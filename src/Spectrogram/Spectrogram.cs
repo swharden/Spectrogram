@@ -67,13 +67,22 @@ namespace Spectrogram
             incomingSignal.AddRange(a);
         }
 
-        public void ProcessAll(int stepSize, double pixelMult, double pixelOffset, double magOffset = 1)
+        public void ProcessAll(int stepSize, double pixelMult, double pixelOffset, double magOffset = 1, bool dB = true)
         {
             while (incomingSignal.Count >= fftSize)
-                ProcessNext(stepSize, pixelMult, pixelOffset, magOffset);
+                ProcessNext(stepSize, pixelMult, pixelOffset, magOffset, dB);
         }
 
-        public void ProcessNext(int stepSize, double pixelMult, double pixelOffset, double magOffset = 1)
+        public void Trim(int samplesToKeep)
+        {
+            if (pixelColumns.Count > samplesToKeep)
+            {
+                int overhang = pixelColumns.Count - samplesToKeep;
+                pixelColumns.RemoveRange(0, overhang);
+            }
+        }
+
+        public void ProcessNext(int stepSize, double pixelMult, double pixelOffset, double magOffset = 1, bool dB = true)
         {
             if (incomingSignal.Count < fftSize)
                 return;
@@ -89,8 +98,10 @@ namespace Spectrogram
             byte[] pixelIntensity = new byte[fftSizeKeep];
             for (int i = 0; i < fftSizeKeep; i++)
             {
-                double mag = buffer[fftKeepIndex1 + i].Magnitude + magOffset;
-                double intensity = 20 * (float)Math.Log10(mag);
+                // TODO: upcoming work to design ideal transforms (magnitude -> intensity)
+                double intensity = buffer[fftKeepIndex1 + i].Magnitude;
+                intensity += magOffset;
+                intensity = (dB) ? 20 * (float)Math.Log10(intensity) : intensity / 100;
                 intensity += pixelOffset;
                 intensity *= pixelMult;
                 intensity = Math.Min(intensity, 255);

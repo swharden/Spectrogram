@@ -40,6 +40,7 @@
             this.lblOffset = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.tbOffset = new System.Windows.Forms.TrackBar();
+            this.cbLog = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbStepSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbMultiply)).BeginInit();
@@ -55,13 +56,13 @@
             this.pictureBox1.Location = new System.Drawing.Point(12, 88);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(776, 359);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
             // timer1
             // 
             this.timer1.Enabled = true;
+            this.timer1.Interval = 1;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // tbStepSize
@@ -157,11 +158,23 @@
             this.tbOffset.TabIndex = 7;
             this.tbOffset.Scroll += new System.EventHandler(this.tbOffset_Scroll);
             // 
+            // cbLog
+            // 
+            this.cbLog.AutoSize = true;
+            this.cbLog.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbLog.Location = new System.Drawing.Point(633, 33);
+            this.cbLog.Name = "cbLog";
+            this.cbLog.Size = new System.Drawing.Size(55, 25);
+            this.cbLog.TabIndex = 10;
+            this.cbLog.Text = "Log";
+            this.cbLog.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 459);
+            this.Controls.Add(this.cbLog);
             this.Controls.Add(this.lblOffset);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.tbOffset);
@@ -198,6 +211,7 @@
         private System.Windows.Forms.Label lblOffset;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TrackBar tbOffset;
+        private System.Windows.Forms.CheckBox cbLog;
     }
 }
 

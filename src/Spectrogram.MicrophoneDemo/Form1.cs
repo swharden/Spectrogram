@@ -93,7 +93,8 @@ namespace Spectrogram.MicrophoneDemo
             if (spec is null)
                 return;
 
-            spec.ProcessAll(stepSize, multiplier, offset);
+            spec.ProcessAll(stepSize, multiplier, offset, dB: cbLog.Checked);
+            spec.Trim(pictureBox1.Width);
             Bitmap bmp = spec.GetBitmap();
 
             pictureBox1.Image?.Dispose();
