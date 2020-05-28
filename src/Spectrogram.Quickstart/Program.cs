@@ -15,15 +15,15 @@ namespace Spectrogram.Quickstart
         static void Main(string[] args)
         {
             Console.WriteLine($"Saving output in: {System.IO.Path.GetFullPath("./")}");
-            //string audioFilePath = "../../../../../data/Handel - Air and Variations.mp3";
-            string audioFilePath = "../../../../../data/cant-do-that.mp3";
+            string audioFilePath = "../../../../../data/Handel - Air and Variations.mp3";
+            //string audioFilePath = "../../../../../data/cant-do-that.mp3";
 
             (double[] audio, int sampleRate) = Read.MP3(audioFilePath);
 
             PlotPCM(audio, sampleRate);
 
-            int fftSize = 4096 / 2;
-            int stepSize = fftSize / 5;
+            int fftSize = 4096 * 4;
+            int stepSize = fftSize / 8;
 
             int fftCount = (audio.Length - fftSize) / stepSize;
             int[] fftIndexes = new int[fftCount];
@@ -37,7 +37,7 @@ namespace Spectrogram.Quickstart
             // only save a range of the FFT
             int fftKeepIndexStart = 0;
             int fftKeepIndexEnd = fftSize / 2;
-            fftKeepIndexEnd /= 4;
+            fftKeepIndexEnd /= 10;
             int fftKeepSize = fftKeepIndexEnd - fftKeepIndexStart;
 
             Stopwatch sw = Stopwatch.StartNew();
@@ -68,8 +68,8 @@ namespace Spectrogram.Quickstart
 
             Console.WriteLine($"Created spectrogram {bmp.Size} in {sw.ElapsedMilliseconds} ms");
             bmp.Save("spectrogram.png", ImageFormat.Png);
-            //bmp.Save("../../../../../dev/spectrogram.png", ImageFormat.Png);
-            bmp.Save("spectrogram.png", ImageFormat.Png);
+            bmp.Save("../../../../../dev/spectrogram-song.jpg", ImageFormat.Png);
+            //bmp.Save("spectrogram.jpg", ImageFormat.Png);
         }
 
         static (float min, float max) Stats(List<float[]> psds)
@@ -114,7 +114,8 @@ namespace Spectrogram.Quickstart
             plt.Axis(y2: 260);
             plt.SaveFig("percentiles.png");
 
-            return (min, max);
+            //return (min, max);
+            return (min, (float)percentiles[99]);
         }
 
         static void PlotPCM(double[] audio, int sampleRate)

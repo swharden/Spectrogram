@@ -17,6 +17,14 @@ _"I'm sorry Dave... I'm afraid I can't do that"_
 Spectrogram can be installed with NuGet:\
 https://www.nuget.org/packages/Spectrogram
 
+## MP3 to Spectrogram
+
+This example demonstrates how to convert a MP3 file to a spectrogram image. A sample MP3 audio file in the [data folder](data) contains the audio track from Ken Barker's excellent piano performance of George Frideric Handel's Suite No. 5 in E major for harpsichord ([_The Harmonious Blacksmith_](https://en.wikipedia.org/wiki/The_Harmonious_Blacksmith)). This audio file is included [with permission](dev/Handel%20-%20Air%20and%20Variations.txt), and the [original video can be viewed on YouTube](https://www.youtube.com/watch?v=Mza-xqk770k).
+
+![](dev/spectrogram-song.jpg)
+
+If you [listen to the audio track](https://www.youtube.com/watch?v=Mza-xqk770k) while closely inspecting the spectrogram you can identify individual piano notes and chords, and may be surprised by the interesting patterns that emerge around trills and glissandos.
+
 ## Resources
 
 ### Similar Software
