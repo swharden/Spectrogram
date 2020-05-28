@@ -1,11 +1,11 @@
 ﻿using Spectrogram.Colormaps;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Numerics;
-using System.Text.RegularExpressions;
 
 namespace Spectrogram
 {
@@ -15,7 +15,7 @@ namespace Spectrogram
         public readonly int sampleRate;
         public readonly double[] freqs;
         private readonly double[] window;
-        private readonly List<float[]> psds = new List<float[]>();
+        private readonly List<byte[]> pixelColumns = new List<byte[]>();
         private readonly List<double> incomingSignal = new List<double>();
         private readonly Complex[] buffer;
         private readonly IColormap cmap;
@@ -45,7 +45,7 @@ namespace Spectrogram
                     fftKeepIndex1 = i;
 
             fftSizeKeep = fftKeepIndex2 - fftKeepIndex1;
-            Console.WriteLine($"Keeping FFT point {fftKeepIndex1} to point {fftKeepIndex2} (of {fftSize / 2})");
+            Debug.WriteLine($"Keeping FFT index {fftKeepIndex1} to index {fftKeepIndex2} (of {fftSize / 2})");
         }
 
         public void Window(double[] newWindow)
@@ -55,24 +55,25 @@ namespace Spectrogram
             Array.Copy(newWindow, 0, window, 0, fftSize);
         }
 
-        public void AddSignal(double[] newValues, bool process = true)
+        public void AddSignal(double[] newValues)
         {
             incomingSignal.AddRange(newValues);
         }
 
+        [Obsolete("the overload that accepts double[] is faster")]
         public void AddSignal(float[] newValues)
         {
             var a = newValues.Select(x => (double)x).ToArray();
             incomingSignal.AddRange(a);
         }
 
-        public void ProcessAll(int stepSize)
+        public void ProcessAll(int stepSize, double pixelMult, double pixelOffset, double magOffset = 1)
         {
             while (incomingSignal.Count >= fftSize)
-                ProcessNext(stepSize);
+                ProcessNext(stepSize, pixelMult, pixelOffset, magOffset);
         }
 
-        public void ProcessNext(int stepSize, double magnitudeOffset = 1)
+        public void ProcessNext(int stepSize, double pixelMult, double pixelOffset, double magOffset = 1)
         {
             if (incomingSignal.Count < fftSize)
                 return;
@@ -84,77 +85,44 @@ namespace Spectrogram
             // crunch the FFT
             FftSharp.Transform.FFT(buffer);
 
-            // collect the magnitude of the positive FFT and scale it to decibels
-            float[] psd = new float[fftSizeKeep];
+            // calculate PSD magnitude, scale it to Decibels, convert it to pixel intensity
+            byte[] pixelIntensity = new byte[fftSizeKeep];
             for (int i = 0; i < fftSizeKeep; i++)
-                psd[i] = 20 * (float)Math.Log10(buffer[fftKeepIndex1 + i].Magnitude + magnitudeOffset);
-            psds.Add(psd);
+            {
+                double mag = buffer[fftKeepIndex1 + i].Magnitude + magOffset;
+                double intensity = 20 * (float)Math.Log10(mag);
+                intensity += pixelOffset;
+                intensity *= pixelMult;
+                intensity = Math.Min(intensity, 255);
+                intensity = Math.Max(intensity, 0);
+                pixelIntensity[i] = (byte)intensity;
+            }
+            pixelColumns.Add(pixelIntensity);
 
             // trim the start of the incoming signal by the step size
-            incomingSignal.RemoveRange(0, stepSize);
+            if (incomingSignal.Count > stepSize)
+                incomingSignal.RemoveRange(0, stepSize);
         }
 
-        public Bitmap GetBitmap(double multiplier = 1, double offset = 0)
+        public Bitmap GetBitmap()
         {
-            Bitmap bmp = Image.Create(psds, cmap, (float)multiplier, (float)offset);
+            Bitmap bmp = Image.Create(pixelColumns, cmap);
             return bmp;
         }
 
-        public void SavePNG(string saveFilePath, double multiplier = 1, double offset = 0)
+        public void SavePNG(string saveFilePath)
         {
-            Bitmap bmp = GetBitmap(multiplier, offset);
-            bmp.Save(saveFilePath, ImageFormat.Png);
+            GetBitmap().Save(saveFilePath, ImageFormat.Png);
         }
 
-        public void SaveBMP(string saveFilePath, double multiplier = 1, double offset = 0)
+        public void SaveBMP(string saveFilePath)
         {
-            Bitmap bmp = GetBitmap(multiplier, offset);
-            bmp.Save(saveFilePath, ImageFormat.Bmp);
+            GetBitmap().Save(saveFilePath, ImageFormat.Bmp);
         }
 
-        public void SaveJPG(string saveFilePath, double multiplier = 1, double offset = 0)
+        public void SaveJPG(string saveFilePath)
         {
-            Bitmap bmp = GetBitmap(multiplier, offset);
-            bmp.Save(saveFilePath, ImageFormat.Jpeg);
-        }
-
-        private (float min, float max) Stats(List<float[]> psds)
-        {
-            int width = psds.Count;
-            int height = psds[0].Length;
-            int count = psds[0].Length * psds.Count;
-
-            Console.WriteLine($"Analyzing {count} values...");
-
-            float[] allValues = new float[count];
-            for (int col = 0; col < width; col++)
-            {
-                for (int row = 0; row < height; row++)
-                {
-                    allValues[col * height + row] = psds[col][row];
-                }
-            }
-
-            Array.Sort(allValues);
-            float min = allValues[0];
-            float max = allValues[count - 1];
-
-            Console.WriteLine($"Width: {width}");
-            Console.WriteLine($"Height: {height}");
-            Console.WriteLine($"Values: {count}");
-            Console.WriteLine();
-            Console.WriteLine($"Min: {min}");
-            Console.WriteLine($"Max: {max}");
-
-            double[] percentiles = new double[101];
-            percentiles[0] = allValues[0];
-            for (int i = 1; i < 100; i++)
-                percentiles[i] = allValues[(int)(allValues.Length * i / 100.0)];
-            percentiles[100] = allValues[allValues.Length - 1];
-            for (int i=0; i<percentiles.Length; i++)
-                Console.WriteLine($"{i} percentile: {percentiles[i]}");
-
-            return (min, max);
+            GetBitmap().Save(saveFilePath, ImageFormat.Jpeg);
         }
     }
 }

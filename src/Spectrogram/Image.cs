@@ -10,13 +10,13 @@ namespace Spectrogram
 {
     public static class Image
     {
-        public static Bitmap Create(List<float[]> psds, IColormap colormap, float mult = 1, float offset = 0)
+        public static Bitmap Create(List<byte[]> pixelValues, IColormap colormap)
         {
-            if (psds is null || psds.Count == 0)
-                throw new ArgumentException("input must contain data");
+            if (pixelValues is null || pixelValues.Count == 0)
+                return null;
 
-            int height = psds[0].Length;
-            int width = psds.Count;
+            int height = pixelValues[0].Length;
+            int width = pixelValues.Count;
 
             Bitmap bmp = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
 
@@ -30,12 +30,8 @@ namespace Spectrogram
             {
                 for (int row = 0; row < height; row++)
                 {
-                    float pixelValue = (psds[col][row] - offset) * mult;
-                    pixelValue = Math.Max(0, pixelValue);
-                    pixelValue = Math.Min(255, pixelValue);
-
                     int bytePosition = (bmp.Height - 1 - row) * bitmapData.Stride + col;
-                    pixels[bytePosition] = (byte)pixelValue;
+                    pixels[bytePosition] = pixelValues[col][row];
                 }
             }
 
