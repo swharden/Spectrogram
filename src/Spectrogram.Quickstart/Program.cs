@@ -14,8 +14,6 @@ namespace Spectrogram.Quickstart
     {
         static void Main(string[] args)
         {
-            PlotLogCurves();
-
             Console.WriteLine($"Saving output in: {System.IO.Path.GetFullPath("./")}");
             //string audioFilePath = "../../../../../data/Handel - Air and Variations.mp3";
             string audioFilePath = "../../../../../data/cant-do-that.mp3";
@@ -52,24 +50,71 @@ namespace Spectrogram.Quickstart
                 // crunch the FFT
                 FftSharp.Transform.FFT(buffer);
 
-                // get the scaled magnitude from the positive FFT
+                // collect the magnitude of the positive FFT
                 float[] psd = new float[fftKeepSize];
                 for (int i = fftKeepIndexStart; i < fftKeepIndexEnd; i++)
-                    //psd[i] = 20 * (float)Math.Log10(buffer[i].Magnitude); // dB
-                    psd[i] = (float)Math.Sqrt(buffer[i].Magnitude); // alternative
+                    psd[i] = 20 * (float)Math.Log10(buffer[i].Magnitude + 1); // note: plus one here
 
+                // store it to make the spectrogram
                 psds.Add(psd);
             }
 
             Console.WriteLine($"Processed {psds.Count} FFTs in {sw.ElapsedMilliseconds} ms");
+            (float min, float max) = Stats(psds);
             sw.Restart();
 
             var cmap = new Colormaps.Viridis();
-            Bitmap bmp = Image.Create(psds, cmap, 25);
+            Bitmap bmp = Image.Create(psds, cmap, 256 / (max - min), min);
 
             Console.WriteLine($"Created spectrogram {bmp.Size} in {sw.ElapsedMilliseconds} ms");
             bmp.Save("spectrogram.png", ImageFormat.Png);
-            bmp.Save("../../../../../dev/spectrogram.png", ImageFormat.Png);
+            //bmp.Save("../../../../../dev/spectrogram.png", ImageFormat.Png);
+            bmp.Save("spectrogram.png", ImageFormat.Png);
+        }
+
+        static (float min, float max) Stats(List<float[]> psds)
+        {
+            int width = psds.Count;
+            int height = psds[0].Length;
+            int count = psds[0].Length * psds.Count;
+
+            Console.WriteLine($"Analyzing {count} values...");
+
+            float[] allValues = new float[count];
+            for (int col = 0; col < width; col++)
+            {
+                for (int row = 0; row < height; row++)
+                {
+                    allValues[col * height + row] = psds[col][row];
+                }
+            }
+
+            Array.Sort(allValues);
+            float min = allValues[0];
+            float max = allValues[count - 1];
+
+            Console.WriteLine($"Width: {width}");
+            Console.WriteLine($"Height: {height}");
+            Console.WriteLine($"Values: {count}");
+            Console.WriteLine();
+            Console.WriteLine($"Min: {min}");
+            Console.WriteLine($"Max: {max}");
+
+            double[] percentiles = new double[101];
+            percentiles[0] = allValues[0];
+            for (int i = 1; i < 100; i++)
+                percentiles[i] = allValues[(int)(allValues.Length * i / 100.0)];
+            percentiles[100] = allValues[allValues.Length - 1];
+
+            var plt = new ScottPlot.Plot(600, 400);
+            plt.PlotSignal(percentiles);
+            plt.Title("Power Spectral Density Distribution");
+            plt.XLabel("Percentile");
+            plt.YLabel("Value");
+            plt.Axis(y2: 260);
+            plt.SaveFig("percentiles.png");
+
+            return (min, max);
         }
 
         static void PlotPCM(double[] audio, int sampleRate)
