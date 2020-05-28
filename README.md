@@ -1,5 +1,5 @@
 # Spectrogram
-**Spectrogram** is a .NET library for creating spectrograms from pre-recorded signals or live audio from the sound card. Spectrogram is provided under the permissive [MIT](LICENSE) and it targets .NET Standard 2.0 so it can be used in .NET Framework and .NET Core projects.
+**Spectrogram** is a .NET library for creating spectrograms from pre-recorded signals or live audio from the sound card.  Spectrogram uses FFT algorithms and window functions provided by the [FftSharp](https://github.com/swharden/FftSharp) project, and it targets .NET Standard 2.0 so it can be used in .NET Framework and .NET Core projects.
 
 ## Quickstart
 
