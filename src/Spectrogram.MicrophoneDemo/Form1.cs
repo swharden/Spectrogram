@@ -39,13 +39,13 @@ namespace Spectrogram.MicrophoneDemo
         }
 
 
-        private Spectrogram spec;
+        private SpectrogramLive spec;
         private NAudio.Wave.WaveInEvent wvin;
 
         private void StartAudioMonitor(int DeviceIndex, int sampleRate = 8000,
             int bitRate = 16, int channels = 1, int bufferMsec = 100, bool start = true)
         {
-            spec = new Spectrogram(1024, sampleRate);
+            spec = new SpectrogramLive(1024, sampleRate);
 
             if (wvin != null)
             {

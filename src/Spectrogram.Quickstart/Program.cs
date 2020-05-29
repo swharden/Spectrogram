@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Spectrogram.Colormaps;
+using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,21 +20,21 @@ namespace Spectrogram.Quickstart
 
         static void Quickstart()
         {
-            //string audioFilePath = "../../../../../data/Handel - Air and Variations.mp3";
-            string audioFilePath = "../../../../../data/cant-do-that.mp3";
+            Console.WriteLine($"Saving output in: {System.IO.Path.GetFullPath("./")}");
 
-            Console.WriteLine("loaing audio file...");
+            // Get PCM audio values by decoding a MP3 file
+            string audioFilePath = "../../../../../data/cant-do-that.mp3";
             (double[] audio, int sampleRate) = Read.MP3(audioFilePath);
 
-            Console.WriteLine("computing FFTs...");
-            var spec = new Spectrogram(fftSize: 4096, sampleRate, freqMax: 5_000);
-            spec.AddSignal(audio);
-            spec.ProcessAll(stepSize: 4096 / 8);
+            // Load the data and save the result of the initial calculation
+            var spec = new Spectrogram(audio, sampleRate, 
+                fftSize: 4096, stepSize: 500, freqMax: 2_500, 
+                multiplier: 1.5, dB: false);
+            spec.SaveJPG("output.jpg");
 
-            Console.WriteLine("converting PSDs to Image...");
-            spec.SaveJPG("test123.jpg", 7, 0);
-
-            Console.WriteLine($"Output in: {System.IO.Path.GetFullPath("./")}");
+            // Save a new image using recalculated pixel values
+            spec.Recalculate(multiplier: 5, dB: true, cmap: new Colormaps.Grayscale());
+            spec.SaveJPG("output2.jpg");
         }
     }
 }
