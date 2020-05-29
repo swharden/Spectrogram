@@ -27,8 +27,8 @@ namespace Spectrogram
 
             if (window is null)
                 window = FftSharp.Window.Hanning(fftSize);
-            else if (window.Length != fftSize / 2)
-                throw new ArgumentException("If a window is given its length must be fftSize/2");
+            else if (window.Length != fftSize)
+                throw new ArgumentException("If a window is given its length must equal fftSize");
 
             (int fftIndex1, int fftIndex2) = Calculate.FftIndexes(freqMin, freqMax, sampleRate, fftSize);
             int fftKeepSize = fftIndex2 - fftIndex1;
