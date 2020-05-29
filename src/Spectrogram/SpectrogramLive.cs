@@ -3,135 +3,135 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.Linq;
 using System.Numerics;
+using System.Text;
 
 namespace Spectrogram
 {
-    /// <summary>
-    /// A Spectrogram designed to analyze live incoming data
-    /// </summary>
     public class SpectrogramLive
     {
-        // strategy: perform mag->pixel conversion immediately (do not store mag)
-
-        /* code is intentionally duplicated here (similar to Spectrogram) for effeciency */
-
-        public readonly int fftSize;
         public readonly int sampleRate;
-        public double[] freqs;
-        private readonly double[] window;
-        private readonly List<byte[]> pixelColumns = new List<byte[]>();
-        private readonly List<double> incomingSignal = new List<double>();
+        public readonly double fftResolution;
+        public readonly double fftFreqSpacing;
+        public readonly int fftSize;
+        public readonly int stepSize;
+
         private readonly Complex[] buffer;
-        private readonly IColormap cmap;
-        private readonly int fftSizeKeep, fftKeepIndex2, fftKeepIndex1;
 
-        public SpectrogramLive(int fftSize, int sampleRate, double freqMax = double.PositiveInfinity, double freqMin = 0)
+        public readonly int fftIndex1;
+        public readonly int fftIndex2;
+        public readonly int fftKeepSize;
+
+        private readonly List<double> signal = new List<double>();
+        private readonly byte[,] pixelValues;
+        private int nextColumnIndex = 0;
+        private int lastColumnIndex = 0;
+        public readonly double[] lastFft;
+
+        public int fftsProcessed { get; private set; }
+
+        // customizable settings
+        private double[] window;
+        private double dbMagOffset = 0;
+        public bool dB = false;
+        private double pixelOffset = 0;
+        public double pixelMult = 1;
+        IColormap cmap = new Viridis();
+
+        public SpectrogramLive(int sampleRate, int fftSize, int stepSize, int width = 100,
+            double freqMax = double.PositiveInfinity, double freqMin = 0)
         {
-            if (fftSize < 2 || !FftSharp.Transform.IsPowerOfTwo(fftSize))
-                throw new ArgumentException("FFT size must be a power of two");
+            if (FftSharp.Transform.IsPowerOfTwo(fftSize) == false)
+                throw new ArgumentException("fftSize must be a power of 2");
 
-            this.fftSize = fftSize;
             this.sampleRate = sampleRate;
-            window = new double[fftSize];
+            this.fftSize = fftSize;
+            this.stepSize = stepSize;
+            fftResolution = (double)sampleRate / fftSize;
+            fftFreqSpacing = (double)fftSize / sampleRate;
+
             buffer = new Complex[fftSize];
-            Window(FftSharp.Window.Hanning(fftSize));
-            freqs = FftSharp.Transform.FFTfreq(sampleRate, fftSize / 2); // TODO match keep
-            cmap = new Colormaps.Viridis();
 
-            (fftKeepIndex1, fftKeepIndex2) = Calculate.FftIndexes(freqMin, freqMax, sampleRate, fftSize);
-            fftSizeKeep = fftKeepIndex2 - fftKeepIndex1;
-            Debug.WriteLine($"Keeping FFT index {fftKeepIndex1} to index {fftKeepIndex2} (of {fftSize / 2})");
+            SetWindow(FftSharp.Window.Hanning(fftSize));
+
+            (fftIndex1, fftIndex2) = Calculate.FftIndexes(freqMin, freqMax, sampleRate, fftSize);
+            fftKeepSize = fftIndex2 - fftIndex1;
+            Debug.WriteLine($"Keeping FFT index {fftIndex1} to index {fftIndex2} (from {fftSize / 2} points)");
+
+            pixelValues = new byte[width, fftKeepSize];
+            lastFft = new double[fftKeepSize];
         }
 
-        public void Window(double[] newWindow)
+        public void SetWindow(double[] window)
         {
-            if (newWindow.Length != fftSize)
-                throw new ArgumentException("Window length must equal fftSize");
-            Array.Copy(newWindow, 0, window, 0, fftSize);
-        }
-
-        public void AddSignal(double[] newValues)
-        {
-            incomingSignal.AddRange(newValues);
-        }
-
-        [Obsolete("the overload that accepts double[] is faster")]
-        public void AddSignal(float[] newValues)
-        {
-            var a = newValues.Select(x => (double)x).ToArray();
-            incomingSignal.AddRange(a);
-        }
-
-        public void ProcessAll(int stepSize, double pixelMult, double pixelOffset, double magOffset = 1, bool dB = true)
-        {
-            while (incomingSignal.Count >= fftSize)
-                ProcessNext(stepSize, pixelMult, pixelOffset, magOffset, dB);
-        }
-
-        public void Trim(int samplesToKeep)
-        {
-            if (pixelColumns.Count > samplesToKeep)
+            if (window != null)
             {
-                int overhang = pixelColumns.Count - samplesToKeep;
-                pixelColumns.RemoveRange(0, overhang);
+                if (window.Length == fftSize)
+                    this.window = window;
+                else
+                    throw new ArgumentException("Window length must equal fftSize");
             }
         }
 
-        public void ProcessNext(int stepSize, double pixelMult, double pixelOffset, double magOffset = 1, bool dB = true)
+        public void Extend(double[] newData, bool process = true)
         {
-            if (incomingSignal.Count < fftSize)
+            signal.AddRange(newData);
+            if (process)
+                ProcessAll();
+        }
+
+        public void ProcessAll()
+        {
+            while (signal.Count >= fftSize)
+                ProcessNextStep();
+        }
+
+        public void ProcessNextStep()
+        {
+            if (signal.Count < fftSize)
                 return;
 
             // copy the oldest part of the incoming signal into the complex buffer
             for (int i = 0; i < fftSize; i++)
-                buffer[i] = new Complex(incomingSignal[i] * window[i], 0);
+                buffer[i] = new Complex(signal[i] * window[i], 0);
 
             // crunch the FFT
             FftSharp.Transform.FFT(buffer);
 
             // calculate PSD magnitude, scale it to Decibels, convert it to pixel intensity
-            byte[] pixelIntensity = new byte[fftSizeKeep];
-            for (int i = 0; i < fftSizeKeep; i++)
+            for (int i = 0; i < fftKeepSize; i++)
             {
-                // TODO: upcoming work to design ideal transforms (magnitude -> intensity)
-                double intensity = buffer[fftKeepIndex1 + i].Magnitude;
-                intensity += magOffset;
-                intensity = (dB) ? 20 * (float)Math.Log10(intensity) : intensity / 100;
+                double intensity = buffer[fftIndex1 + i].Magnitude * 2 / fftSize;
+                if (dB)
+                    intensity = 20 * (float)Math.Log10(intensity + dbMagOffset);
+
                 intensity += pixelOffset;
                 intensity *= pixelMult;
+                lastFft[i] = intensity;
+
                 intensity = Math.Min(intensity, 255);
                 intensity = Math.Max(intensity, 0);
-                pixelIntensity[i] = (byte)intensity;
+                pixelValues[nextColumnIndex, i] = (byte)intensity;
             }
-            pixelColumns.Add(pixelIntensity);
+
+            // update column indexes
+            lastColumnIndex = nextColumnIndex;
+            nextColumnIndex += 1;
+            if (nextColumnIndex >= pixelValues.GetLength(0))
+                nextColumnIndex = 0;
+            fftsProcessed += 1;
 
             // trim the start of the incoming signal by the step size
-            if (incomingSignal.Count > stepSize)
-                incomingSignal.RemoveRange(0, stepSize);
+            if (signal.Count > stepSize)
+                signal.RemoveRange(0, stepSize);
         }
 
+        private int fftsProcessedAtLastBitmap = -1;
+        public bool isNewImageReady { get { return fftsProcessedAtLastBitmap != fftsProcessed; } }
         public Bitmap GetBitmap()
         {
-            Bitmap bmp = Image.Create(pixelColumns, cmap);
-            return bmp;
-        }
-
-        public void SavePNG(string saveFilePath)
-        {
-            GetBitmap().Save(saveFilePath, ImageFormat.Png);
-        }
-
-        public void SaveBMP(string saveFilePath)
-        {
-            GetBitmap().Save(saveFilePath, ImageFormat.Bmp);
-        }
-
-        public void SaveJPG(string saveFilePath)
-        {
-            GetBitmap().Save(saveFilePath, ImageFormat.Jpeg);
+            fftsProcessedAtLastBitmap = fftsProcessed;
+            return Image.Create(pixelValues, cmap, lastColumnIndex);
         }
     }
 }

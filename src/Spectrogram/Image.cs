@@ -41,7 +41,7 @@ namespace Spectrogram
             return bmp;
         }
 
-        public static Bitmap Create(byte[,] pixelValues, IColormap colormap)
+        public static Bitmap Create(byte[,] pixelValues, IColormap colormap, int lastColumnIndex = 0)
         {
             if (pixelValues is null || pixelValues.GetLength(0) == 0)
                 return null;
@@ -59,10 +59,14 @@ namespace Spectrogram
 
             for (int col = 0; col < width; col++)
             {
+                int sourceCol = col + lastColumnIndex;
+                if (sourceCol >= width)
+                    sourceCol -= width;
+
                 for (int row = 0; row < height; row++)
                 {
                     int bytePosition = (bmp.Height - 1 - row) * bitmapData.Stride + col;
-                    pixels[bytePosition] = pixelValues[col, row];
+                    pixels[bytePosition] = pixelValues[sourceCol, row];
                 }
             }
 
