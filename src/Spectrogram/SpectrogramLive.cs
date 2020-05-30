@@ -36,7 +36,7 @@ namespace Spectrogram
         public bool dB = false;
         private double pixelOffset = 0;
         public double pixelMult = 1;
-        IColormap cmap = new Viridis();
+        public IColormap cmap = new Viridis();
 
         public SpectrogramLive(int sampleRate, int fftSize, int stepSize, int width = 100,
             double freqMax = double.PositiveInfinity, double freqMin = 0)
@@ -60,6 +60,7 @@ namespace Spectrogram
 
             pixelValues = new byte[width, fftKeepSize];
             lastFft = new double[fftKeepSize];
+
         }
 
         public void SetWindow(double[] window)
@@ -104,7 +105,6 @@ namespace Spectrogram
                 double intensity = buffer[fftIndex1 + i].Magnitude * 2 / fftSize;
                 if (dB)
                     intensity = 20 * (float)Math.Log10(intensity + dbMagOffset);
-
                 intensity += pixelOffset;
                 intensity *= pixelMult;
                 lastFft[i] = intensity;

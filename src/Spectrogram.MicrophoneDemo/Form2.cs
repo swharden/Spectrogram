@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Spectrogram.Colormaps;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -16,6 +17,7 @@ namespace Spectrogram.MicrophoneDemo
         public Form2()
         {
             InitializeComponent();
+            cbColormap.SelectedIndex = 1;
             pictureBox1.Location = new Point(0, 0);
         }
 
@@ -136,6 +138,27 @@ namespace Spectrogram.MicrophoneDemo
         {
             formsPlot1.plt.AxisAuto(0);
             formsPlot1.plt.Axis(y1: 0, y2: 255);
+        }
+
+        private void cbColormap_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (spec is null)
+                return;
+
+            if (cbColormap.Text == "Grayscale")
+                spec.cmap = new Grayscale();
+            else if (cbColormap.Text == "Viridis")
+                spec.cmap = new Viridis();
+            else if (cbColormap.Text == "Inferno")
+                spec.cmap = new Inferno();
+            else if (cbColormap.Text == "Magma")
+                spec.cmap = new Magma();
+            else if (cbColormap.Text == "Plasma")
+                spec.cmap = new Plasma();
+            else if (cbColormap.Text == "Cividis")
+                spec.cmap = new Cividis();
+            else
+                throw new NotImplementedException("unknown colormap");
         }
     }
 }

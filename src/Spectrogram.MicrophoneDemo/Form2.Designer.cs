@@ -38,6 +38,7 @@
             this.tbIntensity = new System.Windows.Forms.TrackBar();
             this.cbDecibels = new System.Windows.Forms.CheckBox();
             this.btnReset = new System.Windows.Forms.Button();
+            this.cbColormap = new System.Windows.Forms.ComboBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -48,7 +49,7 @@
             // 
             this.panel1.BackColor = System.Drawing.SystemColors.ControlDark;
             this.panel1.Controls.Add(this.pictureBox1);
-            this.panel1.Location = new System.Drawing.Point(12, 75);
+            this.panel1.Location = new System.Drawing.Point(12, 46);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(600, 320);
             this.panel1.TabIndex = 0;
@@ -74,7 +75,7 @@
             this.lblStatus1});
             this.statusStrip1.Location = new System.Drawing.Point(0, 527);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(657, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(625, 22);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -88,18 +89,18 @@
             // 
             this.formsPlot1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.formsPlot1.Location = new System.Drawing.Point(12, 401);
+            this.formsPlot1.Location = new System.Drawing.Point(12, 372);
             this.formsPlot1.Name = "formsPlot1";
-            this.formsPlot1.Size = new System.Drawing.Size(600, 123);
+            this.formsPlot1.Size = new System.Drawing.Size(600, 152);
             this.formsPlot1.TabIndex = 2;
             // 
             // tbIntensity
             // 
             this.tbIntensity.AutoSize = false;
-            this.tbIntensity.Location = new System.Drawing.Point(57, 12);
+            this.tbIntensity.Location = new System.Drawing.Point(184, 7);
             this.tbIntensity.Maximum = 100;
             this.tbIntensity.Name = "tbIntensity";
-            this.tbIntensity.Size = new System.Drawing.Size(555, 33);
+            this.tbIntensity.Size = new System.Drawing.Size(428, 33);
             this.tbIntensity.TabIndex = 3;
             this.tbIntensity.Value = 25;
             this.tbIntensity.Scroll += new System.EventHandler(this.tbIntensity_Scroll);
@@ -126,11 +127,29 @@
             this.btnReset.UseVisualStyleBackColor = true;
             this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
             // 
+            // cbColormap
+            // 
+            this.cbColormap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbColormap.FormattingEnabled = true;
+            this.cbColormap.Items.AddRange(new object[] {
+            "Grayscale",
+            "Viridis",
+            "Inferno",
+            "Magma",
+            "Plasma",
+            "Cividis"});
+            this.cbColormap.Location = new System.Drawing.Point(57, 10);
+            this.cbColormap.Name = "cbColormap";
+            this.cbColormap.Size = new System.Drawing.Size(121, 21);
+            this.cbColormap.TabIndex = 6;
+            this.cbColormap.SelectedIndexChanged += new System.EventHandler(this.cbColormap_SelectedIndexChanged);
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(657, 549);
+            this.ClientSize = new System.Drawing.Size(625, 549);
+            this.Controls.Add(this.cbColormap);
             this.Controls.Add(this.btnReset);
             this.Controls.Add(this.cbDecibels);
             this.Controls.Add(this.tbIntensity);
@@ -162,5 +181,6 @@
         private System.Windows.Forms.TrackBar tbIntensity;
         private System.Windows.Forms.CheckBox cbDecibels;
         private System.Windows.Forms.Button btnReset;
+        private System.Windows.Forms.ComboBox cbColormap;
     }
 }
