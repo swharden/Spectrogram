@@ -17,13 +17,58 @@ _"I'm sorry Dave... I'm afraid I can't do that"_
 Spectrogram can be installed with NuGet:\
 https://www.nuget.org/packages/Spectrogram
 
-## MP3 to Spectrogram
+### Create a Spectrogram
+
+This code in [Program.cs](src/Spectrogram.Quickstart/Program.cs) was used to create the above image:
+```cs
+(double[] audio, int sampleRate) = Read.MP3("cant-do-that.mp3");
+
+var spec = new Spectrogram(
+        signal: audio,
+        sampleRate: sampleRate,
+        fftSize: 4096,
+        stepSize: 500,
+        freqMax: 2500,
+    );
+
+spec.SaveJPG("output.jpg");
+```
+
+If you're using Spectrogram in a graphical application you may find it helpful to retrieve the output as a Bitmap suitable for applying to a Picturebox or similar control:
+
+```cs
+Bitmap bmp = spec.GetBitmap();
+pictureBox1.Image = bmp;
+```
+
+After calculating the Spectrogram (the slow step) FFT magnitudes are stored in memory so you can rapidly recalculate pixel intensities based on new parameters:
+
+```cs
+spec.Recalculate(
+        multiplier: 2.8,
+        dB: true,
+        cmap: new Inferno()
+    );
+spec.SaveJPG("output2.jpg");
+```
+
+Notice the use of custom colormaps in this example.
+
+Viridis | Inferno
+---|---
+![](dev/spectrogram.jpg) | ![](dev/spectrogram2.jpg)
+
+## Song-to-Spectrogram
 
 This example demonstrates how to convert a MP3 file to a spectrogram image. A sample MP3 audio file in the [data folder](data) contains the audio track from Ken Barker's excellent piano performance of George Frideric Handel's Suite No. 5 in E major for harpsichord ([_The Harmonious Blacksmith_](https://en.wikipedia.org/wiki/The_Harmonious_Blacksmith)). This audio file is included [with permission](dev/Handel%20-%20Air%20and%20Variations.txt), and the [original video can be viewed on YouTube](https://www.youtube.com/watch?v=Mza-xqk770k).
 
 ![](dev/spectrogram-song.jpg)
 
 If you [listen to the audio track](https://www.youtube.com/watch?v=Mza-xqk770k) while closely inspecting the spectrogram you can identify individual piano notes and chords, and may be surprised by the interesting patterns that emerge around trills and glissandos.
+
+```cs
+// TODO: update this example
+```
 
 ## Resources
 
@@ -33,8 +78,3 @@ If you [listen to the audio track](https://www.youtube.com/watch?v=Mza-xqk770k) 
 * QrssPIG ([GitLab](https://gitlab.com/hb9fxx/qrsspig)) - open-source spectrograph for Raspberry Pi (C++)
 * Lopora ([GitHub](https://github.com/swharden/Lopora)) - open-source spectrograph (Python 3) 
 * QRSS VD ([GitHub](https://github.com/swharden/QRSS-VD)) - open source spectrograph (Python 2)
-
-### QRSS Information
-  * [What is QRSS?](https://www.qsl.net/m0ayf/What-is-QRSS.html)
-  * [QRSS and you](http://www.ka7oei.com/qrss1.html)
-  * [QRSS (slow CW)](https://sites.google.com/site/qrssinfo/QRSS-Slow-CW)

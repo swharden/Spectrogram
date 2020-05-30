@@ -50,13 +50,13 @@ namespace Spectrogram
 
                 // calculate PSD magnitude (no scaling or conversion)
                 for (int i = 0; i < fftKeepSize; i++)
-                    mags[stepIndex, i] = buffer[fftIndex1 + i].Magnitude;
+                    mags[stepIndex, i] = buffer[fftIndex1 + i].Magnitude / mags.GetLength(0);
             }
 
             Recalculate(multiplier, offset, dB);
         }
 
-        public void Recalculate(double multiplier, double offset = 0, bool dB = false, double dBoffset = 1, IColormap cmap = null)
+        public void Recalculate(double multiplier, double offset = 0, bool dB = false, IColormap cmap = null)
         {
             if (cmap != null)
                 this.cmap = cmap;
@@ -67,13 +67,38 @@ namespace Spectrogram
                 {
                     double value = mags[col, row];
                     if (dB)
-                        value = 20 * Math.Log10(value + dBoffset);
+                        value = 20 * Math.Log10(value + 1);
                     value = (value + offset) * multiplier;
                     value = Math.Min(value, 255);
                     value = Math.Max(value, 0);
                     pixels[col, row] = (byte)value;
                 }
             }
+        }
+
+        public double IdealMultiplier(double percentile = 95, bool dB = false)
+        {
+            if (percentile < 0 || percentile > 100)
+                throw new ArgumentException("percentile must be 0-100");
+
+            double[] flat = new double[mags.GetLength(0) * mags.GetLength(1)];
+            for (int i = 0; i < mags.GetLength(0); i++)
+                for (int j = 0; j < mags.GetLength(1); j++)
+                    flat[i * j + j] = mags[i, j];
+            Array.Sort(flat);
+
+            double magnitude;
+            if (percentile == 0)
+                magnitude = flat[0];
+            else if (percentile == 100)
+                magnitude = flat[flat.Length - 1];
+            else
+                magnitude = flat[(int)(percentile / 100 * (flat.Length - 1))];
+
+            if (dB)
+                magnitude = 20 * Math.Log10(magnitude + 1);
+
+            return 256 / magnitude;
         }
 
         public Bitmap GetBitmap() => Image.Create(pixels, cmap);
