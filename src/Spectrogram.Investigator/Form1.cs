@@ -26,7 +26,7 @@ namespace Spectrogram.Investigator
                 LoadMp3(sampleFilePath);
         }
 
-        Spectrogram spec;
+        SpectrogramImage spec;
         double[] audio;
         int sampleRate;
         private void LoadMp3(string filePath)
@@ -52,7 +52,7 @@ namespace Spectrogram.Investigator
             this.Enabled = false;
             Application.DoEvents();
 
-            spec = new Spectrogram(
+            spec = new SpectrogramImage(
                     signal: audio,
                     sampleRate: sampleRate,
                     fftSize: int.Parse(cbFftSize.Text),

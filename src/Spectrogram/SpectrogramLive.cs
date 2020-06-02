@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Spectrogram
@@ -15,6 +17,8 @@ namespace Spectrogram
         public readonly double fftFreqSpacing;
         public readonly int fftSize;
         public readonly int stepSize;
+        private readonly Bitmap bmp;
+        private readonly BitmapData bmpData;
 
         private readonly Complex[] buffer;
 
@@ -61,6 +65,9 @@ namespace Spectrogram
             pixelValues = new byte[width, fftKeepSize];
             lastFft = new double[fftKeepSize];
 
+            bmp = new Bitmap(width, fftKeepSize, PixelFormat.Format8bppIndexed);
+            bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, bmp.PixelFormat);
+            cmap.Apply(bmp);
         }
 
         public void SetWindow(double[] window)
@@ -128,10 +135,16 @@ namespace Spectrogram
 
         private int fftsProcessedAtLastBitmap = -1;
         public bool isNewImageReady { get { return fftsProcessedAtLastBitmap != fftsProcessed; } }
-        public Bitmap GetBitmap()
+        public Bitmap GetBitmap(bool highlightIndex = false)
         {
             fftsProcessedAtLastBitmap = fftsProcessed;
-            return Image.Create(pixelValues, cmap, lastColumnIndex);
+            int highlightColumn = highlightIndex ? nextColumnIndex : -1;
+            return Image.Create(pixelValues, cmap, highlightColumnIndex: highlightColumn);
+        }
+
+        public void SetNextIndex(int index = 0)
+        {
+            nextColumnIndex = index;
         }
     }
 }

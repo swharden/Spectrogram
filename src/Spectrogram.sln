@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spectrogram.MicrophoneDemo"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spectrogram.Investigator", "Spectrogram.Investigator\Spectrogram.Investigator.csproj", "{EC440919-91A1-44D1-99D7-13CB147EE26C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgoNot", "ArgoNot\ArgoNot.csproj", "{F3BD387C-657F-4185-8420-9D491BDDFD24}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{EC440919-91A1-44D1-99D7-13CB147EE26C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC440919-91A1-44D1-99D7-13CB147EE26C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC440919-91A1-44D1-99D7-13CB147EE26C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3BD387C-657F-4185-8420-9D491BDDFD24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3BD387C-657F-4185-8420-9D491BDDFD24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3BD387C-657F-4185-8420-9D491BDDFD24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3BD387C-657F-4185-8420-9D491BDDFD24}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

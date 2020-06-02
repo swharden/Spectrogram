@@ -7,7 +7,8 @@ namespace Spectrogram
 {
     public static class Read
     {
-        public static (double[] audio, int sampleRate) WavInt16(string filePath, bool scale = true)
+        // TODO: remove this dependency
+        public static (double[] audio, int sampleRate) WavInt16mono(string filePath)
         {
             filePath = System.IO.Path.GetFullPath(filePath);
             if (!System.IO.File.Exists(filePath))
@@ -17,26 +18,25 @@ namespace Spectrogram
             Stopwatch sw = Stopwatch.StartNew();
 
             byte[] bytes = System.IO.File.ReadAllBytes(filePath);
-
             int firstByte = 44;
-            double[] audio = new double[(bytes.Length - firstByte) / 2];
-            for (int i = firstByte; i < bytes.Length / 2 - 1; i++)
-                audio[i / 2] = BitConverter.ToInt16(bytes, i * 2);
-
-            // optionally scale so amplitude is between -1 and 1
-            if (scale)
-                for (int i = 0; i < audio.Length; i++)
-                    audio[i] /= 1 << 15;
 
             // TODO: read sample rate from header
             int sampleRate = 44_100;
 
-            double durationSec = (double)audio.Length / sampleRate;
-            Debug.WriteLine($"Decoded {audio.Length} audio values ({durationSec:N2} sec) in {sw.ElapsedMilliseconds:N0} ms.");
+            double[] audio = new double[(bytes.Length - firstByte) / 2];
+
+            for (int i = 0; i < audio.Length; i++)
+                audio[i] = BitConverter.ToInt16(bytes, firstByte + i * 2);
+
+            Debug.WriteLine($"Decoded {audio.Length} audio values " +
+                $"({(double)audio.Length / sampleRate:N2} sec) " +
+                $"in {sw.ElapsedMilliseconds:N0} ms.");
+
             return (audio, sampleRate);
         }
 
-        public static (double[] audio, int sampleRate) MP3(string filePath, bool scale = true)
+        // TODO: true WAV reader
+        public static (double[] audio, int sampleRate) MP3(string filePath)
         {
             filePath = System.IO.Path.GetFullPath(filePath);
             if (!System.IO.File.Exists(filePath))
@@ -61,11 +61,6 @@ namespace Spectrogram
             // TODO: read sample rate from header
             int sampleRate = 44_100;
             double durationSec = (double)audio.Count / sampleRate;
-
-            // optionally scale so amplitude is between -1 and 1
-            if (scale)
-                for (int i = 0; i < audio.Count; i++)
-                    audio[i] /= 1 << 15;
 
             Debug.WriteLine($"Decoded {audio.Count} audio values ({durationSec:N2} sec) in {sw.ElapsedMilliseconds:N0} ms.");
             return (audio.ToArray(), sampleRate);

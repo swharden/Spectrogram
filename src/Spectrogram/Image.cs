@@ -1,6 +1,7 @@
 ﻿using Spectrogram.Colormaps;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
@@ -10,67 +11,46 @@ namespace Spectrogram
 {
     public static class Image
     {
-        public static Bitmap Create(List<byte[]> pixelValues, IColormap colormap)
-        {
-            if (pixelValues is null || pixelValues.Count == 0)
-                return null;
-
-            int height = pixelValues[0].Length;
-            int width = pixelValues.Count;
-
-            Bitmap bmp = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
-
-            colormap.Apply(bmp);
-
-            var rect = new Rectangle(0, 0, width, height);
-            BitmapData bitmapData = bmp.LockBits(rect, ImageLockMode.ReadOnly, bmp.PixelFormat);
-            byte[] pixels = new byte[bitmapData.Stride * bmp.Height];
-
-            for (int col = 0; col < width; col++)
-            {
-                for (int row = 0; row < height; row++)
-                {
-                    int bytePosition = (bmp.Height - 1 - row) * bitmapData.Stride + col;
-                    pixels[bytePosition] = pixelValues[col][row];
-                }
-            }
-
-            Marshal.Copy(pixels, 0, bitmapData.Scan0, pixels.Length);
-            bmp.UnlockBits(bitmapData);
-
-            return bmp;
-        }
-
-        public static Bitmap Create(byte[,] pixelValues, IColormap colormap, int lastColumnIndex = 0)
+        public static Bitmap Create(byte[,] pixelValues, IColormap colormap, int wrapIndex = 0, int highlightColumnIndex = -1)
         {
             if (pixelValues is null || pixelValues.GetLength(0) == 0)
-                return null;
+                throw new ArgumentException();
 
             int height = pixelValues.GetLength(1);
             int width = pixelValues.GetLength(0);
 
             Bitmap bmp = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
-
             colormap.Apply(bmp);
 
-            var rect = new Rectangle(0, 0, width, height);
-            BitmapData bitmapData = bmp.LockBits(rect, ImageLockMode.ReadOnly, bmp.PixelFormat);
-            byte[] pixels = new byte[bitmapData.Stride * bmp.Height];
+            var lockRect = new Rectangle(0, 0, width, height);
+            BitmapData bitmapData = bmp.LockBits(lockRect, ImageLockMode.ReadOnly, bmp.PixelFormat);
+            int stride = bitmapData.Stride;
 
+            // TODO: optimize spectrogram class to use flat (not 2D) array
+            byte[] bytes = new byte[bitmapData.Stride * bmp.Height];
             for (int col = 0; col < width; col++)
             {
-                int sourceCol = col + lastColumnIndex;
+                int sourceCol = col + wrapIndex;
                 if (sourceCol >= width)
                     sourceCol -= width;
 
                 for (int row = 0; row < height; row++)
                 {
-                    int bytePosition = (bmp.Height - 1 - row) * bitmapData.Stride + col;
-                    pixels[bytePosition] = pixelValues[sourceCol, row];
+                    int bytePosition = (height - 1 - row) * stride + col;
+                    bytes[bytePosition] = pixelValues[sourceCol, row];
                 }
             }
 
-            Marshal.Copy(pixels, 0, bitmapData.Scan0, pixels.Length);
+            if (highlightColumnIndex >=0 && highlightColumnIndex < width)
+            {
+                for (int row = 0; row < height; row++)
+                {
+                    int bytePosition = (height - 1 - row) * stride + highlightColumnIndex;
+                    bytes[bytePosition] = 255;
+                }
+            }
+
+            Marshal.Copy(bytes, 0, bitmapData.Scan0, bytes.Length);
             bmp.UnlockBits(bitmapData);
 
             return bmp;

@@ -10,16 +10,16 @@ using System.Text;
 namespace Spectrogram
 {
     /* code is intentionally duplicated here (similar to SpectrogramLive) for effeciency */
-    public class Spectrogram
+    public class SpectrogramImage
     {
         private readonly double[,] mags;
         private readonly byte[,] pixels;
-        private IColormap cmap = new Viridis();
+        public IColormap cmap = new Viridis();
 
         /// <summary>
         /// Create a Spectrogram from a pre-recorded signal.
         /// </summary>
-        public Spectrogram(double[] signal, int sampleRate, int fftSize, int stepSize,
+        public SpectrogramImage(double[] signal, int sampleRate, int fftSize, int stepSize,
             double freqMax = double.PositiveInfinity, double freqMin = 0,
             double[] window = null, double multiplier = 1, double offset = 0, bool dB = false)
         {
@@ -100,6 +100,8 @@ namespace Spectrogram
 
             return 256 / magnitude;
         }
+
+        public double[,] GetMags() => mags;
 
         public Bitmap GetBitmap() => Image.Create(pixels, cmap);
         public void SavePNG(string saveFilePath) => GetBitmap().Save(saveFilePath, ImageFormat.Png);

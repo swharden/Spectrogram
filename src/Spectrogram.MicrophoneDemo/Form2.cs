@@ -94,7 +94,7 @@ namespace Spectrogram.MicrophoneDemo
             if (spec is null || spec.isNewImageReady == false)
                 return;
 
-            Bitmap bmp = spec.GetBitmap();
+            Bitmap bmp = spec.MakeBitmap();
             pictureBox1.Image?.Dispose();
             pictureBox1.Size = bmp.Size;
             pictureBox1.Image = bmp;

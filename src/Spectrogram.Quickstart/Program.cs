@@ -17,10 +17,10 @@ namespace Spectrogram.Quickstart
         {
             // Get sample audio by decoding a MP3 file
             string audioFilePath = "../../../../../data/cant-do-that.mp3";
-            (double[] audio, int sampleRate) = Read.MP3(audioFilePath, scale: false);
+            (double[] audio, int sampleRate) = Read.MP3(audioFilePath);
 
             // frequency analysis is performed on initialization
-            var spec = new Spectrogram(
+            var spec = new SpectrogramImage(
                     signal: audio,
                     sampleRate: sampleRate,
                     fftSize: 4096,
