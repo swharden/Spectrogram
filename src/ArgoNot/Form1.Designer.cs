@@ -42,11 +42,12 @@
             this.pnlAmplitude = new System.Windows.Forms.Panel();
             this.pbLevel = new System.Windows.Forms.PictureBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.timer2 = new System.Windows.Forms.Timer(this.components);
-            this.timer3 = new System.Windows.Forms.Timer(this.components);
+            this.timerLevelMeter = new System.Windows.Forms.Timer(this.components);
+            this.timerRender = new System.Windows.Forms.Timer(this.components);
+            this.timerCheckClock = new System.Windows.Forms.Timer(this.components);
             this.nudBrightness = new System.Windows.Forms.NumericUpDown();
             this.lblTime = new System.Windows.Forms.Label();
+            this.cbSave = new System.Windows.Forms.CheckBox();
             this.pnlSpectrogram.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbSpectrogram)).BeginInit();
             this.pnlAmplitude.SuspendLayout();
@@ -147,13 +148,13 @@
             // label4
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Segoe UI Semibold", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(968, 9);
+            this.label4.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(968, 4);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(104, 30);
+            this.label4.Size = new System.Drawing.Size(104, 21);
             this.label4.TabIndex = 10;
-            this.label4.Text = "ArgoNOT";
+            this.label4.Text = "ArgoNot";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label5
             // 
@@ -166,7 +167,7 @@
             // 
             // pnlAmplitude
             // 
-            this.pnlAmplitude.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.pnlAmplitude.BackColor = System.Drawing.SystemColors.ControlLight;
             this.pnlAmplitude.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pnlAmplitude.Controls.Add(this.pbLevel);
             this.pnlAmplitude.Location = new System.Drawing.Point(139, 24);
@@ -176,7 +177,7 @@
             // 
             // pbLevel
             // 
-            this.pbLevel.BackColor = System.Drawing.Color.Green;
+            this.pbLevel.BackColor = System.Drawing.Color.DarkSeaGreen;
             this.pbLevel.Location = new System.Drawing.Point(0, 0);
             this.pbLevel.Name = "pbLevel";
             this.pbLevel.Size = new System.Drawing.Size(60, 21);
@@ -192,23 +193,23 @@
             this.label6.TabIndex = 15;
             this.label6.Text = "Audio Level";
             // 
-            // timer1
+            // timerLevelMeter
             // 
-            this.timer1.Enabled = true;
-            this.timer1.Interval = 10;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.timerLevelMeter.Enabled = true;
+            this.timerLevelMeter.Interval = 10;
+            this.timerLevelMeter.Tick += new System.EventHandler(this.LevelMeterTimer_Tick);
             // 
-            // timer2
+            // timerRender
             // 
-            this.timer2.Enabled = true;
-            this.timer2.Interval = 500;
-            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            this.timerRender.Enabled = true;
+            this.timerRender.Interval = 500;
+            this.timerRender.Tick += new System.EventHandler(this.ClockTimer_Tick);
             // 
-            // timer3
+            // timerCheckClock
             // 
-            this.timer3.Enabled = true;
-            this.timer3.Interval = 1000;
-            this.timer3.Tick += new System.EventHandler(this.timer3_Tick);
+            this.timerCheckClock.Enabled = true;
+            this.timerCheckClock.Interval = 1000;
+            this.timerCheckClock.Tick += new System.EventHandler(this.RenderTimer_Tick);
             // 
             // nudBrightness
             // 
@@ -218,7 +219,7 @@
             0,
             0,
             65536});
-            this.nudBrightness.Location = new System.Drawing.Point(519, 26);
+            this.nudBrightness.Location = new System.Drawing.Point(519, 25);
             this.nudBrightness.Name = "nudBrightness";
             this.nudBrightness.Size = new System.Drawing.Size(69, 20);
             this.nudBrightness.TabIndex = 16;
@@ -232,28 +233,42 @@
             // lblTime
             // 
             this.lblTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblTime.AutoSize = true;
-            this.lblTime.Font = new System.Drawing.Font("Segoe UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTime.Location = new System.Drawing.Point(735, 9);
+            this.lblTime.Enabled = false;
+            this.lblTime.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTime.Location = new System.Drawing.Point(964, 25);
             this.lblTime.Name = "lblTime";
-            this.lblTime.Size = new System.Drawing.Size(132, 30);
+            this.lblTime.Size = new System.Drawing.Size(108, 21);
             this.lblTime.TabIndex = 17;
             this.lblTime.Text = "12:34:56 UTC";
+            this.lblTime.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // cbSave
+            // 
+            this.cbSave.AutoSize = true;
+            this.cbSave.Checked = true;
+            this.cbSave.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbSave.Location = new System.Drawing.Point(595, 27);
+            this.cbSave.Name = "cbSave";
+            this.cbSave.Size = new System.Drawing.Size(51, 17);
+            this.cbSave.TabIndex = 18;
+            this.cbSave.Text = "Save";
+            this.cbSave.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1084, 481);
-            this.Controls.Add(this.lblTime);
             this.Controls.Add(this.pnlAmplitude);
             this.Controls.Add(this.pnlSpectrogram);
+            this.Controls.Add(this.lblTime);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.Controls.Add(this.cbSave);
             this.Controls.Add(this.nudBrightness);
             this.Controls.Add(this.cbSoundCard);
             this.Controls.Add(this.cbWindow);
@@ -284,12 +299,13 @@
         private System.Windows.Forms.Panel pnlAmplitude;
         private System.Windows.Forms.PictureBox pbLevel;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Timer timer1;
-        private System.Windows.Forms.Timer timer2;
-        private System.Windows.Forms.Timer timer3;
+        private System.Windows.Forms.Timer timerLevelMeter;
+        private System.Windows.Forms.Timer timerRender;
+        private System.Windows.Forms.Timer timerCheckClock;
         private System.Windows.Forms.PictureBox pbSpectrogram;
         private System.Windows.Forms.NumericUpDown nudBrightness;
         private System.Windows.Forms.Label lblTime;
+        private System.Windows.Forms.CheckBox cbSave;
     }
 }
 
