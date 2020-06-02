@@ -164,8 +164,11 @@ namespace ArgoNot
                 {
                     spec.SetNextIndex(0);
 
-                    string timeStamp = $"{t.Year:D2}{t.Month:D2}{t.Day:D2}{t.Hour:D2}{t.Minute:D2}";
-                    spec.GetBitmap().Save($"{timeStamp}.bmp");
+                    if (cbSave.Checked)
+                    {
+                        string timeStamp = $"{t.Year:D2}{t.Month:D2}{t.Day:D2}{t.Hour:D2}{t.Minute:D2}";
+                        spec.GetBitmap().Save($"{timeStamp}.bmp");
+                    }
                 }
             }
         }
