@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -88,10 +89,11 @@ namespace ArgoNot
             int fftSize = 1 << 14; // 16384 (2.7 sec)
             int widthPx = 1000;
             int stepSize = sampleRate * 60 * 10 / widthPx; // 10 minutes
+            double freqMin = 0;
+            double freqMax = 2500;
 
             // create spectrogram
-            spec = new Spectrogram.SpectrogramLive(sampleRate, fftSize, stepSize, widthPx,
-                freqMin: 0, freqMax: 2500);
+            spec = new Spectrogram.SpectrogramLive(sampleRate, fftSize, stepSize, widthPx, freqMax, freqMin);
 
             // update settings based on GUI
             nudBrightness_ValueChanged(null, null);
@@ -108,6 +110,20 @@ namespace ArgoNot
             pbSpectrogram.Image = spec.GetBitmap();
             pbSpectrogram.Size = pbSpectrogram.Image.Size;
 
+            // update ticks
+            Bitmap bmpTicksV = DrawTicksVert(fftSize, sampleRate, freqMin, freqMax);
+            pbTicksVert.Location = new Point(pbSpectrogram.Width, 0);
+            pbTicksVert.Size = bmpTicksV.Size;
+            pbTicksVert.Image?.Dispose();
+            pbTicksVert.Image = bmpTicksV;
+
+            // update ticks
+            Bitmap bmpTicksH = DrawTicksHoriz(widthPx, durationSec: 60 * 10);
+            pbTicksHoriz.Location = new Point(0, pbSpectrogram.Height);
+            pbTicksHoriz.Size = bmpTicksH.Size;
+            pbTicksHoriz.Image?.Dispose();
+            pbTicksHoriz.Image = bmpTicksH;
+
             // start sound card listener
             wvin?.StopRecording();
             wvin?.Dispose();
@@ -119,6 +135,61 @@ namespace ArgoNot
             };
             wvin.DataAvailable += OnNewAudioData;
             wvin.StartRecording();
+        }
+
+        private Bitmap DrawTicksHoriz(int width, double durationSec)
+        {
+            Bitmap bmp = new Bitmap(pbSpectrogram.Width, 100);
+            int tickSize = 5;
+            using (var gfx = Graphics.FromImage(bmp))
+            using (var pen = new Pen(Color.Black))
+            using (var brush = new SolidBrush(Color.Black))
+            using (var font = new Font(FontFamily.GenericMonospace, 10))
+            using (var sf = new StringFormat { Alignment = StringAlignment.Center })
+            {
+                gfx.Clear(Color.White);
+                for (int i = 0; i < durationSec; i += 60)
+                {
+                    if (i < 30 || durationSec - i < 30)
+                        continue;
+
+                    int xPx = (int)(width * i / durationSec);
+                    xPx = pbSpectrogram.Width - xPx - 1;
+
+                    gfx.DrawLine(pen, xPx, 0, xPx, tickSize);
+                    gfx.DrawString($"{(durationSec - i) / 60:N0}", font, brush, xPx, tickSize, sf);
+                }
+            }
+            return bmp;
+        }
+
+        private Bitmap DrawTicksVert(int fftSize, int sampleRate, double freqMin, double freqMax, double offset = 0, double tickSpacing = 25)
+        {
+            // TODO: move inside spectrogram class
+            Bitmap bmp = new Bitmap(100, pbSpectrogram.Height);
+            double maxFreq = sampleRate / 2;
+            double hzPerPx = fftSize / 2 / maxFreq;
+            int tickSize = 5;
+            using (var gfx = Graphics.FromImage(bmp))
+            using (var pen = new Pen(Color.Black))
+            using (var brush = new SolidBrush(Color.Black))
+            using (var font = new Font(FontFamily.GenericMonospace, 10))
+            using (var sf = new StringFormat { LineAlignment = StringAlignment.Center })
+            {
+                gfx.Clear(Color.White);
+                for (double f = freqMin; f < freqMax; f += tickSpacing)
+                {
+                    int pxY = (int)((f - freqMin) * hzPerPx);
+
+                    if (pxY < 10 || pbSpectrogram.Height - pxY < 10)
+                        continue;
+
+                    pxY = pbSpectrogram.Height - pxY;
+                    gfx.DrawLine(pen, 0, pxY, tickSize, pxY);
+                    gfx.DrawString($"{f + offset:N0}", font, brush, tickSize, pxY, sf);
+                }
+            }
+            return bmp;
         }
 
         private static double amplitudeFrac = 0;
@@ -146,6 +217,8 @@ namespace ArgoNot
                 pbLevel.Width -= 1;
             else
                 pbLevel.Width = newWidth;
+
+            pbLevel.BackColor = ((double)pbLevel.Width / pnlAmplitude.Width > .9) ? Color.Crimson : Color.DarkSeaGreen;
         }
 
         int lastSeenMinute = -1;

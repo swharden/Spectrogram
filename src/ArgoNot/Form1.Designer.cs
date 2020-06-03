@@ -30,6 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             this.pnlSpectrogram = new System.Windows.Forms.Panel();
+            this.pbTicksHoriz = new System.Windows.Forms.PictureBox();
+            this.pbTicksVert = new System.Windows.Forms.PictureBox();
             this.pbSpectrogram = new System.Windows.Forms.PictureBox();
             this.cbColormap = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -49,6 +51,8 @@
             this.lblTime = new System.Windows.Forms.Label();
             this.cbSave = new System.Windows.Forms.CheckBox();
             this.pnlSpectrogram.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbTicksHoriz)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbTicksVert)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbSpectrogram)).BeginInit();
             this.pnlAmplitude.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLevel)).BeginInit();
@@ -61,13 +65,33 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlSpectrogram.AutoScroll = true;
-            this.pnlSpectrogram.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.pnlSpectrogram.BackColor = System.Drawing.Color.White;
             this.pnlSpectrogram.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnlSpectrogram.Controls.Add(this.pbTicksHoriz);
+            this.pnlSpectrogram.Controls.Add(this.pbTicksVert);
             this.pnlSpectrogram.Controls.Add(this.pbSpectrogram);
             this.pnlSpectrogram.Location = new System.Drawing.Point(12, 51);
             this.pnlSpectrogram.Name = "pnlSpectrogram";
-            this.pnlSpectrogram.Size = new System.Drawing.Size(1060, 418);
+            this.pnlSpectrogram.Size = new System.Drawing.Size(1115, 418);
             this.pnlSpectrogram.TabIndex = 2;
+            // 
+            // pbTicksHoriz
+            // 
+            this.pbTicksHoriz.BackColor = System.Drawing.Color.CornflowerBlue;
+            this.pbTicksHoriz.Location = new System.Drawing.Point(20, 109);
+            this.pbTicksHoriz.Name = "pbTicksHoriz";
+            this.pbTicksHoriz.Size = new System.Drawing.Size(100, 50);
+            this.pbTicksHoriz.TabIndex = 2;
+            this.pbTicksHoriz.TabStop = false;
+            // 
+            // pbTicksVert
+            // 
+            this.pbTicksVert.BackColor = System.Drawing.Color.RoyalBlue;
+            this.pbTicksVert.Location = new System.Drawing.Point(127, 35);
+            this.pbTicksVert.Name = "pbTicksVert";
+            this.pbTicksVert.Size = new System.Drawing.Size(100, 50);
+            this.pbTicksVert.TabIndex = 1;
+            this.pbTicksVert.TabStop = false;
             // 
             // pbSpectrogram
             // 
@@ -149,7 +173,7 @@
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label4.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(968, 4);
+            this.label4.Location = new System.Drawing.Point(1023, 4);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(104, 21);
             this.label4.TabIndex = 10;
@@ -235,7 +259,7 @@
             this.lblTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTime.Enabled = false;
             this.lblTime.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTime.Location = new System.Drawing.Point(964, 25);
+            this.lblTime.Location = new System.Drawing.Point(1019, 25);
             this.lblTime.Name = "lblTime";
             this.lblTime.Size = new System.Drawing.Size(108, 21);
             this.lblTime.TabIndex = 17;
@@ -258,7 +282,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1084, 481);
+            this.ClientSize = new System.Drawing.Size(1139, 481);
             this.Controls.Add(this.pnlAmplitude);
             this.Controls.Add(this.pnlSpectrogram);
             this.Controls.Add(this.lblTime);
@@ -277,6 +301,8 @@
             this.Text = "ArgoNot";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.pnlSpectrogram.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pbTicksHoriz)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbTicksVert)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbSpectrogram)).EndInit();
             this.pnlAmplitude.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pbLevel)).EndInit();
@@ -306,6 +332,8 @@
         private System.Windows.Forms.NumericUpDown nudBrightness;
         private System.Windows.Forms.Label lblTime;
         private System.Windows.Forms.CheckBox cbSave;
+        private System.Windows.Forms.PictureBox pbTicksVert;
+        private System.Windows.Forms.PictureBox pbTicksHoriz;
     }
 }
 
