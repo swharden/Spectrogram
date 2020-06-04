@@ -45,11 +45,14 @@
             this.pbLevel = new System.Windows.Forms.PictureBox();
             this.label6 = new System.Windows.Forms.Label();
             this.timerLevelMeter = new System.Windows.Forms.Timer(this.components);
+            this.timerRollover = new System.Windows.Forms.Timer(this.components);
             this.timerRender = new System.Windows.Forms.Timer(this.components);
-            this.timerCheckClock = new System.Windows.Forms.Timer(this.components);
             this.nudBrightness = new System.Windows.Forms.NumericUpDown();
             this.lblTime = new System.Windows.Forms.Label();
             this.cbSave = new System.Windows.Forms.CheckBox();
+            this.btnWsprPath = new System.Windows.Forms.Button();
+            this.lblWspr = new System.Windows.Forms.Label();
+            this.timerWspr = new System.Windows.Forms.Timer(this.components);
             this.pnlSpectrogram.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbTicksHoriz)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbTicksVert)).BeginInit();
@@ -223,17 +226,17 @@
             this.timerLevelMeter.Interval = 10;
             this.timerLevelMeter.Tick += new System.EventHandler(this.LevelMeterTimer_Tick);
             // 
+            // timerRollover
+            // 
+            this.timerRollover.Enabled = true;
+            this.timerRollover.Interval = 500;
+            this.timerRollover.Tick += new System.EventHandler(this.ClockTimer_Tick);
+            // 
             // timerRender
             // 
             this.timerRender.Enabled = true;
-            this.timerRender.Interval = 500;
-            this.timerRender.Tick += new System.EventHandler(this.ClockTimer_Tick);
-            // 
-            // timerCheckClock
-            // 
-            this.timerCheckClock.Enabled = true;
-            this.timerCheckClock.Interval = 1000;
-            this.timerCheckClock.Tick += new System.EventHandler(this.RenderTimer_Tick);
+            this.timerRender.Interval = 1000;
+            this.timerRender.Tick += new System.EventHandler(this.RenderTimer_Tick);
             // 
             // nudBrightness
             // 
@@ -278,11 +281,38 @@
             this.cbSave.Text = "Save";
             this.cbSave.UseVisualStyleBackColor = true;
             // 
+            // btnWsprPath
+            // 
+            this.btnWsprPath.Location = new System.Drawing.Point(652, 22);
+            this.btnWsprPath.Name = "btnWsprPath";
+            this.btnWsprPath.Size = new System.Drawing.Size(75, 23);
+            this.btnWsprPath.TabIndex = 19;
+            this.btnWsprPath.Text = "Configure";
+            this.btnWsprPath.UseVisualStyleBackColor = true;
+            this.btnWsprPath.Click += new System.EventHandler(this.btnWsprPath_Click);
+            // 
+            // lblWspr
+            // 
+            this.lblWspr.AutoSize = true;
+            this.lblWspr.Location = new System.Drawing.Point(649, 8);
+            this.lblWspr.Name = "lblWspr";
+            this.lblWspr.Size = new System.Drawing.Size(82, 13);
+            this.lblWspr.TabIndex = 20;
+            this.lblWspr.Text = "WSPR disabled";
+            // 
+            // timerWspr
+            // 
+            this.timerWspr.Enabled = true;
+            this.timerWspr.Interval = 500;
+            this.timerWspr.Tick += new System.EventHandler(this.timerWspr_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1139, 481);
+            this.Controls.Add(this.lblWspr);
+            this.Controls.Add(this.btnWsprPath);
             this.Controls.Add(this.pnlAmplitude);
             this.Controls.Add(this.pnlSpectrogram);
             this.Controls.Add(this.lblTime);
@@ -326,14 +356,17 @@
         private System.Windows.Forms.PictureBox pbLevel;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Timer timerLevelMeter;
+        private System.Windows.Forms.Timer timerRollover;
         private System.Windows.Forms.Timer timerRender;
-        private System.Windows.Forms.Timer timerCheckClock;
         private System.Windows.Forms.PictureBox pbSpectrogram;
         private System.Windows.Forms.NumericUpDown nudBrightness;
         private System.Windows.Forms.Label lblTime;
         private System.Windows.Forms.CheckBox cbSave;
         private System.Windows.Forms.PictureBox pbTicksVert;
         private System.Windows.Forms.PictureBox pbTicksHoriz;
+        private System.Windows.Forms.Button btnWsprPath;
+        private System.Windows.Forms.Label lblWspr;
+        private System.Windows.Forms.Timer timerWspr;
     }
 }
 

@@ -146,5 +146,10 @@ namespace Spectrogram
         {
             nextColumnIndex = index;
         }
+
+        public int PixelY(double frequency)
+        {
+            return (int)(frequency * fftSize / sampleRate);
+        }
     }
 }

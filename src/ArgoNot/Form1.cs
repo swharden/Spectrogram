@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -13,14 +15,19 @@ namespace ArgoNot
 {
     public partial class Form1 : Form
     {
-        private Spectrogram.SpectrogramLive spec;
-        private NAudio.Wave.WaveInEvent wvin;
+        Spectrogram.SpectrogramLive spec;
+        NAudio.Wave.WaveInEvent wvin;
+        readonly List<WsprSpot> recentSpots = new List<WsprSpot>();
 
         public Form1()
         {
             InitializeComponent();
             cbColormap.SelectedIndex = 0;
             cbWindow.SelectedIndex = 1;
+
+            string devFilePath = @"C:\Users\Scott\Documents\temp\wsprTest\ALL_WSPR.TXT";
+            if (File.Exists(devFilePath))
+                wsprLogFilePath = devFilePath;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -49,13 +56,13 @@ namespace ArgoNot
                 return;
 
             if (cbColormap.Text == "Viridis")
-                new Spectrogram.Colormaps.Viridis().Apply(spec.GetBitmap());
+                spec.cmap = new Spectrogram.Colormaps.Viridis();
             else if (cbColormap.Text == "Grayscale")
-                new Spectrogram.Colormaps.Grayscale().Apply(spec.GetBitmap());
+                spec.cmap = new Spectrogram.Colormaps.Grayscale();
             else if (cbColormap.Text == "Plasma")
-                new Spectrogram.Colormaps.Plasma().Apply(spec.GetBitmap());
+                spec.cmap = new Spectrogram.Colormaps.Plasma();
             else if (cbColormap.Text == "Argo")
-                new Spectrogram.Colormaps.Grayscale().Apply(spec.GetBitmap());
+                spec.cmap = new Spectrogram.Colormaps.Grayscale();
         }
 
         private void cbWindow_SelectedIndexChanged(object sender, EventArgs e)
@@ -249,8 +256,75 @@ namespace ArgoNot
         private void RenderTimer_Tick(object sender, EventArgs e)
         {
             spec.ProcessAll();
+
+            Bitmap bmpSource = spec.GetBitmap(highlightIndex: true);
+            Bitmap bmp = new Bitmap(bmpSource.Width, bmpSource.Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+            using (var gfx = Graphics.FromImage(bmp))
+            using (var pen = new Pen(Color.Black))
+            using (var labelFg = new SolidBrush(Color.White))
+            using (var labelBg = new SolidBrush(Color.Black))
+            //using (var font = new Font("Segoe UI", 12))
+            using (var font = new Font(FontFamily.GenericMonospace, 10, FontStyle.Bold))
+            using (var sf = new StringFormat { LineAlignment = StringAlignment.Center })
+            {
+                gfx.DrawImage(bmpSource, 0, 0);
+
+                for (int i = 0; i < 5; i++)
+                {
+                    var segmentSpots = recentSpots
+                        .Where(x => x.segment == i)
+                        .OrderBy(x=>x.frequencyHz)
+                        .Reverse();
+
+                    int lastY = 0;
+                    int minY = (int)font.Size;
+                    Console.WriteLine();
+                    foreach (WsprSpot spot in segmentSpots)
+                    {
+                        int x = bmp.Width / 5 * spot.segment;
+                        int y = bmp.Height - spec.PixelY(spot.frequencyHz - 10_138_700);
+                        Console.WriteLine(y);
+                        if (y - lastY < minY)
+                            y = lastY + minY;
+                        lastY = y;
+                        gfx.DrawString($"{spot.callsign} ({spot.strength} dB)", font, labelBg, x + 1, y + 1, sf);
+                        gfx.DrawString($"{spot.callsign} ({spot.strength} dB)", font, labelBg, x - 1, y - 1, sf);
+                        gfx.DrawString($"{spot.callsign} ({spot.strength} dB)", font, labelFg, x, y, sf);
+                    }
+                }
+            }
+
             pbSpectrogram.Image?.Dispose();
-            pbSpectrogram.Image = spec.GetBitmap(highlightIndex: true);
+            pbSpectrogram.Image = bmp;
+        }
+
+        string wsprLogFilePath = null;
+        private void btnWsprPath_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog diag = new OpenFileDialog();
+            diag.Filter = "WSPR Log Files (*.txt)|*.txt";
+            diag.FileName = "ALL_WSPR.TXT";
+            diag.Title = "Locate WSPR Log File";
+            if (diag.ShowDialog() == DialogResult.OK)
+            {
+                wsprLogFilePath = diag.FileName;
+                lblWspr.Text = "WSPR enabled";
+            }
+            else
+            {
+                wsprLogFilePath = null;
+                lblWspr.Text = "WSPR disabled";
+            }
+        }
+
+        private void timerWspr_Tick(object sender, EventArgs e)
+        {
+            if (wsprLogFilePath is null)
+                return;
+
+            var reader = new WsprLogWatcher(wsprLogFilePath);
+            recentSpots.Clear();
+            recentSpots.AddRange(reader.allSpots.Where(x => x.age < 10));
         }
     }
 }
