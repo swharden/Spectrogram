@@ -147,7 +147,6 @@ namespace ArgoNot
             pbBackground.Size = bmp.Size;
         }
 
-
         private static double amplitudeFrac = 0;
         private void OnNewAudioData(object sender, NAudio.Wave.WaveInEventArgs args)
         {
@@ -212,35 +211,51 @@ namespace ArgoNot
             using (var pen = new Pen(Color.Black))
             using (var labelFg = new SolidBrush(Color.White))
             using (var labelBg = new SolidBrush(Color.Black))
-            //using (var font = new Font("Segoe UI", 12))
             using (var font = new Font(FontFamily.GenericMonospace, 10, FontStyle.Bold))
-            using (var sf = new StringFormat { LineAlignment = StringAlignment.Center })
+            using (var sfMiddleCenter = new StringFormat { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center })
             {
                 gfx.DrawImage(bmpSource, 0, 0);
 
-                for (int i = 0; i < 5; i++)
+                // draw WSPR band limits
+                int bandMaxY = spec.PixelY(band.upperFreq - band.dialFreq);
+                int bandMinY = spec.PixelY(band.lowerFreq - band.dialFreq);
+                pen.Color = Color.White;
+                pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+                gfx.DrawLine(pen, 0, bandMaxY, spec.Width, bandMaxY);
+                gfx.DrawLine(pen, 0, bandMinY, spec.Width, bandMinY);
+
+                // draw WSPR calls
+                for (int segment = 0; segment < 5; segment++)
                 {
                     var segmentSpots = recentSpots
-                        .Where(x => x.segment == i)
+                        .Where(x => x.segment == segment)
                         .OrderBy(x => x.frequencyHz)
-                        .Reverse();
+                        .Reverse()
+                        .ToArray();
 
-                    int lastY = 0;
-                    int minY = (int)font.Size;
-                    Console.WriteLine();
-                    foreach (WsprSpot spot in segmentSpots)
+                    for (int i = 0; i < segmentSpots.Count(); i++)
                     {
+                        WsprSpot spot = segmentSpots[i];
                         int x = bmp.Width / 5 * spot.segment;
-                        int y = bmp.Height - spec.PixelY(spot.frequencyHz - band.dialFreq);
-                        Console.WriteLine(y);
-                        if (y - lastY < minY)
-                            y = lastY + minY;
-                        lastY = y;
-                        gfx.DrawString($"{spot.callsign} ({spot.strength} dB)", font, labelBg, x + 1, y + 1, sf);
-                        gfx.DrawString($"{spot.callsign} ({spot.strength} dB)", font, labelBg, x - 1, y - 1, sf);
-                        gfx.DrawString($"{spot.callsign} ({spot.strength} dB)", font, labelFg, x, y, sf);
+                        int y = spec.PixelY(spot.frequencyHz - band.dialFreq);
+
+                        // numbered marker
+                        int r = 7;
+                        int xNum = x + r * 2 * i + r;
+                        gfx.FillEllipse(labelBg, xNum - r, y - r, r * 2, r * 2);
+                        gfx.DrawString($"{i + 1}", font, labelFg, xNum, y, sfMiddleCenter);
+
+                        // description with faux outline
+                        int yLbl = (int)((i) * font.Size * 1.2) + bandMinY;
+                        string lbl = $"{i + 1}: {spot.callsign} ({spot.strength} dB)";
+                        gfx.DrawString(lbl, font, labelBg, x + 1, yLbl + 1);
+                        gfx.DrawString(lbl, font, labelBg, x - 1, yLbl - 1);
+                        gfx.DrawString(lbl, font, labelBg, x - 1, yLbl + 1);
+                        gfx.DrawString(lbl, font, labelBg, x + 1, yLbl - 1);
+                        gfx.DrawString(lbl, font, labelFg, x, yLbl);
                     }
                 }
+
             }
 
             pbSpectrogram.Image?.Dispose();
@@ -266,10 +281,17 @@ namespace ArgoNot
             }
         }
 
+        int lastReadMinute = -1;
         private void timerWspr_Tick(object sender, EventArgs e)
         {
             if (wsprLogFilePath is null)
                 return;
+
+            // only read the log 5 seconds after a new minute
+            if (DateTime.UtcNow.Minute == lastReadMinute || DateTime.UtcNow.Second < 5)
+                return;
+            else
+                lastReadMinute = DateTime.UtcNow.Minute;
 
             var reader = new WsprLogWatcher(wsprLogFilePath);
             recentSpots.Clear();

@@ -162,7 +162,7 @@ namespace Spectrogram
 
         public int PixelY(double frequency)
         {
-            return (int)(frequency * fftSize / sampleRate);
+            return Height - (int)(frequency * fftSize / sampleRate);
         }
     }
 }
