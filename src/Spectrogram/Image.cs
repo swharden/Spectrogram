@@ -70,5 +70,6 @@ namespace Spectrogram
             }
             bmp.Save(saveAs, ImageFormat.Png);
         }
+
     }
 }

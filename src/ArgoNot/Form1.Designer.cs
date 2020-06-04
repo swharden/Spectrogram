@@ -30,9 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             this.pnlSpectrogram = new System.Windows.Forms.Panel();
-            this.pbTicksHoriz = new System.Windows.Forms.PictureBox();
-            this.pbTicksVert = new System.Windows.Forms.PictureBox();
             this.pbSpectrogram = new System.Windows.Forms.PictureBox();
+            this.pbBackground = new System.Windows.Forms.PictureBox();
             this.cbColormap = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.cbWindow = new System.Windows.Forms.ComboBox();
@@ -53,10 +52,11 @@
             this.btnWsprPath = new System.Windows.Forms.Button();
             this.lblWspr = new System.Windows.Forms.Label();
             this.timerWspr = new System.Windows.Forms.Timer(this.components);
+            this.cbOffset = new System.Windows.Forms.ComboBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.pnlSpectrogram.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbTicksHoriz)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbTicksVert)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbSpectrogram)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbBackground)).BeginInit();
             this.pnlAmplitude.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLevel)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudBrightness)).BeginInit();
@@ -70,31 +70,12 @@
             this.pnlSpectrogram.AutoScroll = true;
             this.pnlSpectrogram.BackColor = System.Drawing.Color.White;
             this.pnlSpectrogram.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlSpectrogram.Controls.Add(this.pbTicksHoriz);
-            this.pnlSpectrogram.Controls.Add(this.pbTicksVert);
             this.pnlSpectrogram.Controls.Add(this.pbSpectrogram);
+            this.pnlSpectrogram.Controls.Add(this.pbBackground);
             this.pnlSpectrogram.Location = new System.Drawing.Point(12, 51);
             this.pnlSpectrogram.Name = "pnlSpectrogram";
-            this.pnlSpectrogram.Size = new System.Drawing.Size(1115, 418);
+            this.pnlSpectrogram.Size = new System.Drawing.Size(1165, 418);
             this.pnlSpectrogram.TabIndex = 2;
-            // 
-            // pbTicksHoriz
-            // 
-            this.pbTicksHoriz.BackColor = System.Drawing.Color.CornflowerBlue;
-            this.pbTicksHoriz.Location = new System.Drawing.Point(20, 109);
-            this.pbTicksHoriz.Name = "pbTicksHoriz";
-            this.pbTicksHoriz.Size = new System.Drawing.Size(100, 50);
-            this.pbTicksHoriz.TabIndex = 2;
-            this.pbTicksHoriz.TabStop = false;
-            // 
-            // pbTicksVert
-            // 
-            this.pbTicksVert.BackColor = System.Drawing.Color.RoyalBlue;
-            this.pbTicksVert.Location = new System.Drawing.Point(127, 35);
-            this.pbTicksVert.Name = "pbTicksVert";
-            this.pbTicksVert.Size = new System.Drawing.Size(100, 50);
-            this.pbTicksVert.TabIndex = 1;
-            this.pbTicksVert.TabStop = false;
             // 
             // pbSpectrogram
             // 
@@ -104,6 +85,15 @@
             this.pbSpectrogram.Size = new System.Drawing.Size(100, 50);
             this.pbSpectrogram.TabIndex = 0;
             this.pbSpectrogram.TabStop = false;
+            // 
+            // pbBackground
+            // 
+            this.pbBackground.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.pbBackground.Location = new System.Drawing.Point(0, 0);
+            this.pbBackground.Name = "pbBackground";
+            this.pbBackground.Size = new System.Drawing.Size(140, 106);
+            this.pbBackground.TabIndex = 3;
+            this.pbBackground.TabStop = false;
             // 
             // cbColormap
             // 
@@ -176,7 +166,7 @@
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label4.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(1023, 4);
+            this.label4.Location = new System.Drawing.Point(1073, 4);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(104, 21);
             this.label4.TabIndex = 10;
@@ -262,7 +252,7 @@
             this.lblTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTime.Enabled = false;
             this.lblTime.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTime.Location = new System.Drawing.Point(1019, 25);
+            this.lblTime.Location = new System.Drawing.Point(1069, 25);
             this.lblTime.Name = "lblTime";
             this.lblTime.Size = new System.Drawing.Size(108, 21);
             this.lblTime.TabIndex = 17;
@@ -274,7 +264,7 @@
             this.cbSave.AutoSize = true;
             this.cbSave.Checked = true;
             this.cbSave.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbSave.Location = new System.Drawing.Point(595, 27);
+            this.cbSave.Location = new System.Drawing.Point(802, 28);
             this.cbSave.Name = "cbSave";
             this.cbSave.Size = new System.Drawing.Size(51, 17);
             this.cbSave.TabIndex = 18;
@@ -283,7 +273,7 @@
             // 
             // btnWsprPath
             // 
-            this.btnWsprPath.Location = new System.Drawing.Point(652, 22);
+            this.btnWsprPath.Location = new System.Drawing.Point(721, 23);
             this.btnWsprPath.Name = "btnWsprPath";
             this.btnWsprPath.Size = new System.Drawing.Size(75, 23);
             this.btnWsprPath.TabIndex = 19;
@@ -294,7 +284,7 @@
             // lblWspr
             // 
             this.lblWspr.AutoSize = true;
-            this.lblWspr.Location = new System.Drawing.Point(649, 8);
+            this.lblWspr.Location = new System.Drawing.Point(718, 7);
             this.lblWspr.Name = "lblWspr";
             this.lblWspr.Size = new System.Drawing.Size(82, 13);
             this.lblWspr.TabIndex = 20;
@@ -306,15 +296,33 @@
             this.timerWspr.Interval = 500;
             this.timerWspr.Tick += new System.EventHandler(this.timerWspr_Tick);
             // 
+            // cbOffset
+            // 
+            this.cbOffset.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbOffset.FormattingEnabled = true;
+            this.cbOffset.Location = new System.Drawing.Point(594, 24);
+            this.cbOffset.Name = "cbOffset";
+            this.cbOffset.Size = new System.Drawing.Size(121, 21);
+            this.cbOffset.TabIndex = 21;
+            this.cbOffset.SelectedIndexChanged += new System.EventHandler(this.cbOffset_SelectedIndexChanged);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(591, 8);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(78, 13);
+            this.label7.TabIndex = 22;
+            this.label7.Text = "Dial Frequency";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1139, 481);
-            this.Controls.Add(this.lblWspr);
-            this.Controls.Add(this.btnWsprPath);
+            this.ClientSize = new System.Drawing.Size(1189, 481);
             this.Controls.Add(this.pnlAmplitude);
             this.Controls.Add(this.pnlSpectrogram);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.lblTime);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
@@ -323,6 +331,9 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cbSave);
+            this.Controls.Add(this.lblWspr);
+            this.Controls.Add(this.btnWsprPath);
+            this.Controls.Add(this.cbOffset);
             this.Controls.Add(this.nudBrightness);
             this.Controls.Add(this.cbSoundCard);
             this.Controls.Add(this.cbWindow);
@@ -331,9 +342,8 @@
             this.Text = "ArgoNot";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.pnlSpectrogram.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pbTicksHoriz)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbTicksVert)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbSpectrogram)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbBackground)).EndInit();
             this.pnlAmplitude.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pbLevel)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudBrightness)).EndInit();
@@ -362,11 +372,12 @@
         private System.Windows.Forms.NumericUpDown nudBrightness;
         private System.Windows.Forms.Label lblTime;
         private System.Windows.Forms.CheckBox cbSave;
-        private System.Windows.Forms.PictureBox pbTicksVert;
-        private System.Windows.Forms.PictureBox pbTicksHoriz;
         private System.Windows.Forms.Button btnWsprPath;
         private System.Windows.Forms.Label lblWspr;
         private System.Windows.Forms.Timer timerWspr;
+        private System.Windows.Forms.ComboBox cbOffset;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.PictureBox pbBackground;
     }
 }
 

@@ -25,6 +25,10 @@ namespace ArgoNot
             cbColormap.SelectedIndex = 0;
             cbWindow.SelectedIndex = 1;
 
+            foreach (var band in WsprBands.GetBands())
+                cbOffset.Items.Add($"{band.name}: {band.dialFreq:N0} Hz");
+            cbOffset.SelectedIndex = 5;
+
             string devFilePath = @"C:\Users\Scott\Documents\temp\wsprTest\ALL_WSPR.TXT";
             if (File.Exists(devFilePath))
                 wsprLogFilePath = devFilePath;
@@ -116,20 +120,7 @@ namespace ArgoNot
             pbSpectrogram.Image?.Dispose();
             pbSpectrogram.Image = spec.GetBitmap();
             pbSpectrogram.Size = pbSpectrogram.Image.Size;
-
-            // update ticks
-            Bitmap bmpTicksV = DrawTicksVert(fftSize, sampleRate, freqMin, freqMax);
-            pbTicksVert.Location = new Point(pbSpectrogram.Width, 0);
-            pbTicksVert.Size = bmpTicksV.Size;
-            pbTicksVert.Image?.Dispose();
-            pbTicksVert.Image = bmpTicksV;
-
-            // update ticks
-            Bitmap bmpTicksH = DrawTicksHoriz(widthPx, durationSec: 60 * 10);
-            pbTicksHoriz.Location = new Point(0, pbSpectrogram.Height);
-            pbTicksHoriz.Size = bmpTicksH.Size;
-            pbTicksHoriz.Image?.Dispose();
-            pbTicksHoriz.Image = bmpTicksH;
+            UpdateTics();
 
             // start sound card listener
             wvin?.StopRecording();
@@ -144,60 +135,18 @@ namespace ArgoNot
             wvin.StartRecording();
         }
 
-        private Bitmap DrawTicksHoriz(int width, double durationSec)
+        private void UpdateTics()
         {
-            Bitmap bmp = new Bitmap(pbSpectrogram.Width, 100);
-            int tickSize = 5;
-            using (var gfx = Graphics.FromImage(bmp))
-            using (var pen = new Pen(Color.Black))
-            using (var brush = new SolidBrush(Color.Black))
-            using (var font = new Font(FontFamily.GenericMonospace, 10))
-            using (var sf = new StringFormat { Alignment = StringAlignment.Center })
-            {
-                gfx.Clear(Color.White);
-                for (int i = 0; i < durationSec; i += 60)
-                {
-                    if (i < 30 || durationSec - i < 30)
-                        continue;
+            if (spec is null || band is null)
+                return;
 
-                    int xPx = (int)(width * i / durationSec);
-                    xPx = pbSpectrogram.Width - xPx - 1;
-
-                    gfx.DrawLine(pen, xPx, 0, xPx, tickSize);
-                    gfx.DrawString($"{(durationSec - i) / 60:N0}", font, brush, xPx, tickSize, sf);
-                }
-            }
-            return bmp;
+            Bitmap bmp = new Bitmap(spec.Width + 140, spec.Height + 30);
+            Ticks.DrawTicks(bmp, spec.Width, spec.Height, spec.fftFreqMin, spec.fftFreqMax, band.dialFreq);
+            pbBackground.BackgroundImage?.Dispose();
+            pbBackground.BackgroundImage = bmp;
+            pbBackground.Size = bmp.Size;
         }
 
-        private Bitmap DrawTicksVert(int fftSize, int sampleRate, double freqMin, double freqMax, double offset = 0, double tickSpacing = 25)
-        {
-            // TODO: move inside spectrogram class
-            Bitmap bmp = new Bitmap(100, pbSpectrogram.Height);
-            double maxFreq = sampleRate / 2;
-            double hzPerPx = fftSize / 2 / maxFreq;
-            int tickSize = 5;
-            using (var gfx = Graphics.FromImage(bmp))
-            using (var pen = new Pen(Color.Black))
-            using (var brush = new SolidBrush(Color.Black))
-            using (var font = new Font(FontFamily.GenericMonospace, 10))
-            using (var sf = new StringFormat { LineAlignment = StringAlignment.Center })
-            {
-                gfx.Clear(Color.White);
-                for (double f = freqMin; f < freqMax; f += tickSpacing)
-                {
-                    int pxY = (int)((f - freqMin) * hzPerPx);
-
-                    if (pxY < 10 || pbSpectrogram.Height - pxY < 10)
-                        continue;
-
-                    pxY = pbSpectrogram.Height - pxY;
-                    gfx.DrawLine(pen, 0, pxY, tickSize, pxY);
-                    gfx.DrawString($"{f + offset:N0}", font, brush, tickSize, pxY, sf);
-                }
-            }
-            return bmp;
-        }
 
         private static double amplitudeFrac = 0;
         private void OnNewAudioData(object sender, NAudio.Wave.WaveInEventArgs args)
@@ -273,7 +222,7 @@ namespace ArgoNot
                 {
                     var segmentSpots = recentSpots
                         .Where(x => x.segment == i)
-                        .OrderBy(x=>x.frequencyHz)
+                        .OrderBy(x => x.frequencyHz)
                         .Reverse();
 
                     int lastY = 0;
@@ -282,7 +231,7 @@ namespace ArgoNot
                     foreach (WsprSpot spot in segmentSpots)
                     {
                         int x = bmp.Width / 5 * spot.segment;
-                        int y = bmp.Height - spec.PixelY(spot.frequencyHz - 10_138_700);
+                        int y = bmp.Height - spec.PixelY(spot.frequencyHz - band.dialFreq);
                         Console.WriteLine(y);
                         if (y - lastY < minY)
                             y = lastY + minY;
@@ -325,6 +274,13 @@ namespace ArgoNot
             var reader = new WsprLogWatcher(wsprLogFilePath);
             recentSpots.Clear();
             recentSpots.AddRange(reader.allSpots.Where(x => x.age < 10));
+        }
+
+        WsprBand band;
+        private void cbOffset_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            band = WsprBands.GetBands()[cbOffset.SelectedIndex];
+            UpdateTics();
         }
     }
 }

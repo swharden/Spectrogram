@@ -17,6 +17,7 @@ namespace Spectrogram
         public readonly double fftFreqSpacing;
         public readonly int fftSize;
         public readonly int stepSize;
+        public readonly int Width;
         private readonly Bitmap bmp;
         private readonly BitmapData bmpData;
 
@@ -24,7 +25,11 @@ namespace Spectrogram
 
         public readonly int fftIndex1;
         public readonly int fftIndex2;
-        public readonly int fftKeepSize;
+        //public readonly int fftKeepSize;
+        public readonly int Height;
+        public readonly double[] fftFreqs;
+        public readonly double fftFreqMin;
+        public readonly double fftFreqMax;
 
         private readonly List<double> signal = new List<double>();
         private readonly byte[,] pixelValues;
@@ -59,13 +64,21 @@ namespace Spectrogram
             SetWindow(FftSharp.Window.Hanning(fftSize));
 
             (fftIndex1, fftIndex2) = Calculate.FftIndexes(freqMin, freqMax, sampleRate, fftSize);
-            fftKeepSize = fftIndex2 - fftIndex1;
+            Height = fftIndex2 - fftIndex1;
             Debug.WriteLine($"Keeping FFT index {fftIndex1} to index {fftIndex2} (from {fftSize / 2} points)");
 
-            pixelValues = new byte[width, fftKeepSize];
-            lastFft = new double[fftKeepSize];
+            double[] fftFreqsAll = FftSharp.Transform.FFTfreq(sampleRate, fftSize / 2);
+            fftFreqs = new double[Height];
+            for (int i = 0; i < Height; i++)
+                fftFreqs[i] = fftFreqsAll[fftIndex1 + i];
+            fftFreqMin = fftFreqs[0];
+            fftFreqMax = fftFreqs[Height - 1];
 
-            bmp = new Bitmap(width, fftKeepSize, PixelFormat.Format8bppIndexed);
+            pixelValues = new byte[width, Height];
+            lastFft = new double[Height];
+            Width = width;
+
+            bmp = new Bitmap(width, Height, PixelFormat.Format8bppIndexed);
             bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, bmp.PixelFormat);
             cmap.Apply(bmp);
         }
@@ -107,7 +120,7 @@ namespace Spectrogram
             FftSharp.Transform.FFT(buffer);
 
             // calculate PSD magnitude, scale it to Decibels, convert it to pixel intensity
-            for (int i = 0; i < fftKeepSize; i++)
+            for (int i = 0; i < Height; i++)
             {
                 double intensity = buffer[fftIndex1 + i].Magnitude * 2 / fftSize;
                 if (dB)
