@@ -33,7 +33,7 @@ namespace Spectrogram
 
         private readonly List<double> signal = new List<double>();
         private readonly byte[,] pixelValues;
-        private int nextColumnIndex = 0;
+        public int nextColumnIndex = 0;
         private int lastColumnIndex = 0;
         public readonly double[] lastFft;
 
@@ -65,7 +65,6 @@ namespace Spectrogram
 
             (fftIndex1, fftIndex2) = Calculate.FftIndexes(freqMin, freqMax, sampleRate, fftSize);
             Height = fftIndex2 - fftIndex1;
-            Debug.WriteLine($"Keeping FFT index {fftIndex1} to index {fftIndex2} (from {fftSize / 2} points)");
 
             double[] fftFreqsAll = FftSharp.Transform.FFTfreq(sampleRate, fftSize / 2);
             fftFreqs = new double[Height];
@@ -81,6 +80,19 @@ namespace Spectrogram
             bmp = new Bitmap(width, Height, PixelFormat.Format8bppIndexed);
             bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, bmp.PixelFormat);
             cmap.Apply(bmp);
+        }
+
+        public string GetDetails()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"Sample rate: {sampleRate:N0} Hz");
+            sb.AppendLine($"FFT size: {fftSize:N0} samples ({1000.0 * fftSize / sampleRate:N2} ms)");
+            sb.AppendLine($"FFT Resolution: {fftResolution:N3} Hz / px");
+            sb.AppendLine($"Nyquist frequency: {sampleRate / 2:N0} Hz");
+            sb.AppendLine($"Min frequency: {fftFreqMin:N2} Hz (index {fftIndex1})");
+            sb.AppendLine($"Max frequency: {fftFreqMax:N2} Hz (index {fftIndex2})");
+            sb.AppendLine($"Dimensions: ({Width} px, {Height} px)");
+            return sb.ToString();
         }
 
         public void SetWindow(double[] window)
@@ -148,11 +160,11 @@ namespace Spectrogram
 
         private int fftsProcessedAtLastBitmap = -1;
         public bool isNewImageReady { get { return fftsProcessedAtLastBitmap != fftsProcessed; } }
-        public Bitmap GetBitmap(bool highlightIndex = false)
+        public Bitmap GetBitmap()
         {
             fftsProcessedAtLastBitmap = fftsProcessed;
-            int highlightColumn = highlightIndex ? nextColumnIndex : -1;
-            return Image.Create(pixelValues, cmap, highlightColumnIndex: highlightColumn);
+
+            return Image.Create(pixelValues, cmap);
         }
 
         public void SetNextIndex(int index = 0)

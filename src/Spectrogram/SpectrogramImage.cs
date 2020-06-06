@@ -27,8 +27,8 @@ namespace Spectrogram
 
             if (window is null)
                 window = FftSharp.Window.Hanning(fftSize);
-            else if (window.Length != fftSize)
-                throw new ArgumentException("If a window is given its length must equal fftSize");
+
+            window = ZeroPad(window, fftSize);
 
             (int fftIndex1, int fftIndex2) = Calculate.FftIndexes(freqMin, freqMax, sampleRate, fftSize);
             int fftKeepSize = fftIndex2 - fftIndex1;
@@ -54,6 +54,14 @@ namespace Spectrogram
             }
 
             Recalculate(multiplier, offset, dB);
+        }
+
+        public double[] ZeroPad(double[] input, int targetLength)
+        {
+            int difference = targetLength - input.Length;
+            double[] padded = new double[targetLength];
+            Array.Copy(input, 0, padded, difference / 2, input.Length);
+            return padded;
         }
 
         public void Recalculate(double multiplier, double offset = 0, bool dB = false, IColormap cmap = null)
@@ -107,5 +115,28 @@ namespace Spectrogram
         public void SavePNG(string saveFilePath) => GetBitmap().Save(saveFilePath, ImageFormat.Png);
         public void SaveBMP(string saveFilePath) => GetBitmap().Save(saveFilePath, ImageFormat.Bmp);
         public void SaveJPG(string saveFilePath) => GetBitmap().Save(saveFilePath, ImageFormat.Jpeg);
+        public void SaveBMPcompressed(string saveFilePath, int halfTimes = 1)
+        {
+            var compressedPixels = this.pixels;
+            for (int i = 0; i < halfTimes; i++)
+                compressedPixels = CompressVertMax(compressedPixels);
+            Bitmap bmp = Image.Create(compressedPixels, cmap);
+            bmp.Save(saveFilePath, ImageFormat.Bmp);
+        }
+
+        private byte[,] CompressVertMax(byte[,] input)
+        {
+            Console.WriteLine("compressing...");
+            byte[,] output = new byte[input.GetLength(0), input.GetLength(1) / 2];
+            for (int x = 0; x < output.GetLength(0); x++)
+            {
+                for (int y = 0; y < output.GetLength(1); y++)
+                {
+                    double value = (input[x, y * 2] + input[x, y * 2 + 1]) / 2;
+                    output[x, y] = (byte)value;
+                }
+            }
+            return output;
+        }
     }
 }

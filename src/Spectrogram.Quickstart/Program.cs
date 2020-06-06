@@ -15,6 +15,28 @@ namespace Spectrogram.Quickstart
     {
         static void Main(string[] args)
         {
+            (double[] sampleAudio, _) = Read.WavInt16mono(@"C:\Users\Scott\Documents\important\data\200605-6k.wav");
+            int sampleRate = 6000;
+
+            int fftSize = 1 << 15;
+            int windowSize = fftSize;
+            int stepSize = (sampleAudio.Length - windowSize) / 1000;
+
+            var spec = new Spectrogram2(sampleRate, fftSize, windowSize, stepSize, 1200, 1500);
+
+            spec.Add(sampleAudio);
+
+            Console.WriteLine("processing...");
+            spec.Process();
+            Console.WriteLine(spec);
+
+            Console.WriteLine("writing bitmap...");
+            Bitmap bmp = spec.GetBitmap();
+            bmp.Save("output.bmp");
+        }
+
+        static void Quickstart()
+        {
             // Get sample audio by decoding a MP3 file
             string audioFilePath = "../../../../../data/cant-do-that.mp3";
             (double[] audio, int sampleRate) = Read.MP3(audioFilePath);

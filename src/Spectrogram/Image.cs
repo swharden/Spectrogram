@@ -11,7 +11,7 @@ namespace Spectrogram
 {
     public static class Image
     {
-        public static Bitmap Create(byte[,] pixelValues, IColormap colormap, int wrapIndex = 0, int highlightColumnIndex = -1)
+        public static Bitmap Create(byte[,] pixelValues, IColormap colormap, int wrapIndex = 0)
         {
             if (pixelValues is null || pixelValues.GetLength(0) == 0)
                 throw new ArgumentException();
@@ -41,15 +41,6 @@ namespace Spectrogram
                 }
             }
 
-            if (highlightColumnIndex >=0 && highlightColumnIndex < width)
-            {
-                for (int row = 0; row < height; row++)
-                {
-                    int bytePosition = (height - 1 - row) * stride + highlightColumnIndex;
-                    bytes[bytePosition] = 255;
-                }
-            }
-
             Marshal.Copy(bytes, 0, bitmapData.Scan0, bytes.Length);
             bmp.UnlockBits(bitmapData);
 
@@ -69,6 +60,36 @@ namespace Spectrogram
                 gfx.FillRectangle(brush, i * pxPerValue, 0, pxPerValue, height);
             }
             bmp.Save(saveAs, ImageFormat.Png);
+        }
+
+        public static Bitmap Create(byte[,] pixelValues)
+        {
+            if (pixelValues is null || pixelValues.GetLength(0) == 0)
+                throw new ArgumentException();
+
+            int height = pixelValues.GetLength(1);
+            int width = pixelValues.GetLength(0);
+
+            Bitmap bmp = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
+
+            var lockRect = new Rectangle(0, 0, width, height);
+            BitmapData bitmapData = bmp.LockBits(lockRect, ImageLockMode.ReadOnly, bmp.PixelFormat);
+            int stride = bitmapData.Stride;
+
+            byte[] bytes = new byte[bitmapData.Stride * bmp.Height];
+            for (int col = 0; col < width; col++)
+            {
+                for (int row = 0; row < height; row++)
+                {
+                    int bytePosition = (height - 1 - row) * stride + col;
+                    bytes[bytePosition] = pixelValues[col, row];
+                }
+            }
+
+            Marshal.Copy(bytes, 0, bitmapData.Scan0, bytes.Length);
+            bmp.UnlockBits(bitmapData);
+
+            return bmp;
         }
 
     }
