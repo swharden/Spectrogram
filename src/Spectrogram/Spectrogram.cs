@@ -78,17 +78,16 @@ namespace Spectrogram
                 newFfts[newFftIndex] = new double[settings.Height];
                 for (int i = 0; i < settings.Height; i++)
                     newFfts[newFftIndex][i] = buffer[settings.FftIndex1 + i].Magnitude / settings.FftSize;
-
-                FftsProcessed += 1;
             });
 
             foreach (var newFft in newFfts)
                 ffts.Add(newFft);
+            FftsProcessed += newFfts.Length;
 
             newAudio.RemoveRange(0, newFftCount * settings.StepSize);
         }
 
-        public Bitmap GetBitmap(double multiplier = 1, bool dB = false)
+        public Bitmap GetBitmap(double multiplier = 1, bool dB = false, bool roll = false)
         {
             if (Width == 0)
                 return null;
@@ -103,9 +102,17 @@ namespace Spectrogram
             byte[] bytes = new byte[bitmapData.Stride * bmp.Height];
             for (int col = 0; col < Width; col++)
             {
+                int sourceCol = col;
+                if (roll)
+                {
+                    sourceCol += Width - FftsProcessed % Width;
+                    if (sourceCol >= Width)
+                        sourceCol -= Width;
+                }
+
                 for (int row = 0; row < Height; row++)
                 {
-                    double value = ffts[col][row];
+                    double value = ffts[sourceCol][row];
                     if (dB)
                         value = 20 * Math.Log10(value + 1);
                     value *= multiplier;

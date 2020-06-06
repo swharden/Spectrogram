@@ -72,13 +72,26 @@ namespace Spectrogram.MicrophoneDemo
                 Stopwatch sw = Stopwatch.StartNew();
                 spec.Process();
                 spec.TrimWidth(pictureBox1.Width);
-                Bitmap bmp = spec.GetBitmap(multiplier, cbDecibels.Checked);
+                Bitmap bmp = spec.GetBitmap(multiplier, cbDecibels.Checked, cbRoll.Checked);
+                Bitmap bmp2 = new Bitmap(spec.Width, spec.Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+                using (var gfx = Graphics.FromImage(bmp2))
+                using (var pen = new Pen(Color.White))
+                {
+                    gfx.DrawImage(bmp, 0, 0);
+                    if (cbRoll.Checked)
+                    {
+                        int x = spec.FftsProcessed % pictureBox1.Width - 1;
+                        gfx.DrawLine(pen, x, 0, x, pictureBox1.Height);
+                    }
+                }
+                bmp.Dispose();
+
                 sw.Stop();
                 pictureBox1.Image?.Dispose();
-                pictureBox1.Image = bmp;
+                pictureBox1.Image = bmp2;
                 lblStatus3.Text = $"Render time: {sw.ElapsedMilliseconds:D2} ms";
             }
-            
+
             lblStatus1.Text = $"Time: {listener.TotalTimeSec:N3} sec";
             lblStatus2.Text = $"FFTs processed: {spec.FftsProcessed:N0}";
             pbAmplitude.Value = (int)(listener.AmplitudeFrac * pbAmplitude.Maximum);

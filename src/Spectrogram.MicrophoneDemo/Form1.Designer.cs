@@ -41,6 +41,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.tbBrightness = new System.Windows.Forms.TrackBar();
             this.cbDecibels = new System.Windows.Forms.CheckBox();
+            this.cbRoll = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).BeginInit();
@@ -155,12 +156,23 @@
             this.cbDecibels.Text = "dB";
             this.cbDecibels.UseVisualStyleBackColor = true;
             // 
+            // cbRoll
+            // 
+            this.cbRoll.AutoSize = true;
+            this.cbRoll.Location = new System.Drawing.Point(411, 28);
+            this.cbRoll.Name = "cbRoll";
+            this.cbRoll.Size = new System.Drawing.Size(44, 17);
+            this.cbRoll.TabIndex = 8;
+            this.cbRoll.Text = "Roll";
+            this.cbRoll.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(1024, 598);
+            this.Controls.Add(this.cbRoll);
             this.Controls.Add(this.cbDecibels);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.statusStrip1);
@@ -194,6 +206,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TrackBar tbBrightness;
         private System.Windows.Forms.CheckBox cbDecibels;
+        private System.Windows.Forms.CheckBox cbRoll;
     }
 }
 
