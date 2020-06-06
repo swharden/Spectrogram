@@ -13,10 +13,12 @@ namespace Spectrogram
         public readonly double FftLengthSec;
         public readonly double FreqNyquist;
         public readonly double HzPerPixel;
+        public readonly double PxPerHz;
         public readonly int FftIndex1;
         public readonly int FftIndex2;
         public readonly double FreqMin;
         public readonly double FreqMax;
+        public readonly double FreqSpan;
         public readonly int Height;
 
         // horizontal information
@@ -41,11 +43,13 @@ namespace Spectrogram
             // vertical
             FreqNyquist = sampleRate / 2;
             HzPerPixel = (double)sampleRate / fftSize;
+            PxPerHz = (double)fftSize / sampleRate;
             FftIndex1 = (minFreq == 0) ? 0 : (int)(minFreq / HzPerPixel);
             FftIndex2 = (maxFreq > fftSize / 2) ? fftSize / 2 : (int)(maxFreq / HzPerPixel);
             Height = FftIndex2 - FftIndex1;
             FreqMin = FftIndex1 * HzPerPixel;
             FreqMax = FftIndex2 * HzPerPixel;
+            FreqSpan = FreqMax - FreqMin;
 
             // horizontal
             StepLengthSec = (double)StepSize / sampleRate;

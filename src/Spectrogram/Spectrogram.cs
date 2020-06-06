@@ -143,5 +143,10 @@ namespace Spectrogram
                     ffts.Insert(0, new double[Height]);
             }
         }
+
+        public Bitmap GetVerticalScale(int width)
+        {
+            return Scale.Vertical(width, settings);
+        }
     }
 }

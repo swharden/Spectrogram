@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.cbDevice = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.pbSpectrogram = new System.Windows.Forms.PictureBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.lblStatus1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.lblStatus2 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -45,10 +45,12 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.cbFftSize = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.pbScaleVert = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.pbSpectrogram)).BeginInit();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).BeginInit();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbScaleVert)).BeginInit();
             this.SuspendLayout();
             // 
             // cbDevice
@@ -70,16 +72,16 @@
             this.label1.TabIndex = 1;
             this.label1.Text = "Device";
             // 
-            // pictureBox1
+            // pbSpectrogram
             // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.pbSpectrogram.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox1.BackColor = System.Drawing.Color.Black;
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(909, 512);
-            this.pictureBox1.TabIndex = 2;
-            this.pictureBox1.TabStop = false;
+            this.pbSpectrogram.BackColor = System.Drawing.Color.Black;
+            this.pbSpectrogram.Location = new System.Drawing.Point(0, 0);
+            this.pbSpectrogram.Name = "pbSpectrogram";
+            this.pbSpectrogram.Size = new System.Drawing.Size(901, 512);
+            this.pbSpectrogram.TabIndex = 2;
+            this.pbSpectrogram.TabStop = false;
             // 
             // statusStrip1
             // 
@@ -90,7 +92,7 @@
             this.pbAmplitude});
             this.statusStrip1.Location = new System.Drawing.Point(0, 567);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(933, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1032, 22);
             this.statusStrip1.TabIndex = 3;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -114,7 +116,7 @@
             // 
             this.lblStatus3.AutoSize = false;
             this.lblStatus3.Name = "lblStatus3";
-            this.lblStatus3.Size = new System.Drawing.Size(316, 17);
+            this.lblStatus3.Size = new System.Drawing.Size(415, 17);
             this.lblStatus3.Spring = true;
             this.lblStatus3.Text = "toolStripStatusLabel1";
             this.lblStatus3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -179,10 +181,11 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.AutoScroll = true;
             this.panel1.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.panel1.Controls.Add(this.pictureBox1);
+            this.panel1.Controls.Add(this.pbScaleVert);
+            this.panel1.Controls.Add(this.pbSpectrogram);
             this.panel1.Location = new System.Drawing.Point(12, 52);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(909, 512);
+            this.panel1.Size = new System.Drawing.Size(1008, 512);
             this.panel1.TabIndex = 10;
             // 
             // cbFftSize
@@ -204,11 +207,21 @@
             this.label3.TabIndex = 12;
             this.label3.Text = "FFT Size";
             // 
+            // pbScaleVert
+            // 
+            this.pbScaleVert.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbScaleVert.BackColor = System.Drawing.Color.Navy;
+            this.pbScaleVert.Location = new System.Drawing.Point(901, 0);
+            this.pbScaleVert.Name = "pbScaleVert";
+            this.pbScaleVert.Size = new System.Drawing.Size(107, 512);
+            this.pbScaleVert.TabIndex = 3;
+            this.pbScaleVert.TabStop = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(933, 589);
+            this.ClientSize = new System.Drawing.Size(1032, 589);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.cbFftSize);
             this.Controls.Add(this.panel1);
@@ -222,11 +235,12 @@
             this.Name = "Form1";
             this.Text = "Spectrogram Microphone Demo";
             this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbSpectrogram)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).EndInit();
             this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pbScaleVert)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -236,7 +250,7 @@
 
         private System.Windows.Forms.ComboBox cbDevice;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox pbSpectrogram;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel lblStatus1;
         private System.Windows.Forms.ToolStripStatusLabel lblStatus2;
@@ -250,6 +264,7 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.ComboBox cbFftSize;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.PictureBox pbScaleVert;
     }
 }
 
