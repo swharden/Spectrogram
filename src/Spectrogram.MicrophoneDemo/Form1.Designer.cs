@@ -42,9 +42,13 @@
             this.tbBrightness = new System.Windows.Forms.TrackBar();
             this.cbDecibels = new System.Windows.Forms.CheckBox();
             this.cbRoll = new System.Windows.Forms.CheckBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.cbFftSize = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).BeginInit();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // cbDevice
@@ -68,10 +72,12 @@
             // 
             // pictureBox1
             // 
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.BackColor = System.Drawing.Color.Black;
-            this.pictureBox1.Location = new System.Drawing.Point(12, 52);
+            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(1000, 512);
+            this.pictureBox1.Size = new System.Drawing.Size(909, 512);
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
             // 
@@ -82,9 +88,9 @@
             this.lblStatus2,
             this.lblStatus3,
             this.pbAmplitude});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 576);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 567);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1024, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(933, 22);
             this.statusStrip1.TabIndex = 3;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -108,7 +114,7 @@
             // 
             this.lblStatus3.AutoSize = false;
             this.lblStatus3.Name = "lblStatus3";
-            this.lblStatus3.Size = new System.Drawing.Size(407, 17);
+            this.lblStatus3.Size = new System.Drawing.Size(316, 17);
             this.lblStatus3.Spring = true;
             this.lblStatus3.Text = "toolStripStatusLabel1";
             this.lblStatus3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -130,7 +136,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(136, 9);
+            this.label2.Location = new System.Drawing.Point(263, 9);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(56, 13);
             this.label2.TabIndex = 5;
@@ -138,7 +144,7 @@
             // 
             // tbBrightness
             // 
-            this.tbBrightness.Location = new System.Drawing.Point(139, 25);
+            this.tbBrightness.Location = new System.Drawing.Point(266, 24);
             this.tbBrightness.Maximum = 100;
             this.tbBrightness.Name = "tbBrightness";
             this.tbBrightness.Size = new System.Drawing.Size(220, 45);
@@ -149,7 +155,7 @@
             // cbDecibels
             // 
             this.cbDecibels.AutoSize = true;
-            this.cbDecibels.Location = new System.Drawing.Point(366, 28);
+            this.cbDecibels.Location = new System.Drawing.Point(493, 28);
             this.cbDecibels.Name = "cbDecibels";
             this.cbDecibels.Size = new System.Drawing.Size(39, 17);
             this.cbDecibels.TabIndex = 7;
@@ -159,24 +165,57 @@
             // cbRoll
             // 
             this.cbRoll.AutoSize = true;
-            this.cbRoll.Location = new System.Drawing.Point(411, 28);
+            this.cbRoll.Location = new System.Drawing.Point(538, 28);
             this.cbRoll.Name = "cbRoll";
             this.cbRoll.Size = new System.Drawing.Size(44, 17);
             this.cbRoll.TabIndex = 8;
             this.cbRoll.Text = "Roll";
             this.cbRoll.UseVisualStyleBackColor = true;
             // 
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.AutoScroll = true;
+            this.panel1.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.panel1.Controls.Add(this.pictureBox1);
+            this.panel1.Location = new System.Drawing.Point(12, 52);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(909, 512);
+            this.panel1.TabIndex = 10;
+            // 
+            // cbFftSize
+            // 
+            this.cbFftSize.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbFftSize.FormattingEnabled = true;
+            this.cbFftSize.Location = new System.Drawing.Point(139, 25);
+            this.cbFftSize.Name = "cbFftSize";
+            this.cbFftSize.Size = new System.Drawing.Size(121, 21);
+            this.cbFftSize.TabIndex = 11;
+            this.cbFftSize.SelectedIndexChanged += new System.EventHandler(this.cbFftSize_SelectedIndexChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(136, 9);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(49, 13);
+            this.label3.TabIndex = 12;
+            this.label3.Text = "FFT Size";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(1024, 598);
+            this.ClientSize = new System.Drawing.Size(933, 589);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.cbFftSize);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.cbRoll);
             this.Controls.Add(this.cbDecibels);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.tbBrightness);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cbDevice);
@@ -187,6 +226,7 @@
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).EndInit();
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -207,6 +247,9 @@
         private System.Windows.Forms.TrackBar tbBrightness;
         private System.Windows.Forms.CheckBox cbDecibels;
         private System.Windows.Forms.CheckBox cbRoll;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.ComboBox cbFftSize;
+        private System.Windows.Forms.Label label3;
     }
 }
 

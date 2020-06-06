@@ -17,6 +17,10 @@ namespace Spectrogram.MicrophoneDemo
         {
             InitializeComponent();
             PopulateMicrophoneList();
+
+            for (int i = 9; i < 16; i++)
+                cbFftSize.Items.Add($"2^{i} ({1 << i:N0})");
+            cbFftSize.SelectedIndex = 1;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -29,11 +33,11 @@ namespace Spectrogram.MicrophoneDemo
         private void StartListening()
         {
             int sampleRate = 6000;
-            int fftSize = 1 << 10;
+            int fftSize = 1 << (9 + cbFftSize.SelectedIndex);
+            int stepSize = fftSize / 20;
 
-            int columnsPerSecond = 50;
-            int stepSize = sampleRate / columnsPerSecond;
-
+            pictureBox1.Image?.Dispose();
+            pictureBox1.Image = null;
             listener?.Dispose();
             listener = new Listener(cbDevice.SelectedIndex, sampleRate);
             spec = new Spectrogram(sampleRate, fftSize, stepSize);
@@ -60,6 +64,11 @@ namespace Spectrogram.MicrophoneDemo
             StartListening();
         }
 
+        private void cbFftSize_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            StartListening();
+        }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             double[] newAudio = listener.GetNewAudio();
@@ -71,7 +80,7 @@ namespace Spectrogram.MicrophoneDemo
             {
                 Stopwatch sw = Stopwatch.StartNew();
                 spec.Process();
-                spec.TrimWidth(pictureBox1.Width);
+                spec.MakeWidth(pictureBox1.Width);
                 Bitmap bmp = spec.GetBitmap(multiplier, cbDecibels.Checked, cbRoll.Checked);
                 Bitmap bmp2 = new Bitmap(spec.Width, spec.Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
                 using (var gfx = Graphics.FromImage(bmp2))
