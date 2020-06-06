@@ -128,11 +128,20 @@ namespace Spectrogram
             return bmp;
         }
 
-        public void TrimWidth(int maxWidth)
+        public void MakeWidth(int targetWidth, bool trimOverhang = true, bool zeroPad = true)
         {
-            int overhang = Width - maxWidth;
-            if (overhang > 0)
-                ffts.RemoveRange(0, overhang);
+            if (trimOverhang)
+            {
+                int overhang = Width - targetWidth;
+                if (overhang > 0)
+                    ffts.RemoveRange(0, overhang);
+            }
+
+            if (zeroPad)
+            {
+                while (ffts.Count < targetWidth)
+                    ffts.Insert(0, new double[Height]);
+            }
         }
     }
 }
