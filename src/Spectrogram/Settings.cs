@@ -10,6 +10,7 @@ namespace Spectrogram
 
         // vertical information
         public readonly int FftSize;
+        public readonly double FftLengthSec;
         public readonly double FreqNyquist;
         public readonly double HzPerPixel;
         public readonly int FftIndex1;
@@ -19,29 +20,23 @@ namespace Spectrogram
         public readonly int Height;
 
         // horizontal information
-        public readonly int WindowSize;
-        public readonly double WindowLengthSec;
         public readonly double[] Window;
         public readonly int StepSize;
         public readonly double StepLengthSec;
         public readonly double StepOverlapFrac;
         public readonly double StepOverlapSec;
 
-        public Settings(int sampleRate, int fftSize, int windowSize, int stepSize,
+        public Settings(int sampleRate, int fftSize, int stepSize,
             double minFreq = 0, double maxFreq = double.PositiveInfinity)
         {
             if (FftSharp.Transform.IsPowerOfTwo(fftSize) == false)
                 throw new ArgumentException("FFT size must be a power of 2");
 
-            if (FftSharp.Transform.IsPowerOfTwo(windowSize) == false)
-                throw new ArgumentException("window size must be a power of 2");
-
             // FFT info
             SampleRate = sampleRate;
             FftSize = fftSize;
-            WindowSize = windowSize;
-            WindowLengthSec = (double)WindowSize / SampleRate;
             StepSize = stepSize;
+            FftLengthSec = (double)fftSize / sampleRate;
 
             // vertical
             FreqNyquist = sampleRate / 2;
@@ -54,9 +49,9 @@ namespace Spectrogram
 
             // horizontal
             StepLengthSec = (double)StepSize / sampleRate;
-            Window = FftSharp.Window.Hanning(WindowSize);
-            StepOverlapSec = WindowLengthSec - StepLengthSec;
-            StepOverlapFrac = StepOverlapSec / WindowLengthSec;
+            Window = FftSharp.Window.Hanning(fftSize);
+            StepOverlapSec = FftLengthSec - StepLengthSec;
+            StepOverlapFrac = StepOverlapSec / FftLengthSec;
         }
     }
 }

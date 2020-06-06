@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace Spectrogram
 {
@@ -16,10 +17,10 @@ namespace Spectrogram
         private readonly List<double[]> ffts = new List<double[]>();
         private readonly List<double> newAudio = new List<double>();
 
-        public Spectrogram(int sampleRate, int fftSize, int windowSize, int stepSize,
+        public Spectrogram(int sampleRate, int fftSize, int stepSize,
             double minFreq = 0, double maxFreq = double.PositiveInfinity)
         {
-            settings = new Settings(sampleRate, fftSize, windowSize, stepSize, minFreq, maxFreq);
+            settings = new Settings(sampleRate, fftSize, stepSize, minFreq, maxFreq);
         }
 
         public void Add(double[] audio)
@@ -29,26 +30,30 @@ namespace Spectrogram
 
         public void Process()
         {
-            int fftsToProcess = (newAudio.Count - settings.WindowSize) / settings.StepSize;
+            int fftsToProcess = (newAudio.Count - settings.FftSize) / settings.StepSize;
+            if (fftsToProcess < 1)
+                return;
 
-            for (int newFftIndex = 0; newFftIndex < fftsToProcess; newFftIndex++)
+            double[][] newFfts = new double[fftsToProcess][];
+
+            Parallel.For(0, fftsToProcess, newFftIndex =>
             {
-                // copy audio into complex buffer
-                Complex[] buffer = new Complex[settings.WindowSize];
+                Complex[] buffer = new Complex[settings.FftSize];
                 int sourceIndex = newFftIndex * settings.StepSize;
-                for (int i = 0; i < settings.WindowSize; i++)
-                    buffer[i] = new Complex(newAudio[sourceIndex] * settings.Window[i], 0);
+                for (int i = 0; i < settings.FftSize; i++)
+                    buffer[i] = new Complex(newAudio[sourceIndex + i] * settings.Window[i], 0);
 
-                // perform FFT
-                Console.WriteLine(buffer[100]);
                 FftSharp.Transform.FFT(buffer);
 
-                // get magnitude just from the region of interest
-                var newFft = new double[settings.Height];
+                newFfts[newFftIndex] = new double[settings.Height];
                 for (int i = 0; i < settings.Height; i++)
-                    newFft[i] = buffer[settings.FftIndex1 + i].Magnitude;
+                    newFfts[newFftIndex][i] = buffer[settings.FftIndex1 + i].Magnitude / settings.FftSize;
+            });
+
+            foreach (var newFft in newFfts)
                 ffts.Add(newFft);
-            }
+
+            newAudio.RemoveRange(0, fftsToProcess * settings.StepSize);
         }
 
         public Bitmap GetBitmap()
