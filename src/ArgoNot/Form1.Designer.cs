@@ -54,6 +54,9 @@
             this.timerWspr = new System.Windows.Forms.Timer(this.components);
             this.cbOffset = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
+            this.cbResolution = new System.Windows.Forms.ComboBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             this.pnlSpectrogram.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbSpectrogram)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbBackground)).BeginInit();
@@ -284,7 +287,7 @@
             // lblWspr
             // 
             this.lblWspr.AutoSize = true;
-            this.lblWspr.Location = new System.Drawing.Point(718, 7);
+            this.lblWspr.Location = new System.Drawing.Point(718, 8);
             this.lblWspr.Name = "lblWspr";
             this.lblWspr.Size = new System.Drawing.Size(82, 13);
             this.lblWspr.TabIndex = 20;
@@ -315,13 +318,47 @@
             this.label7.TabIndex = 22;
             this.label7.Text = "Dial Frequency";
             // 
+            // cbResolution
+            // 
+            this.cbResolution.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbResolution.FormattingEnabled = true;
+            this.cbResolution.Items.AddRange(new object[] {
+            "0.37 Hz / pixel",
+            "0.73 Hz / pixel"});
+            this.cbResolution.Location = new System.Drawing.Point(859, 25);
+            this.cbResolution.Name = "cbResolution";
+            this.cbResolution.Size = new System.Drawing.Size(121, 21);
+            this.cbResolution.TabIndex = 23;
+            this.cbResolution.SelectedIndexChanged += new System.EventHandler(this.cbResolution_SelectedIndexChanged);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(856, 8);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(57, 13);
+            this.label8.TabIndex = 24;
+            this.label8.Text = "Resolution";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(992, 12);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 25;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1189, 481);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.pnlAmplitude);
             this.Controls.Add(this.pnlSpectrogram);
+            this.Controls.Add(this.label8);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.lblTime);
             this.Controls.Add(this.label6);
@@ -330,6 +367,7 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.Controls.Add(this.cbResolution);
             this.Controls.Add(this.cbSave);
             this.Controls.Add(this.lblWspr);
             this.Controls.Add(this.btnWsprPath);
@@ -378,6 +416,9 @@
         private System.Windows.Forms.ComboBox cbOffset;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.PictureBox pbBackground;
+        private System.Windows.Forms.ComboBox cbResolution;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button button1;
     }
 }
 

@@ -24,6 +24,7 @@ namespace ArgoNot
             InitializeComponent();
             cbColormap.SelectedIndex = 0;
             cbWindow.SelectedIndex = 1;
+            cbResolution.SelectedIndex = 1;
 
             foreach (var band in WsprBands.GetBands())
                 cbOffset.Items.Add($"{band.name}: {band.dialFreq:N0} Hz");
@@ -97,7 +98,13 @@ namespace ArgoNot
         private void StartListening()
         {
             int sampleRate = 6000; // 48kHz / 8
-            int fftSize = 1 << 14; // 16384 (2.7 sec)
+
+            int fftSize;
+            if (cbResolution.SelectedIndex == 0)
+                fftSize = 1 << 14; // 16384 points, 2.73 sec, 0.37 Hz/Px
+            else
+                fftSize = 1 << 13; // 8192 points, 1.37 sec, 0.73 Hz/Px
+
             int widthPx = 1000;
             int stepSize = sampleRate * 60 * 10 / widthPx; // 10 minutes
             double freqMin = 0;
@@ -205,7 +212,7 @@ namespace ArgoNot
         {
             spec.ProcessAll();
 
-            Bitmap bmpSource = spec.GetBitmap(highlightIndex: true);
+            Bitmap bmpSource = spec.GetBitmap();
             Bitmap bmp = new Bitmap(bmpSource.Width, bmpSource.Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
             using (var gfx = Graphics.FromImage(bmp))
             using (var pen = new Pen(Color.Black))
@@ -216,13 +223,19 @@ namespace ArgoNot
             {
                 gfx.DrawImage(bmpSource, 0, 0);
 
+                // draw next index line
+                pen.Color = Color.White;
+                gfx.DrawLine(pen, spec.nextColumnIndex, 0, spec.nextColumnIndex, spec.Height);
+
                 // draw WSPR band limits
                 int bandMaxY = spec.PixelY(band.upperFreq - band.dialFreq);
                 int bandMinY = spec.PixelY(band.lowerFreq - band.dialFreq);
+                int qrssMinY = spec.PixelY(band.lowerFreq - band.dialFreq - 200);
                 pen.Color = Color.White;
                 pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
                 gfx.DrawLine(pen, 0, bandMaxY, spec.Width, bandMaxY);
                 gfx.DrawLine(pen, 0, bandMinY, spec.Width, bandMinY);
+                gfx.DrawLine(pen, 0, qrssMinY, spec.Width, qrssMinY);
 
                 // draw WSPR calls
                 for (int segment = 0; segment < 5; segment++)
@@ -303,6 +316,16 @@ namespace ArgoNot
         {
             band = WsprBands.GetBands()[cbOffset.SelectedIndex];
             UpdateTics();
+        }
+
+        private void cbResolution_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            StartListening();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var grab = new Grab(spec, band.lowerFreq - band.dialFreq - 200, band.upperFreq - band.dialFreq);
         }
     }
 }
