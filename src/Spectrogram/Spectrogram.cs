@@ -23,6 +23,15 @@ namespace Spectrogram
             settings = new Settings(sampleRate, fftSize, stepSize, minFreq, maxFreq);
         }
 
+        public void SetWindow(double[] newWindow)
+        {
+            if (newWindow.Length != settings.FftSize)
+                throw new ArgumentException("window length must equal FFT size");
+
+            for (int i=0; i<settings.FftSize; i++)
+                settings.Window[i] = newWindow[i];
+        }
+
         public void Add(double[] audio)
         {
             newAudio.AddRange(audio);
@@ -56,7 +65,7 @@ namespace Spectrogram
             newAudio.RemoveRange(0, fftsToProcess * settings.StepSize);
         }
 
-        public Bitmap GetBitmap()
+        public Bitmap GetBitmap(double multiplier = 1)
         {
             Bitmap bmp = new Bitmap(Width, Height, PixelFormat.Format8bppIndexed);
             new Colormaps.Viridis().Apply(bmp);
@@ -70,7 +79,7 @@ namespace Spectrogram
             {
                 for (int row = 0; row < Height; row++)
                 {
-                    double value = ffts[col][row] * (1 << 32);
+                    double value = ffts[col][row] * multiplier;
                     value = Math.Min(value, 255);
                     int bytePosition = (Height - 1 - row) * stride + col;
                     bytes[bytePosition] = (byte)value;
