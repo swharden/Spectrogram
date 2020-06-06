@@ -88,7 +88,7 @@ namespace Spectrogram
             newAudio.RemoveRange(0, newFftCount * settings.StepSize);
         }
 
-        public Bitmap GetBitmap(double multiplier = 1)
+        public Bitmap GetBitmap(double multiplier = 1, bool dB = false)
         {
             if (Width == 0)
                 return null;
@@ -105,7 +105,10 @@ namespace Spectrogram
             {
                 for (int row = 0; row < Height; row++)
                 {
-                    double value = ffts[col][row] * multiplier;
+                    double value = ffts[col][row];
+                    if (dB)
+                        value = 20 * Math.Log10(value + 1);
+                    value *= multiplier;
                     value = Math.Min(value, 255);
                     int bytePosition = (Height - 1 - row) * stride + col;
                     bytes[bytePosition] = (byte)value;

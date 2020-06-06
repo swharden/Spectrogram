@@ -38,8 +38,12 @@
             this.lblStatus3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.pbAmplitude = new System.Windows.Forms.ToolStripProgressBar();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.label2 = new System.Windows.Forms.Label();
+            this.tbBrightness = new System.Windows.Forms.TrackBar();
+            this.cbDecibels = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.statusStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).BeginInit();
             this.SuspendLayout();
             // 
             // cbDevice
@@ -122,14 +126,46 @@
             this.timer1.Interval = 1;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(136, 9);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(56, 13);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Brightness";
+            // 
+            // tbBrightness
+            // 
+            this.tbBrightness.Location = new System.Drawing.Point(139, 25);
+            this.tbBrightness.Maximum = 100;
+            this.tbBrightness.Name = "tbBrightness";
+            this.tbBrightness.Size = new System.Drawing.Size(220, 45);
+            this.tbBrightness.TabIndex = 6;
+            this.tbBrightness.TickFrequency = 2;
+            this.tbBrightness.Value = 5;
+            // 
+            // cbDecibels
+            // 
+            this.cbDecibels.AutoSize = true;
+            this.cbDecibels.Location = new System.Drawing.Point(366, 28);
+            this.cbDecibels.Name = "cbDecibels";
+            this.cbDecibels.Size = new System.Drawing.Size(39, 17);
+            this.cbDecibels.TabIndex = 7;
+            this.cbDecibels.Text = "dB";
+            this.cbDecibels.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(1024, 598);
+            this.Controls.Add(this.cbDecibels);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.tbBrightness);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cbDevice);
             this.Name = "Form1";
@@ -138,6 +174,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -154,6 +191,9 @@
         private System.Windows.Forms.ToolStripProgressBar pbAmplitude;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.ToolStripStatusLabel lblStatus3;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TrackBar tbBrightness;
+        private System.Windows.Forms.CheckBox cbDecibels;
     }
 }
 

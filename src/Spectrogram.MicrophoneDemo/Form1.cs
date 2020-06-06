@@ -65,12 +65,14 @@ namespace Spectrogram.MicrophoneDemo
             double[] newAudio = listener.GetNewAudio();
             spec.Add(newAudio);
 
+            double multiplier = tbBrightness.Value / 20.0;
+
             if (spec.FftsToProcess > 0)
             {
                 Stopwatch sw = Stopwatch.StartNew();
                 spec.Process();
                 spec.TrimWidth(pictureBox1.Width);
-                Bitmap bmp = spec.GetBitmap();
+                Bitmap bmp = spec.GetBitmap(multiplier, cbDecibels.Checked);
                 sw.Stop();
                 pictureBox1.Image?.Dispose();
                 pictureBox1.Image = bmp;

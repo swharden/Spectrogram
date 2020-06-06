@@ -46,18 +46,24 @@ namespace Spectrogram.MicrophoneDemo
                 buffer[i] = BitConverter.ToInt16(args.Buffer, i * bytesPerSample);
                 peak = Math.Max(peak, buffer[i]);
             }
-            audio.AddRange(buffer);
+            lock (audio)
+            {
+                audio.AddRange(buffer);
+            }
             AmplitudeFrac = peak / (1 << 15);
             TotalSamples += newSampleCount;
         }
 
         public double[] GetNewAudio()
         {
-            double[] values = new double[audio.Count];
-            for (int i = 0; i < values.Length; i++)
-                values[i] = audio[i];
-            audio.RemoveRange(0, values.Length);
-            return values;
+            lock (audio)
+            {
+                double[] values = new double[audio.Count];
+                for (int i = 0; i < values.Length; i++)
+                    values[i] = audio[i];
+                audio.RemoveRange(0, values.Length);
+                return values;
+            }
         }
     }
 }
