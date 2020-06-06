@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30128.74
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spectrogram", "Spectrogram\Spectrogram.csproj", "{6FF83EDD-E18A-4EDD-8D53-D2281515AC47}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spectrogram", "Spectrogram\Spectrogram.csproj", "{6FF83EDD-E18A-4EDD-8D53-D2281515AC47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spectrogram.Dev", "Spectrogram.Dev\Spectrogram.Dev.csproj", "{8C42A3FE-BE35-46EE-AF09-09427941E857}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spectrogram.Dev", "Spectrogram.Dev\Spectrogram.Dev.csproj", "{8C42A3FE-BE35-46EE-AF09-09427941E857}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spectrogram.MicrophoneDemo", "Spectrogram.MicrophoneDemo\Spectrogram.MicrophoneDemo.csproj", "{D51ABC6A-53F4-4620-88A1-14EA1D779538}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{8C42A3FE-BE35-46EE-AF09-09427941E857}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C42A3FE-BE35-46EE-AF09-09427941E857}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C42A3FE-BE35-46EE-AF09-09427941E857}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D51ABC6A-53F4-4620-88A1-14EA1D779538}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D51ABC6A-53F4-4620-88A1-14EA1D779538}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D51ABC6A-53F4-4620-88A1-14EA1D779538}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D51ABC6A-53F4-4620-88A1-14EA1D779538}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
