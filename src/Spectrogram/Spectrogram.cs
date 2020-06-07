@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -47,11 +48,14 @@ namespace Spectrogram
 
         public void SetWindow(double[] newWindow)
         {
-            if (newWindow.Length != settings.FftSize)
-                throw new ArgumentException("window length must equal FFT size");
+            if (newWindow.Length > settings.FftSize)
+                throw new ArgumentException("window length cannot exceed FFT size");
 
             for (int i = 0; i < settings.FftSize; i++)
-                settings.Window[i] = newWindow[i];
+                settings.Window[i] = 0;
+
+            int offset = (settings.FftSize - newWindow.Length) / 2;
+            Array.Copy(newWindow, 0, settings.Window, offset, newWindow.Length);
         }
 
         public void Add(double[] audio)
@@ -96,8 +100,28 @@ namespace Spectrogram
 
         public Bitmap GetBitmap(double multiplier = 1, bool dB = false, bool roll = false)
         {
-            if (Width == 0)
-                return null;
+            return _GetBitmap(ffts, multiplier, dB, roll, FftsProcessed);
+        }
+
+        public Bitmap GetBitmapMax(double multiplier = 1, bool dB = false, bool roll = false, int reduction = 4)
+        {
+            List<double[]> ffts2 = new List<double[]>();
+            for (int i = 0; i < ffts.Count; i++)
+            {
+                double[] d1 = ffts[i];
+                double[] d2 = new double[d1.Length / reduction];
+                for (int j = 0; j < d2.Length; j++)
+                    for (int k = 0; k < reduction; k++)
+                        d2[j] = Math.Max(d2[j], d1[j * reduction + k]);
+                ffts2.Add(d2);
+            }
+            return _GetBitmap(ffts2, multiplier, dB, roll, FftsProcessed);
+        }
+
+        private static Bitmap _GetBitmap(List<double[]> ffts, double multiplier = 1, bool dB = false, bool roll = false, int FftsProcessed = 0)
+        {
+            int Width = ffts.Count;
+            int Height = ffts[0].Length;
 
             Bitmap bmp = new Bitmap(Width, Height, PixelFormat.Format8bppIndexed);
             new Colormaps.Viridis().Apply(bmp);
