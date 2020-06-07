@@ -10,8 +10,8 @@ namespace Spectrogram.Dev
             double[] audio = Read.WavInt16mono("../../../../../data/qrss-10min.wav");
             double[] window = FftSharp.Window.Hanning(1 << 14);
 
-            Test_1x(audio, 6000, window);
-            Test_4x(audio, 6000, window);
+            //Test_1x(audio, 6000, window);
+            //Test_4x(audio, 6000, window);
         }
 
         static void Test_1x(double[] audio, int sampleRate, double[] window)
@@ -24,7 +24,7 @@ namespace Spectrogram.Dev
 
             spec.Add(audio);
             spec.Process();
-            Bitmap bmp = spec.GetBitmap(multiplier: 2);
+            Bitmap bmp = spec.GetBitmap(intensity: 2);
             bmp.Save("test-1x.bmp");
         }
 
@@ -38,7 +38,7 @@ namespace Spectrogram.Dev
 
             spec.Add(audio);
             spec.Process();
-            Bitmap bmp = spec.GetBitmapMax(multiplier: 2 * 3, reduction: 4);
+            Bitmap bmp = spec.GetBitmapMax(intensity: 2 * 3, reduction: 4);
             bmp.Save("test-4x.bmp");
         }
     }
