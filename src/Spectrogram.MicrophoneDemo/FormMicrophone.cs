@@ -63,7 +63,7 @@ namespace Spectrogram.MicrophoneDemo
         private void timer1_Tick(object sender, EventArgs e)
         {
             double[] newAudio = listener.GetNewAudio();
-            spec.Add(newAudio);
+            spec.Add(newAudio, process: false);
 
             double multiplier = tbBrightness.Value / 20.0;
 

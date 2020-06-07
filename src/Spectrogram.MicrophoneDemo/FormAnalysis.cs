@@ -61,7 +61,7 @@ namespace Spectrogram.MicrophoneDemo
             double[] newAudio = listener.GetNewAudio();
             pnlAmpInner.Width = (int)(listener.AmplitudeFrac * pnlAmpOuter.Width);
 
-            spec.Add(newAudio);
+            spec.Add(newAudio, process: false);
             double[][] newFfts = spec.Process();
             if (newFfts is null)
                 return;
