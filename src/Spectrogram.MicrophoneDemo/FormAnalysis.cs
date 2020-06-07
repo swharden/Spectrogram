@@ -84,7 +84,7 @@ namespace Spectrogram.MicrophoneDemo
             using (Bitmap bmpIndexed = Image.Create(pixelValues, nextColIndex))
             using (Graphics gfx = Graphics.FromImage(bmp))
             {
-                new Colormaps.Viridis().Apply(bmpIndexed);
+                new Colormap.Viridis().Apply(bmpIndexed);
                 gfx.DrawImage(bmpIndexed, 0, 0);
                 gfx.DrawLine(Pens.White, nextColIndex, 0, nextColIndex, spec.Height);
             }

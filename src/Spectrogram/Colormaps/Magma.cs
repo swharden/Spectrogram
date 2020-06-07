@@ -1,35 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.Text;
 
 namespace Spectrogram.Colormaps
 {
-    public class Magma : IColormap
+    class Magma : Colormap
     {
-        public string GetName()
+        public override (byte r, byte g, byte b) GetRGB(byte value)
         {
-            return "Magma"; // TODO: use reflection
-        }
-
-        public void Apply(Bitmap bmp)
-        {
-            ColorPalette pal = bmp.Palette;
-            for (int i = 0; i < 256; i++)
-                pal.Entries[i] = Color.FromArgb(255, RGB[i, 0], RGB[i, 1], RGB[i, 2]);
-            bmp.Palette = pal;
-        }
-
-        public (byte r, byte g, byte b) Lookup(int value)
-        {
-            value = Math.Max(value, 0);
-            value = Math.Min(value, 255);
             return (RGB[value, 0], RGB[value, 1], RGB[value, 2]);
         }
 
-        // magma
-        public readonly byte[,] RGB =
+        private readonly byte[,] RGB =
         {
             {0, 0, 3},
             {0, 0, 4},
@@ -288,6 +270,5 @@ namespace Spectrogram.Colormaps
             {252, 251, 189},
             {252, 253, 191},
         };
-
     }
 }

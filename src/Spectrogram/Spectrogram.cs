@@ -17,6 +17,7 @@ namespace Spectrogram
         private readonly Settings settings;
         public readonly List<double[]> ffts = new List<double[]>(); // TODO: private
         private readonly List<double> newAudio = new List<double>();
+        private Colormaps.Colormap cmap = Colormap.GetColormap();
 
         public Spectrogram(int sampleRate, int fftSize, int stepSize,
             double minFreq = 0, double maxFreq = double.PositiveInfinity,
@@ -44,6 +45,11 @@ namespace Spectrogram
                    $"window: {settings.FftLengthSec:N2} sec, " +
                    $"step: {settings.StepLengthSec:N2} sec, " +
                    $"overlap: {settings.StepOverlapFrac * 100:N0}%";
+        }
+
+        public void SetColormap(Colormap.Name colormapName)
+        {
+            cmap = Colormap.GetColormap(colormapName);
         }
 
         public void SetWindow(double[] newWindow)
@@ -101,7 +107,7 @@ namespace Spectrogram
         }
 
         public Bitmap GetBitmap(double intensity = 1, bool dB = false, bool roll = false) =>
-            _GetBitmap(ffts, intensity, dB, roll, FftsProcessed);
+            _GetBitmap(ffts, cmap, intensity, dB, roll, FftsProcessed);
 
         public void SaveImage(string fileName, double intensity = 1, bool dB = false, bool roll = false)
         {
@@ -119,7 +125,7 @@ namespace Spectrogram
             else
                 throw new ArgumentException("unknown file extension");
 
-            _GetBitmap(ffts, intensity, dB, roll, FftsProcessed).Save(fileName, fmt);
+            _GetBitmap(ffts, cmap, intensity, dB, roll, FftsProcessed).Save(fileName, fmt);
         }
 
         public Bitmap GetBitmapMax(double intensity = 1, bool dB = false, bool roll = false, int reduction = 4)
@@ -134,16 +140,16 @@ namespace Spectrogram
                         d2[j] = Math.Max(d2[j], d1[j * reduction + k]);
                 ffts2.Add(d2);
             }
-            return _GetBitmap(ffts2, intensity, dB, roll, FftsProcessed);
+            return _GetBitmap(ffts2, cmap, intensity, dB, roll, FftsProcessed);
         }
 
-        private static Bitmap _GetBitmap(List<double[]> ffts, double intensity = 1, bool dB = false, bool roll = false, int FftsProcessed = 0)
+        private static Bitmap _GetBitmap(List<double[]> ffts, Colormaps.Colormap cmap, double intensity = 1, bool dB = false, bool roll = false, int FftsProcessed = 0)
         {
             int Width = ffts.Count;
             int Height = ffts[0].Length;
 
             Bitmap bmp = new Bitmap(Width, Height, PixelFormat.Format8bppIndexed);
-            new Colormaps.Viridis().Apply(bmp);
+            cmap.Apply(bmp);
 
             var lockRect = new Rectangle(0, 0, Width, Height);
             BitmapData bitmapData = bmp.LockBits(lockRect, ImageLockMode.ReadOnly, bmp.PixelFormat);
