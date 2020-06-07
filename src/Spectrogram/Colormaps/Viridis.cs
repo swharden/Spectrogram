@@ -4,9 +4,9 @@ using System.Drawing.Imaging;
 
 namespace Spectrogram.Colormaps
 {
-    public class Viridis : Colormap
+    public class Viridis : IColormap
     {
-        public override (byte r, byte g, byte b) GetRGB(byte value)
+        public (byte r, byte g, byte b) GetRGB(byte value)
         {
             return (RGB[value, 0], RGB[value, 1], RGB[value, 2]);
         }

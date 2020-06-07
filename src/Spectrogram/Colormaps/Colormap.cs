@@ -6,6 +6,7 @@ using System.Text;
 
 namespace Spectrogram.Colormaps
 {
+    [Obsolete("DONT USE", true)]
     public abstract class Colormap
     {
         // each colormap must implement its own lookup method

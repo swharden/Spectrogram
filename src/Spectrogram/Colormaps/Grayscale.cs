@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Spectrogram.Colormaps
 {
-    class Grayscale : Colormap
+    class Grayscale : IColormap
     {
-        public override (byte r, byte g, byte b) GetRGB(byte value)
+        public (byte r, byte g, byte b) GetRGB(byte value)
         {
             return (value, value, value);
         }

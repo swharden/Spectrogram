@@ -17,7 +17,7 @@ namespace Spectrogram
         private readonly Settings settings;
         public readonly List<double[]> ffts = new List<double[]>(); // TODO: private
         private readonly List<double> newAudio = new List<double>();
-        private Colormaps.Colormap cmap = Colormap.GetColormap();
+        private Colormap cmap = Colormap.Viridis;
 
         public Spectrogram(int sampleRate, int fftSize, int stepSize,
             double minFreq = 0, double maxFreq = double.PositiveInfinity,
@@ -47,9 +47,9 @@ namespace Spectrogram
                    $"overlap: {settings.StepOverlapFrac * 100:N0}%";
         }
 
-        public void SetColormap(Colormap.Name colormapName)
+        public void SetColormap(Colormap cmap)
         {
-            cmap = Colormap.GetColormap(colormapName);
+            this.cmap = cmap ?? this.cmap;
         }
 
         public void SetWindow(double[] newWindow)
@@ -143,7 +143,7 @@ namespace Spectrogram
             return _GetBitmap(ffts2, cmap, intensity, dB, roll, FftsProcessed);
         }
 
-        private static Bitmap _GetBitmap(List<double[]> ffts, Colormaps.Colormap cmap, double intensity = 1, bool dB = false, bool roll = false, int FftsProcessed = 0)
+        private static Bitmap _GetBitmap(List<double[]> ffts, Colormap cmap, double intensity = 1, bool dB = false, bool roll = false, int FftsProcessed = 0)
         {
             int Width = ffts.Count;
             int Height = ffts[0].Length;
