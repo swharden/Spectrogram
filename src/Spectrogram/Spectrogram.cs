@@ -58,9 +58,11 @@ namespace Spectrogram
             Array.Copy(newWindow, 0, settings.Window, offset, newWindow.Length);
         }
 
-        public void Add(double[] audio)
+        public void Add(double[] audio, bool process = true)
         {
             newAudio.AddRange(audio);
+            if (process)
+                Process();
         }
 
         public int FftsToProcess { get { return (newAudio.Count - settings.FftSize) / settings.StepSize; } }
