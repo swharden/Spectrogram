@@ -100,7 +100,7 @@ namespace Spectrogram
             int stride = bitmapData.Stride;
 
             byte[] bytes = new byte[bitmapData.Stride * bmp.Height];
-            for (int col = 0; col < Width; col++)
+            Parallel.For(0, Width, col =>
             {
                 int sourceCol = col;
                 if (roll)
@@ -120,7 +120,7 @@ namespace Spectrogram
                     int bytePosition = (Height - 1 - row) * stride + col;
                     bytes[bytePosition] = (byte)value;
                 }
-            }
+            });
 
             Marshal.Copy(bytes, 0, bitmapData.Scan0, bytes.Length);
             bmp.UnlockBits(bitmapData);
