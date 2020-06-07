@@ -57,5 +57,10 @@ namespace Spectrogram
             StepOverlapSec = FftLengthSec - StepLengthSec;
             StepOverlapFrac = StepOverlapSec / FftLengthSec;
         }
+
+        public int PixelY(double freq)
+        {
+            return (int)(Height - (freq - FreqMin + HzPerPixel) * PxPerHz - 1);
+        }
     }
 }

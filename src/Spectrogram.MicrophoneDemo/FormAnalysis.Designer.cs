@@ -1,6 +1,6 @@
 ﻿namespace Spectrogram.MicrophoneDemo
 {
-    partial class FormQrssTest
+    partial class FormAnalysis
     {
         /// <summary>
         /// Required designer variable.
@@ -85,7 +85,7 @@
             this.panel1.Controls.Add(this.pbSpectrogram);
             this.panel1.Location = new System.Drawing.Point(0, 52);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(977, 542);
+            this.panel1.Size = new System.Drawing.Size(1124, 443);
             this.panel1.TabIndex = 11;
             // 
             // pbScaleVert
@@ -151,13 +151,15 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(977, 594);
+            this.ClientSize = new System.Drawing.Size(1124, 495);
             this.Controls.Add(this.nudBrightness);
             this.Controls.Add(this.pnlAmpOuter);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cbDevice);
+            this.MaximumSize = new System.Drawing.Size(1140, 99999);
+            this.MinimumSize = new System.Drawing.Size(1140, 39);
             this.Name = "FormQrssTest";
             this.Text = "FormQrssTest";
             this.Load += new System.EventHandler(this.FormQrssTest_Load);

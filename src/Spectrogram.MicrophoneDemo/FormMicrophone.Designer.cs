@@ -1,6 +1,6 @@
 ﻿namespace Spectrogram.MicrophoneDemo
 {
-    partial class Form1
+    partial class FormMicrophone
     {
         /// <summary>
         /// Required designer variable.

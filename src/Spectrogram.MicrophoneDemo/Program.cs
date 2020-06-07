@@ -16,7 +16,7 @@ namespace Spectrogram.MicrophoneDemo
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FormQrssTest());
+            Application.Run(new FormMenu());
         }
     }
 }

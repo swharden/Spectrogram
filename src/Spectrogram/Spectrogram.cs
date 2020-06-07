@@ -14,13 +14,17 @@ namespace Spectrogram
         public int Height { get { return settings.Height; } }
 
         private readonly Settings settings;
-        private readonly List<double[]> ffts = new List<double[]>();
+        public readonly List<double[]> ffts = new List<double[]>(); // TODO: private
         private readonly List<double> newAudio = new List<double>();
 
         public Spectrogram(int sampleRate, int fftSize, int stepSize,
-            double minFreq = 0, double maxFreq = double.PositiveInfinity)
+            double minFreq = 0, double maxFreq = double.PositiveInfinity,
+            int? fixedWidth = null)
         {
             settings = new Settings(sampleRate, fftSize, stepSize, minFreq, maxFreq);
+
+            if (fixedWidth.HasValue)
+                SetFixedWidth(fixedWidth.Value);
         }
 
         public override string ToString()
@@ -58,10 +62,10 @@ namespace Spectrogram
         public int FftsToProcess { get { return (newAudio.Count - settings.FftSize) / settings.StepSize; } }
         public int FftsProcessed { get; private set; }
 
-        public void Process()
+        public double[][] Process()
         {
             if (FftsToProcess < 1)
-                return;
+                return null;
 
             int newFftCount = FftsToProcess;
             double[][] newFfts = new double[newFftCount][];
@@ -85,6 +89,9 @@ namespace Spectrogram
             FftsProcessed += newFfts.Length;
 
             newAudio.RemoveRange(0, newFftCount * settings.StepSize);
+            PadOrTrimForFixedWidth();
+
+            return newFfts;
         }
 
         public Bitmap GetBitmap(double multiplier = 1, bool dB = false, bool roll = false)
@@ -128,25 +135,29 @@ namespace Spectrogram
             return bmp;
         }
 
-        public void MakeWidth(int targetWidth, bool trimOverhang = true, bool zeroPad = true)
+        private int fixedWidth = 0;
+        public void SetFixedWidth(int width)
         {
-            if (trimOverhang)
+            fixedWidth = width;
+            PadOrTrimForFixedWidth();
+        }
+
+        private void PadOrTrimForFixedWidth()
+        {
+            if (fixedWidth > 0)
             {
-                int overhang = Width - targetWidth;
+                int overhang = Width - fixedWidth;
                 if (overhang > 0)
                     ffts.RemoveRange(0, overhang);
-            }
 
-            if (zeroPad)
-            {
-                while (ffts.Count < targetWidth)
+                while (ffts.Count < fixedWidth)
                     ffts.Insert(0, new double[Height]);
             }
         }
 
-        public Bitmap GetVerticalScale(int width)
+        public Bitmap GetVerticalScale(int width, int pxPerPx = 1)
         {
-            return Scale.Vertical(width, settings);
+            return Scale.Vertical(width, settings, pxPerPx: pxPerPx);
         }
     }
 }
