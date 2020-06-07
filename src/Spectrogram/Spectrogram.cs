@@ -100,12 +100,29 @@ namespace Spectrogram
             return newFfts;
         }
 
-        public Bitmap GetBitmap(double multiplier = 1, bool dB = false, bool roll = false)
+        public Bitmap GetBitmap(double intensity = 1, bool dB = false, bool roll = false) =>
+            _GetBitmap(ffts, intensity, dB, roll, FftsProcessed);
+
+        public void SaveImage(string fileName, double intensity = 1, bool dB = false, bool roll = false)
         {
-            return _GetBitmap(ffts, multiplier, dB, roll, FftsProcessed);
+            string extension = System.IO.Path.GetExtension(fileName).ToLower();
+
+            ImageFormat fmt;
+            if (extension == ".bmp")
+                fmt = ImageFormat.Bmp;
+            else if (extension == ".png")
+                fmt = ImageFormat.Png;
+            else if (extension == ".jpg" || extension == ".jpeg")
+                fmt = ImageFormat.Jpeg;
+            else if (extension == ".gif")
+                fmt = ImageFormat.Gif;
+            else
+                throw new ArgumentException("unknown file extension");
+
+            _GetBitmap(ffts, intensity, dB, roll, FftsProcessed).Save(fileName, fmt);
         }
 
-        public Bitmap GetBitmapMax(double multiplier = 1, bool dB = false, bool roll = false, int reduction = 4)
+        public Bitmap GetBitmapMax(double intensity = 1, bool dB = false, bool roll = false, int reduction = 4)
         {
             List<double[]> ffts2 = new List<double[]>();
             for (int i = 0; i < ffts.Count; i++)
@@ -117,10 +134,10 @@ namespace Spectrogram
                         d2[j] = Math.Max(d2[j], d1[j * reduction + k]);
                 ffts2.Add(d2);
             }
-            return _GetBitmap(ffts2, multiplier, dB, roll, FftsProcessed);
+            return _GetBitmap(ffts2, intensity, dB, roll, FftsProcessed);
         }
 
-        private static Bitmap _GetBitmap(List<double[]> ffts, double multiplier = 1, bool dB = false, bool roll = false, int FftsProcessed = 0)
+        private static Bitmap _GetBitmap(List<double[]> ffts, double intensity = 1, bool dB = false, bool roll = false, int FftsProcessed = 0)
         {
             int Width = ffts.Count;
             int Height = ffts[0].Length;
@@ -148,7 +165,7 @@ namespace Spectrogram
                     double value = ffts[sourceCol][row];
                     if (dB)
                         value = 20 * Math.Log10(value + 1);
-                    value *= multiplier;
+                    value *= intensity;
                     value = Math.Min(value, 255);
                     int bytePosition = (Height - 1 - row) * stride + col;
                     bytes[bytePosition] = (byte)value;
