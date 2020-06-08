@@ -41,12 +41,11 @@ namespace Spectrogram
 
             // vertical
             minFreq = Math.Max(minFreq, 0);
-            maxFreq = Math.Min(maxFreq, fftSize / 2);
             FreqNyquist = sampleRate / 2;
             HzPerPixel = (double)sampleRate / fftSize;
             PxPerHz = (double)fftSize / sampleRate;
-            FftIndex1 = (int)(minFreq / HzPerPixel);
-            FftIndex2 = (int)(maxFreq / HzPerPixel);
+            FftIndex1 = (minFreq == 0) ? 0 : (int)(minFreq / HzPerPixel);
+            FftIndex2 = (maxFreq >= FreqNyquist) ? fftSize / 2 : (int)(maxFreq / HzPerPixel);
             Height = FftIndex2 - FftIndex1;
             FreqMin = FftIndex1 * HzPerPixel;
             FreqMax = FftIndex2 * HzPerPixel;
