@@ -7,23 +7,28 @@ namespace Spectrogram
 {
     public class Colormap
     {
-        public static Colormap Viridis => new Colormap(new Colormaps.Viridis());
+        public static Colormap Argo => new Colormap(new Colormaps.Argo());
+        public static Colormap Blues => new Colormap(new Colormaps.Blues());
+        public static Colormap Cividis => new Colormap(new Colormaps.Cividis());
         public static Colormap Grayscale => new Colormap(new Colormaps.Grayscale());
+        public static Colormap Greens => new Colormap(new Colormaps.Greens());
+        public static Colormap Jet => new Colormap(new Colormaps.Jet());
+        public static Colormap Inferno => new Colormap(new Colormaps.Inferno());
+        public static Colormap Magma => new Colormap(new Colormaps.Magma());
+        public static Colormap Plasma => new Colormap(new Colormaps.Plasma());
+        public static Colormap Viridis => new Colormap(new Colormaps.Viridis());
 
         private readonly IColormap cmap;
+        public readonly string Name;
         public Colormap(IColormap colormap)
         {
             cmap = colormap ?? new Colormaps.Grayscale();
+            Name = cmap.GetType().Name;
         }
 
         public override string ToString()
         {
-            return $"Colormap {GetName()}";
-        }
-
-        public string GetName()
-        {
-            return cmap.GetType().Name;
+            return $"Colormap {Name}";
         }
 
         public (byte r, byte g, byte b) GetRGB(byte value)
