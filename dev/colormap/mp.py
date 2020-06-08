@@ -73,16 +73,14 @@ def colormapToIntegerText(cmapName="viridis"):
 
 if __name__ == "__main__":
 
-    colormapToIntegerText("viridis")
+    cmapNames = ["cividis", "gray", "inferno",
+                 "magma", "plasma", "viridis"]
 
-    # cmapNames = ["cividis", "gray", "inferno",
-    #              "magma", "plasma", "viridis"]
-
-    # for cmapName in cmapNames:
-    #     print(f"analyzing {cmapName}...")
-    #     colormapToIntegerText(cmapName)
-    #     # plotCmapCurves(cmapName)
-    #     # plt.savefig(f"analyzed2/{cmapName}.png")
-    #     # plt.close()
+    for cmapName in cmapNames:
+        print(f"analyzing {cmapName}...")
+        colormapToIntegerText(cmapName)
+        # plotCmapCurves(cmapName)
+        # plt.savefig(f"analyzed2/{cmapName}.png")
+        # plt.close()
 
 print("DONE")
