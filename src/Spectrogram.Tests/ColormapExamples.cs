@@ -13,10 +13,13 @@ namespace Spectrogram.Tests
         private void HalSpectrogram(Colormap cmap)
         {
             double[] audio = Read.WavInt16mono("../../../../../data/cant-do-that-44100.wav");
-            var spec = new Spectrogram(sampleRate: 44100, fftSize: 1 << 12, stepSize: 500, maxFreq: 3000);
+            int sampleRate = 44100;
+            int fftSize = 1 << 13;
+            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 200, maxFreq: 3000);
+            spec.SetWindow(FftSharp.Window.Hanning(fftSize/3)); // sharper window than typical
             spec.Add(audio);
             spec.SetColormap(cmap);
-            spec.SaveImage($"../../../../../dev/graphics/hal-{cmap.Name}.png", intensity: .2);
+            spec.SaveImage($"../../../../../dev/graphics/hal-{cmap.Name}.png", intensity: .5);
         }
         [Test]
 
