@@ -12,45 +12,29 @@ _"I'm sorry Dave... I'm afraid I can't do that"_
 
 ## Quickstart
 
-### Install
+_Spectrogram is [available on NuGet](https://www.nuget.org/packages/Spectrogram)_
 
-Spectrogram can be installed with NuGet:\
-https://www.nuget.org/packages/Spectrogram
-
-### Create a Spectrogram
-
-This code in [Program.cs](src/Spectrogram.Quickstart/Program.cs) was used to create the above image:
 ```cs
-(double[] audio, int sampleRate) = Read.MP3("cant-do-that.mp3");
+double[] audio = Read.WavInt16mono("hal.wav");
+int sampleRate = 44100;
 
-var spec = new Spectrogram(
-        signal: audio,
-        sampleRate: sampleRate,
-        fftSize: 4096,
-        stepSize: 500,
-        freqMax: 2500,
-    );
-
-spec.SaveJPG("output.jpg");
+var spec = new Spectrogram(sampleRate, fftSize: 4096, stepSize: 500, maxFreq: 3000);
+spec.Add(audio);
+spec.SaveImage("hal.png", intensity: .4);
 ```
 
-If you're using Spectrogram in a graphical application you may find it helpful to retrieve the output as a Bitmap suitable for applying to a Picturebox or similar control:
+This code generates the image displayed at the top of this page.
+
+## Windows Forms
+
+If you're using Spectrogram in a graphical application you may find it helpful to retrieve the output as a Bitmap which can be displayed on a Picturebox:
 
 ```cs
 Bitmap bmp = spec.GetBitmap();
 pictureBox1.Image = bmp;
 ```
 
-After calculating the Spectrogram (the slow step) FFT magnitudes are stored in memory so you can rapidly recalculate pixel intensities based on new parameters:
-
-```cs
-spec.Recalculate(
-        multiplier: 2.8,
-        dB: true,
-        cmap: new Inferno()
-    );
-spec.SaveJPG("output2.jpg");
-```
+I find it helpful to put the Picturebox inside a Panel with auto-scroll enabled, so large spectrograms which are bigger than the size of the window can be interactively displayed.
 
 ## Song-to-Spectrogram
 
@@ -61,7 +45,21 @@ This example demonstrates how to convert a MP3 file to a spectrogram image. A sa
 If you [listen to the audio track](https://www.youtube.com/watch?v=Mza-xqk770k) while closely inspecting the spectrogram you can identify individual piano notes and chords, and may be surprised by the interesting patterns that emerge around trills and glissandos.
 
 ```cs
-// TODO: update this example
+double[] audio = { /* read using Mp3Sharp */ }
+int sampleRate = 44100;
+
+var spec = new Spectrogram(sampleRate, fftSize: 16384, stepSize: 2500, maxFreq: 2200);
+spec.Add(audio);
+spec.SaveImage("spectrogram-song.jpg", intensity: 5, dB: true);
+```
+
+```cs
+Console.WriteLine(spec);
+```
+```
+Spectrogram (2993, 817)
+  Vertical (817 px): 0 - 2,199 Hz, FFT size: 16,384 samples, 2.69 Hz/px
+  Horizontal (2993 px): 2.96 min, window: 0.37 sec, step: 0.06 sec, overlap: 84%
 ```
 
 ## Colormaps
