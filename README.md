@@ -36,6 +36,42 @@ pictureBox1.Image = bmp;
 
 I find it helpful to put the Picturebox inside a Panel with auto-scroll enabled, so large spectrograms which are bigger than the size of the window can be interactively displayed.
 
+## Real-Time Spectrogram
+
+An example program is included in this repository which demonstrates how to use [NAudio](https://github.com/naudio/NAudio) to get samples from the sound card and display them as a spectrogram. Spectrogram was designed to be able to display spectrograms with live or growing data, so this is exceptionally easy to implement.
+
+![](dev/microphone-spectrogram.gif)
+
+To do this, keep your Spectrogram at the class level:
+```cs
+Spectrogram spec;
+
+public Form1()
+{
+    InitializeComponent();
+    spec = new Spectrogram(sampleRate, fftSize: 4096, stepSize: 500, maxFreq: 3000);
+}
+```
+
+Whenever an audio buffer gets filled, add the data to your Spectrogram:
+```cs
+private void GotNewBuffer(double[] audio)
+{
+    spec.Add(audio);
+}
+```
+
+Then set up a timer to trigger rendering:
+```cs
+private void timer1_Tick(object sender, EventArgs e){
+    Bitmap bmp = spec.GetBitmap(intensity: .4);
+    pictureBox1.Image?.Dispose();
+    pictureBox1.Image = bmp;
+}
+```
+
+Review the source code of the demo application for additional details and considerations. You'll found I abstracted the audio interfacing code into its own class, isolating it from the GUI code.
+
 ## Song-to-Spectrogram
 
 This example demonstrates how to convert a MP3 file to a spectrogram image. A sample MP3 audio file in the [data folder](data) contains the audio track from Ken Barker's excellent piano performance of George Frideric Handel's Suite No. 5 in E major for harpsichord ([_The Harmonious Blacksmith_](https://en.wikipedia.org/wiki/The_Harmonious_Blacksmith)). This audio file is included [with permission](dev/Handel%20-%20Air%20and%20Variations.txt), and the [original video can be viewed on YouTube](https://www.youtube.com/watch?v=Mza-xqk770k).
@@ -62,6 +98,7 @@ The Spectrogram's `ToString()` method displays detailed information about the sp
 ```cs
 Console.WriteLine(spec);
 ```
+
 ```
 Spectrogram (2993, 817)
   Vertical (817 px): 0 - 2,199 Hz, FFT size: 16,384 samples, 2.69 Hz/px
@@ -100,3 +137,4 @@ Viridis | ![](dev/colormap/analyzed2/viridis.png) | ![](dev/graphics/hal-Viridis
 * [FftSharp](https://github.com/swharden/FftSharp) - the module which actually performs the FFT and related transformations
 * [MP3Sharp](https://github.com/ZaneDubya/MP3Sharp) - a library I use to read MP3 files during testing
 * [FSKview](https://github.com/swharden/FSKview) - a real-time spectrogram for viewing frequency-shift-keyed (FSK) signals from audio transmitted over radio frequency.
+* [NAudio](https://github.com/naudio/NAudio) - an open source .NET library which makes it easy to get samples from the microphone or sound card in real time
