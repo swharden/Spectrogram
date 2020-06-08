@@ -73,7 +73,7 @@ def colormapToIntegerText(cmapName="viridis"):
 
 if __name__ == "__main__":
 
-    cmapNames = ["cividis", "gray", "inferno",
+    cmapNames = ["cividis", "gray", "gray_r", "inferno",
                  "jet", "magma", "plasma", "viridis"]
 
     for cmapName in cmapNames:

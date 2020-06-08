@@ -26,6 +26,7 @@ namespace Spectrogram.Tests
             HalSpectrogram(Colormap.Blues);
             HalSpectrogram(Colormap.Cividis);
             HalSpectrogram(Colormap.Grayscale);
+            HalSpectrogram(Colormap.GrayscaleReversed);
             HalSpectrogram(Colormap.Greens);
             HalSpectrogram(Colormap.Inferno);
             HalSpectrogram(Colormap.Jet);
