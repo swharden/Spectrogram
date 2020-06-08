@@ -20,7 +20,10 @@ def valuesInImage(filePath):
             r, g, b = im[y, x]
             pixelValues[y, x] = rgbToInt32(r * 255, g * 255, b * 255)
     pixelValues = np.unique(pixelValues)
-    print(pixelValues)
+    for i, val in enumerate(pixelValues):
+        print(f"{val:08d}", end=", ")
+        if (i % 8 == 7):
+            print()
     print(f"Found {len(pixelValues)} unique pixel values")
 
 
