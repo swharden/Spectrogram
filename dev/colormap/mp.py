@@ -59,9 +59,11 @@ def colormapToIntegerText(cmapName="viridis"):
     cmap = plt.get_cmap(cmapName)
     for i in range(256):
         r, g, b, a = cmap(i/255.0)
-        int32 = rgbToInt32(r*255, g*255, b*255)
-        int32 *= 255 # alpha
-        txt += f"{int32:010d}, "
+        r = int(r*255)
+        g = int(g*255)
+        b = int(b*255)
+        val = r << 16 | g << 8 | b
+        txt += f"{val:08d}, "
         if i % 8 == 7:
             txt += "\n"
 
@@ -70,14 +72,17 @@ def colormapToIntegerText(cmapName="viridis"):
 
 
 if __name__ == "__main__":
-    cmapNames = ["cividis", "gray", "inferno",
-                 "magma", "plasma", "viridis"]
 
-    for cmapName in cmapNames:
-        print(f"analyzing {cmapName}...")
-        colormapToIntegerText(cmapName)
-        plotCmapCurves(cmapName)
-        plt.savefig(f"analyzed2/{cmapName}.png")
-        plt.close()
+    colormapToIntegerText("viridis")
+
+    # cmapNames = ["cividis", "gray", "inferno",
+    #              "magma", "plasma", "viridis"]
+
+    # for cmapName in cmapNames:
+    #     print(f"analyzing {cmapName}...")
+    #     colormapToIntegerText(cmapName)
+    #     # plotCmapCurves(cmapName)
+    #     # plt.savefig(f"analyzed2/{cmapName}.png")
+    #     # plt.close()
 
 print("DONE")
