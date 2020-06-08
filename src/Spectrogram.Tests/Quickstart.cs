@@ -18,18 +18,5 @@ namespace Spectrogram.Tests
             
             Console.WriteLine(spec);
         }
-
-        [Test]
-        public void Test_WholeFile_CustomColormap()
-        {
-            double[] audio = Read.WavInt16mono("../../../../../data/cant-do-that-44100.wav");
-
-            var spec = new Spectrogram(sampleRate: 44100, fftSize: 1 << 12, stepSize: 500, maxFreq: 3000);
-            spec.Add(audio);
-            spec.SetColormap(global::Spectrogram.Colormap.Grayscale);
-            spec.SaveImage("../../../../../dev/graphics/hal-grayscale.png", intensity: .2);
-
-            Console.WriteLine(spec);
-        }
     }
 }
