@@ -26,8 +26,8 @@ namespace Spectrogram.Tests
 
             var spec = new Spectrogram(sampleRate: 44100, fftSize: 1 << 12, stepSize: 500, maxFreq: 3000);
             spec.Add(audio);
-            spec.SetColormap(Colormap.Viridis);
-            spec.SaveImage("../../../../../dev/graphics/hal.png", intensity: .2);
+            spec.SetColormap(global::Spectrogram.Colormap.Grayscale);
+            spec.SaveImage("../../../../../dev/graphics/hal-grayscale.png", intensity: .2);
 
             Console.WriteLine(spec);
         }
