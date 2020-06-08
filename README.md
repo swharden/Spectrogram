@@ -52,12 +52,6 @@ spec.Recalculate(
 spec.SaveJPG("output2.jpg");
 ```
 
-Notice the use of custom colormaps in this example.
-
-Viridis | Inferno
----|---
-![](dev/spectrogram.jpg) | ![](dev/spectrogram2.jpg)
-
 ## Song-to-Spectrogram
 
 This example demonstrates how to convert a MP3 file to a spectrogram image. A sample MP3 audio file in the [data folder](data) contains the audio track from Ken Barker's excellent piano performance of George Frideric Handel's Suite No. 5 in E major for harpsichord ([_The Harmonious Blacksmith_](https://en.wikipedia.org/wiki/The_Harmonious_Blacksmith)). This audio file is included [with permission](dev/Handel%20-%20Air%20and%20Variations.txt), and the [original video can be viewed on YouTube](https://www.youtube.com/watch?v=Mza-xqk770k).
@@ -69,6 +63,23 @@ If you [listen to the audio track](https://www.youtube.com/watch?v=Mza-xqk770k) 
 ```cs
 // TODO: update this example
 ```
+
+## Colormaps
+
+These examples demonstrate the identical spectrogram analyzed with a variety of different colormaps.
+
+Colormap Name | Color Curves | Example Spectrogram
+---|---|---
+Argo | ![](dev/colormap/analyzed2/argo.png) | ![](dev/graphics/hal-Argo.png)
+Blues | ![](dev/colormap/analyzed2/blues.png) | ![](dev/graphics/hal-Blues.png)
+Cividis | ![](dev/colormap/analyzed2/cividis.png) | ![](dev/graphics/hal-Cividis.png)
+Grayscale | ![](dev/colormap/analyzed2/gray.png) | ![](dev/graphics/hal-Grayscale.png)
+Greens | ![](dev/colormap/analyzed2/greens.png) | ![](dev/graphics/hal-Greens.png)
+Inferno | ![](dev/colormap/analyzed2/inferno.png) | ![](dev/graphics/hal-Inferno.png)
+Jet | ![](dev/colormap/analyzed2/jet.png) | ![](dev/graphics/hal-Jet.png)
+Magma | ![](dev/colormap/analyzed2/magma.png) | ![](dev/graphics/hal-Magma.png)
+Plasma | ![](dev/colormap/analyzed2/plasma.png) | ![](dev/graphics/hal-Plasma.png)
+Viridis | ![](dev/colormap/analyzed2/viridis.png) | ![](dev/graphics/hal-Viridis.png)
 
 ## Resources
 
