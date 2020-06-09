@@ -6,6 +6,8 @@ namespace Spectrogram.MicrophoneDemo
 {
     public partial class FormAnalysis : Form
     {
+        Colormap[] cmaps;
+
         public FormAnalysis()
         {
             InitializeComponent();
@@ -24,6 +26,11 @@ namespace Spectrogram.MicrophoneDemo
                     cbDevice.Items.Add(NAudio.Wave.WaveIn.GetCapabilities(i).ProductName);
                 cbDevice.SelectedIndex = 0;
             }
+
+            cmaps = Colormap.GetColormaps();
+            foreach (Colormap cmap in cmaps)
+                cbColormap.Items.Add(cmap.Name);
+            cbColormap.SelectedIndex = cbColormap.Items.IndexOf("Viridis");
         }
 
         private void FormQrssTest_Load(object sender, EventArgs e) { }
@@ -84,7 +91,7 @@ namespace Spectrogram.MicrophoneDemo
             using (Bitmap bmpIndexed = Image.Create(pixelValues, nextColIndex))
             using (Graphics gfx = Graphics.FromImage(bmp))
             {
-                Colormap.Viridis.Apply(bmpIndexed);
+                cmaps[cbColormap.SelectedIndex].Apply(bmpIndexed);
                 gfx.DrawImage(bmpIndexed, 0, 0);
                 gfx.DrawLine(Pens.White, nextColIndex, 0, nextColIndex, spec.Height);
             }

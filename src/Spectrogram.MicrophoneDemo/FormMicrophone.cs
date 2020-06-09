@@ -5,6 +5,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -13,6 +14,8 @@ namespace Spectrogram.MicrophoneDemo
 {
     public partial class FormMicrophone : Form
     {
+        Colormap[] cmaps;
+
         public FormMicrophone()
         {
             InitializeComponent();
@@ -34,6 +37,11 @@ namespace Spectrogram.MicrophoneDemo
             for (int i = 9; i < 16; i++)
                 cbFftSize.Items.Add($"2^{i} ({1 << i:N0})");
             cbFftSize.SelectedIndex = 1;
+
+            cmaps = Colormap.GetColormaps();
+            foreach (Colormap cmap in cmaps)
+                cbColormap.Items.Add(cmap.Name);
+            cbColormap.SelectedIndex = cbColormap.Items.IndexOf("Viridis");
         }
 
         private void Form1_Load(object sender, EventArgs e) { }
@@ -93,6 +101,11 @@ namespace Spectrogram.MicrophoneDemo
             lblStatus1.Text = $"Time: {listener.TotalTimeSec:N3} sec";
             lblStatus2.Text = $"FFTs processed: {spec.FftsProcessed:N0}";
             pbAmplitude.Value = (int)(listener.AmplitudeFrac * pbAmplitude.Maximum);
+        }
+
+        private void cbColormap_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            spec.SetColormap(cmaps[cbColormap.SelectedIndex]);
         }
     }
 }

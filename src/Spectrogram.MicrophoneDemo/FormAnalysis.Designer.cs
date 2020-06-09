@@ -39,6 +39,8 @@
             this.pnlAmpOuter = new System.Windows.Forms.Panel();
             this.pnlAmpInner = new System.Windows.Forms.Panel();
             this.nudBrightness = new System.Windows.Forms.NumericUpDown();
+            this.cbColormap = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbScaleVert)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbSpectrogram)).BeginInit();
@@ -146,12 +148,32 @@
             0,
             0});
             // 
-            // FormQrssTest
+            // cbColormap
+            // 
+            this.cbColormap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbColormap.FormattingEnabled = true;
+            this.cbColormap.Location = new System.Drawing.Point(241, 25);
+            this.cbColormap.Name = "cbColormap";
+            this.cbColormap.Size = new System.Drawing.Size(146, 21);
+            this.cbColormap.TabIndex = 15;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(238, 11);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(56, 13);
+            this.label3.TabIndex = 16;
+            this.label3.Text = "Brightness";
+            // 
+            // FormAnalysis
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1124, 495);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.cbColormap);
             this.Controls.Add(this.nudBrightness);
             this.Controls.Add(this.pnlAmpOuter);
             this.Controls.Add(this.panel1);
@@ -160,7 +182,7 @@
             this.Controls.Add(this.cbDevice);
             this.MaximumSize = new System.Drawing.Size(1140, 99999);
             this.MinimumSize = new System.Drawing.Size(1140, 39);
-            this.Name = "FormQrssTest";
+            this.Name = "FormAnalysis";
             this.Text = "FormQrssTest";
             this.Load += new System.EventHandler(this.FormQrssTest_Load);
             this.panel1.ResumeLayout(false);
@@ -185,5 +207,7 @@
         private System.Windows.Forms.Panel pnlAmpOuter;
         private System.Windows.Forms.NumericUpDown nudBrightness;
         private System.Windows.Forms.Panel pnlAmpInner;
+        private System.Windows.Forms.ComboBox cbColormap;
+        private System.Windows.Forms.Label label3;
     }
 }

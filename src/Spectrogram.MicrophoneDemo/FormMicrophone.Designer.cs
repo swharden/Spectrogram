@@ -43,9 +43,11 @@
             this.cbDecibels = new System.Windows.Forms.CheckBox();
             this.cbRoll = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.pbScaleVert = new System.Windows.Forms.PictureBox();
             this.cbFftSize = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.pbScaleVert = new System.Windows.Forms.PictureBox();
+            this.cbColormap = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pbSpectrogram)).BeginInit();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).BeginInit();
@@ -138,7 +140,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(263, 9);
+            this.label2.Location = new System.Drawing.Point(390, 9);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(56, 13);
             this.label2.TabIndex = 5;
@@ -146,7 +148,7 @@
             // 
             // tbBrightness
             // 
-            this.tbBrightness.Location = new System.Drawing.Point(266, 24);
+            this.tbBrightness.Location = new System.Drawing.Point(393, 24);
             this.tbBrightness.Maximum = 100;
             this.tbBrightness.Name = "tbBrightness";
             this.tbBrightness.Size = new System.Drawing.Size(220, 45);
@@ -157,7 +159,7 @@
             // cbDecibels
             // 
             this.cbDecibels.AutoSize = true;
-            this.cbDecibels.Location = new System.Drawing.Point(493, 28);
+            this.cbDecibels.Location = new System.Drawing.Point(620, 28);
             this.cbDecibels.Name = "cbDecibels";
             this.cbDecibels.Size = new System.Drawing.Size(39, 17);
             this.cbDecibels.TabIndex = 7;
@@ -167,7 +169,7 @@
             // cbRoll
             // 
             this.cbRoll.AutoSize = true;
-            this.cbRoll.Location = new System.Drawing.Point(538, 28);
+            this.cbRoll.Location = new System.Drawing.Point(665, 28);
             this.cbRoll.Name = "cbRoll";
             this.cbRoll.Size = new System.Drawing.Size(44, 17);
             this.cbRoll.TabIndex = 8;
@@ -188,6 +190,16 @@
             this.panel1.Size = new System.Drawing.Size(1008, 512);
             this.panel1.TabIndex = 10;
             // 
+            // pbScaleVert
+            // 
+            this.pbScaleVert.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbScaleVert.BackColor = System.Drawing.Color.Navy;
+            this.pbScaleVert.Location = new System.Drawing.Point(901, 0);
+            this.pbScaleVert.Name = "pbScaleVert";
+            this.pbScaleVert.Size = new System.Drawing.Size(107, 512);
+            this.pbScaleVert.TabIndex = 3;
+            this.pbScaleVert.TabStop = false;
+            // 
             // cbFftSize
             // 
             this.cbFftSize.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -207,21 +219,32 @@
             this.label3.TabIndex = 12;
             this.label3.Text = "FFT Size";
             // 
-            // pbScaleVert
+            // cbColormap
             // 
-            this.pbScaleVert.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbScaleVert.BackColor = System.Drawing.Color.Navy;
-            this.pbScaleVert.Location = new System.Drawing.Point(901, 0);
-            this.pbScaleVert.Name = "pbScaleVert";
-            this.pbScaleVert.Size = new System.Drawing.Size(107, 512);
-            this.pbScaleVert.TabIndex = 3;
-            this.pbScaleVert.TabStop = false;
+            this.cbColormap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbColormap.FormattingEnabled = true;
+            this.cbColormap.Location = new System.Drawing.Point(266, 25);
+            this.cbColormap.Name = "cbColormap";
+            this.cbColormap.Size = new System.Drawing.Size(121, 21);
+            this.cbColormap.TabIndex = 13;
+            this.cbColormap.SelectedIndexChanged += new System.EventHandler(this.cbColormap_SelectedIndexChanged);
             // 
-            // Form1
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(263, 9);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(51, 13);
+            this.label4.TabIndex = 14;
+            this.label4.Text = "Colormap";
+            // 
+            // FormMicrophone
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1032, 589);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.cbColormap);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.cbFftSize);
             this.Controls.Add(this.panel1);
@@ -232,7 +255,7 @@
             this.Controls.Add(this.tbBrightness);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cbDevice);
-            this.Name = "Form1";
+            this.Name = "FormMicrophone";
             this.Text = "Spectrogram Microphone Demo";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pbSpectrogram)).EndInit();
@@ -265,6 +288,8 @@
         private System.Windows.Forms.ComboBox cbFftSize;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.PictureBox pbScaleVert;
+        private System.Windows.Forms.ComboBox cbColormap;
+        private System.Windows.Forms.Label label4;
     }
 }
 
