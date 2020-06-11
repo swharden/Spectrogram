@@ -16,6 +16,9 @@ namespace Spectrogram
         public int FftSize { get { return settings.FftSize; } }
         public double HzPerPx { get { return settings.HzPerPixel; } }
         public double SecPerPx { get { return settings.StepLengthSec; } }
+        public int FftsToProcess { get { return (newAudio.Count - settings.FftSize) / settings.StepSize; } }
+        public int FftsProcessed { get; private set; }
+        public int NextColumnIndex { get { return (FftsProcessed + rollOffset) % Width; } }
 
         private readonly Settings settings;
         public readonly List<double[]> ffts = new List<double[]>(); // TODO: private
@@ -74,8 +77,11 @@ namespace Spectrogram
                 Process();
         }
 
-        public int FftsToProcess { get { return (newAudio.Count - settings.FftSize) / settings.StepSize; } }
-        public int FftsProcessed { get; private set; }
+        private int rollOffset = 0;
+        public void RollReset()
+        {
+            rollOffset = -FftsProcessed;
+        }
 
         public double[][] Process()
         {
@@ -110,7 +116,7 @@ namespace Spectrogram
         }
 
         public Bitmap GetBitmap(double intensity = 1, bool dB = false, bool roll = false) =>
-            _GetBitmap(ffts, cmap, intensity, dB, roll, FftsProcessed);
+            _GetBitmap(ffts, cmap, intensity, dB, roll, NextColumnIndex);
 
         public void SaveImage(string fileName, double intensity = 1, bool dB = false, bool roll = false)
         {
@@ -128,7 +134,7 @@ namespace Spectrogram
             else
                 throw new ArgumentException("unknown file extension");
 
-            _GetBitmap(ffts, cmap, intensity, dB, roll, FftsProcessed).Save(fileName, fmt);
+            _GetBitmap(ffts, cmap, intensity, dB, roll, NextColumnIndex).Save(fileName, fmt);
         }
 
         public Bitmap GetBitmapMax(double intensity = 1, bool dB = false, bool roll = false, int reduction = 4)
@@ -143,10 +149,10 @@ namespace Spectrogram
                         d2[j] = Math.Max(d2[j], d1[j * reduction + k]);
                 ffts2.Add(d2);
             }
-            return _GetBitmap(ffts2, cmap, intensity, dB, roll, FftsProcessed);
+            return _GetBitmap(ffts2, cmap, intensity, dB, roll, NextColumnIndex);
         }
 
-        private static Bitmap _GetBitmap(List<double[]> ffts, Colormap cmap, double intensity = 1, bool dB = false, bool roll = false, int FftsProcessed = 0)
+        private static Bitmap _GetBitmap(List<double[]> ffts, Colormap cmap, double intensity = 1, bool dB = false, bool roll = false, int rollOffset = 0)
         {
             int Width = ffts.Count;
             int Height = ffts[0].Length;
@@ -164,7 +170,7 @@ namespace Spectrogram
                 int sourceCol = col;
                 if (roll)
                 {
-                    sourceCol += Width - FftsProcessed % Width;
+                    sourceCol += Width - rollOffset % Width;
                     if (sourceCol >= Width)
                         sourceCol -= Width;
                 }
