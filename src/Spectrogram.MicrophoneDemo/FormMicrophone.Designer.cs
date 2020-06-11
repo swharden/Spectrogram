@@ -48,6 +48,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.cbColormap = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.btnResetRoll = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbSpectrogram)).BeginInit();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).BeginInit();
@@ -175,6 +176,7 @@
             this.cbRoll.TabIndex = 8;
             this.cbRoll.Text = "Roll";
             this.cbRoll.UseVisualStyleBackColor = true;
+            this.cbRoll.CheckedChanged += new System.EventHandler(this.cbRoll_CheckedChanged);
             // 
             // panel1
             // 
@@ -238,11 +240,23 @@
             this.label4.TabIndex = 14;
             this.label4.Text = "Colormap";
             // 
+            // btnResetRoll
+            // 
+            this.btnResetRoll.Enabled = false;
+            this.btnResetRoll.Location = new System.Drawing.Point(715, 24);
+            this.btnResetRoll.Name = "btnResetRoll";
+            this.btnResetRoll.Size = new System.Drawing.Size(75, 23);
+            this.btnResetRoll.TabIndex = 15;
+            this.btnResetRoll.Text = "Reset Roll";
+            this.btnResetRoll.UseVisualStyleBackColor = true;
+            this.btnResetRoll.Click += new System.EventHandler(this.btnResetRoll_Click);
+            // 
             // FormMicrophone
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1032, 589);
+            this.Controls.Add(this.btnResetRoll);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.cbColormap);
             this.Controls.Add(this.label3);
@@ -290,6 +304,7 @@
         private System.Windows.Forms.PictureBox pbScaleVert;
         private System.Windows.Forms.ComboBox cbColormap;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button btnResetRoll;
     }
 }
 

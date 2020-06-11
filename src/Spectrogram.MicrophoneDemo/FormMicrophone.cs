@@ -88,8 +88,7 @@ namespace Spectrogram.MicrophoneDemo
                     gfx.DrawImage(bmpSpecIndexed, 0, 0);
                     if (cbRoll.Checked)
                     {
-                        int x = spec.FftsProcessed % pbSpectrogram.Width - 1;
-                        gfx.DrawLine(pen, x, 0, x, pbSpectrogram.Height);
+                        gfx.DrawLine(pen, spec.NextColumnIndex, 0, spec.NextColumnIndex, pbSpectrogram.Height);
                     }
                 }
                 sw.Stop();
@@ -106,6 +105,16 @@ namespace Spectrogram.MicrophoneDemo
         private void cbColormap_SelectedIndexChanged(object sender, EventArgs e)
         {
             spec.SetColormap(cmaps[cbColormap.SelectedIndex]);
+        }
+
+        private void btnResetRoll_Click(object sender, EventArgs e)
+        {
+            spec.RollReset();
+        }
+
+        private void cbRoll_CheckedChanged(object sender, EventArgs e)
+        {
+            btnResetRoll.Enabled = cbRoll.Checked;
         }
     }
 }
