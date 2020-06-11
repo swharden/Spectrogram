@@ -13,6 +13,9 @@ namespace Spectrogram
     {
         public int Width { get { return ffts.Count; } }
         public int Height { get { return settings.Height; } }
+        public int FftSize { get { return settings.FftSize; } }
+        public double HzPerPx { get { return settings.HzPerPixel; } }
+        public double SecPerPx { get { return settings.StepLengthSec; } }
 
         private readonly Settings settings;
         public readonly List<double[]> ffts = new List<double[]>(); // TODO: private
@@ -204,9 +207,18 @@ namespace Spectrogram
             }
         }
 
-        public Bitmap GetVerticalScale(int width, int pxPerPx = 1)
+        public Bitmap GetVerticalScale(int width, int offsetHz = 0, int tickSize = 3, int reduction = 1)
         {
-            return Scale.Vertical(width, settings, pxPerPx: pxPerPx);
+            return Scale.Vertical(width, settings, offsetHz, tickSize, reduction);
+        }
+
+        public int PixelY(double frequency, int reduction = 1)
+        {
+            // TODO: tick generation should use this method
+            int pixelsFromZeroHz = (int)(settings.PxPerHz * frequency / reduction);
+            int pixelsFromMinFreq = pixelsFromZeroHz - settings.FftIndex1 / reduction + 1;
+            int pixelRow = settings.Height / reduction - 1 - pixelsFromMinFreq;
+            return pixelRow - 1;
         }
     }
 }
