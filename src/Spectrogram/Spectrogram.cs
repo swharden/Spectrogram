@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
-using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
@@ -93,10 +92,10 @@ namespace Spectrogram
 
             Parallel.For(0, newFftCount, newFftIndex =>
             {
-                Complex[] buffer = new Complex[settings.FftSize];
+                FftSharp.Complex[] buffer = new FftSharp.Complex[settings.FftSize];
                 int sourceIndex = newFftIndex * settings.StepSize;
                 for (int i = 0; i < settings.FftSize; i++)
-                    buffer[i] = new Complex(newAudio[sourceIndex + i] * settings.Window[i], 0);
+                    buffer[i].Real = newAudio[sourceIndex + i] * settings.Window[i];
 
                 FftSharp.Transform.FFT(buffer);
 
