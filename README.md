@@ -140,7 +140,7 @@ spec.Add(audio);
 spec.SaveData("hal.sff");
 ```
 
-This file can now be read in any language. A Python module to read SFF files has been created (in [dev/sff/sffLib.py](dev/sff/sffLib.py)) which allows Spectrograms created by this library and stored in SFF format to be loaded as 2D numpy arrays in Python.
+This file can now be read in any language. A Python module to read SFF files has been created (in [dev/sff/](dev/sff/)) which allows Spectrograms created by this library and stored in SFF format to be loaded as 2D numpy arrays in Python.
 
 ```python
 import matplotlib.pyplot as plt
