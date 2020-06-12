@@ -20,6 +20,7 @@ namespace Spectrogram
         public readonly double FreqMax;
         public readonly double FreqSpan;
         public readonly int Height;
+        public int OffsetHz;
 
         // horizontal information
         public readonly double[] Window;
@@ -28,7 +29,7 @@ namespace Spectrogram
         public readonly double StepOverlapFrac;
         public readonly double StepOverlapSec;
 
-        public Settings(int sampleRate, int fftSize, int stepSize, double minFreq, double maxFreq)
+        public Settings(int sampleRate, int fftSize, int stepSize, double minFreq, double maxFreq, int offsetHz)
         {
             if (FftSharp.Transform.IsPowerOfTwo(fftSize) == false)
                 throw new ArgumentException("FFT size must be a power of 2");
@@ -50,6 +51,7 @@ namespace Spectrogram
             FreqMin = FftIndex1 * HzPerPixel;
             FreqMax = FftIndex2 * HzPerPixel;
             FreqSpan = FreqMax - FreqMin;
+            OffsetHz = offsetHz;
 
             // horizontal
             StepLengthSec = (double)StepSize / sampleRate;

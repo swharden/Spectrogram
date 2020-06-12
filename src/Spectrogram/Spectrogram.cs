@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Spectrogram
@@ -18,6 +20,7 @@ namespace Spectrogram
         public int FftsToProcess { get { return (newAudio.Count - settings.FftSize) / settings.StepSize; } }
         public int FftsProcessed { get; private set; }
         public int NextColumnIndex { get { return (FftsProcessed + rollOffset) % Width; } }
+        public int OffsetHz { get { return settings.OffsetHz; } set { settings.OffsetHz = value; } }
 
         private readonly Settings settings;
         public readonly List<double[]> ffts = new List<double[]>(); // TODO: private
@@ -26,9 +29,9 @@ namespace Spectrogram
 
         public Spectrogram(int sampleRate, int fftSize, int stepSize,
             double minFreq = 0, double maxFreq = double.PositiveInfinity,
-            int? fixedWidth = null)
+            int? fixedWidth = null, int offsetHz = 0)
         {
-            settings = new Settings(sampleRate, fftSize, stepSize, minFreq, maxFreq);
+            settings = new Settings(sampleRate, fftSize, stepSize, minFreq, maxFreq, offsetHz);
 
             if (fixedWidth.HasValue)
                 SetFixedWidth(fixedWidth.Value);
@@ -190,6 +193,101 @@ namespace Spectrogram
             bmp.UnlockBits(bitmapData);
 
             return bmp;
+        }
+
+        /// <summary>
+        /// Export spectrogram data as a SFF (spectrogram file format) binary file
+        /// </summary>
+        public void SaveData(string filePath, bool complexFormat = false)
+        {
+            if (!filePath.EndsWith(".sff", StringComparison.OrdinalIgnoreCase))
+                filePath += ".sff";
+
+            const byte FileFormatVersionMajor = 1;
+            const byte FileFormatVersionMinor = 1;
+
+            byte[] header = new byte[256];
+
+            // file type designator
+            header[0] = 211; // intentionally non-ASCII
+            header[1] = (byte)'S';
+            header[2] = (byte)'F';
+            header[3] = (byte)'F';
+            header[4] = (byte)'\r';
+            header[5] = (byte)'\n';
+            header[6] = (byte)' ';
+            header[7] = (byte)'\n';
+
+            int magicNumber = BitConverter.ToInt32(header, 0);
+            if (magicNumber != 1179014099)
+                throw new InvalidDataException("magic number for SFF files is 1179014099");
+
+            // plain text helpful for people who open this file in a text editor
+            string fileInfo = $"Spectrogram File Format {FileFormatVersionMajor}.{FileFormatVersionMinor}\r\n";
+            byte[] fileInfoBytes = Encoding.UTF8.GetBytes(fileInfo);
+            if (fileInfoBytes.Length > 32)
+                throw new InvalidDataException("file info cannot exceed 32 bytes");
+            Array.Copy(fileInfoBytes, 0, header, 8, fileInfoBytes.Length);
+
+            // version
+            header[40] = FileFormatVersionMajor;
+            header[41] = FileFormatVersionMinor;
+
+            // time information
+            Array.Copy(BitConverter.GetBytes(settings.SampleRate), 0, header, 42, 4);
+            Array.Copy(BitConverter.GetBytes(settings.StepSize), 0, header, 46, 4);
+            Array.Copy(BitConverter.GetBytes(Width), 0, header, 50, 4);
+
+            // frequency information
+            Array.Copy(BitConverter.GetBytes(FftSize), 0, header, 54, 4);
+            Array.Copy(BitConverter.GetBytes(settings.FftIndex1), 0, header, 58, 4);
+            Array.Copy(BitConverter.GetBytes(Height), 0, header, 62, 4);
+            Array.Copy(BitConverter.GetBytes(OffsetHz), 0, header, 66, 4);
+
+            // data encoding details
+            byte valuesPerPoint = 1; // only 2 for complex data
+            byte bytesPerValue = 8; // a double is 8 bytes
+            byte decibelUnits = 0; // 1 if units are in dB
+            byte dataExtraByte = 0; // unused
+            header[70] = valuesPerPoint;
+            header[71] = bytesPerValue;
+            header[72] = decibelUnits;
+            header[73] = dataExtraByte;
+
+            // source file date and time
+            int twoDigitYear = DateTime.UtcNow.Year - 2000;
+            header[74] = (byte)twoDigitYear;
+            header[75] = (byte)DateTime.UtcNow.Month;
+            header[76] = (byte)DateTime.UtcNow.Day;
+            header[77] = (byte)DateTime.UtcNow.Hour;
+            header[78] = (byte)DateTime.UtcNow.Minute;
+            header[79] = (byte)DateTime.UtcNow.Second;
+
+            // binary data location
+            int firstDataByte = header.Length;
+            Array.Copy(BitConverter.GetBytes(firstDataByte), 0, header, 80, 4);
+
+            // create bytes to write to file
+            int dataPointCount = Height * Width;
+            int bytesPerPoint = bytesPerValue * valuesPerPoint;
+            byte[] fileBytes = new byte[header.Length + dataPointCount * bytesPerPoint];
+            Array.Copy(header, 0, fileBytes, 0, header.Length);
+
+            // copy data into byte area
+            int bytesPerColumn = Height * bytesPerPoint;
+            for (int x = 0; x < Width; x++)
+            {
+                int columnOffset = bytesPerColumn * x;
+                for (int y = 0; y < Height; y++)
+                {
+                    int rowOffset = y * bytesPerPoint;
+                    int valueOffset = firstDataByte + columnOffset + rowOffset;
+                    Array.Copy(BitConverter.GetBytes(ffts[x][y]), 0, fileBytes, valueOffset, 8);
+                }
+            }
+
+            // write file to disk
+            File.WriteAllBytes(filePath, fileBytes);
         }
 
         private int fixedWidth = 0;

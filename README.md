@@ -125,6 +125,44 @@ Viridis | Jet | GrayReversed | GreensReversed
 
 See all colormaps in [dev/colormap/](dev/colormap/)
 
+## Spectrogram File Format (SFF)
+
+The Spectrogram library has methods which can read and write spectrogram data from SFF files. These files contain 2D spectrogram data (repeated FFTs) stored as double-precision floating-point values and a small header describing the audio and FFT settings suitable for deriving scale information. 
+
+SFF files can store `Complex` values (with real and imaginary values for each point) to faithfully represent the FFT output, or stored with `double` values to represent magnitude (with an optional pre-conversion to Decibels to represent power). 
+
+```cs
+double[] audio = Read.WavInt16mono("hal.wav");
+int sampleRate = 44100;
+int fftSize = 1 << 12;
+var spec = new Spectrogram(sampleRate, fftSize, stepSize: 700, maxFreq: 2000);
+spec.Add(audio);
+spec.SaveData("hal.sff");
+```
+
+This file can now be read in any language. A Python module to read SFF files has been created (in [dev/sff/sffLib.py](dev/sff/sffLib.py)) which allows Spectrograms created by this library and stored in SFF format to be loaded as 2D numpy arrays in Python.
+
+```python
+import matplotlib.pyplot as plt
+import sffLib
+
+# load spectrogram data as a 2D numpy array
+sf = sffLib.SpectrogramFile("/hal.sff")
+
+# plot the spectrogram as a heatmap
+freqs = np.arange(sf.values.shape[1]) * sf.hzPerPx / 1000
+times = np.arange(sf.values.shape[0]) * sf.secPerPx
+plt.pcolormesh(freqs, times, sf.values)
+
+# decorate the plot
+plt.colorbar()
+plt.title("Spectrogram Magnitude (RMS)")
+plt.ylabel("Time (seconds)")
+plt.xlabel("Frequency (kHz)")
+plt.show()
+```
+
+![](dev/sff/hal.png)
 
 ## Resources
 * [FftSharp](https://github.com/swharden/FftSharp) - the module which actually performs the FFT and related transformations
