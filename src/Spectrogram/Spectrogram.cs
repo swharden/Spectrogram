@@ -78,9 +78,9 @@ namespace Spectrogram
         }
 
         private int rollOffset = 0;
-        public void RollReset()
+        public void RollReset(int offset = 0)
         {
-            rollOffset = -FftsProcessed;
+            rollOffset = -FftsProcessed + offset;
         }
 
         public double[][] Process()
