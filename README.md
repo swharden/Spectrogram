@@ -127,9 +127,11 @@ See all colormaps in [dev/colormap/](dev/colormap/)
 
 ## Spectrogram File Format (SFF)
 
-The Spectrogram library has methods which can read and write spectrogram data from SFF files. These files contain 2D spectrogram data (repeated FFTs) stored as double-precision floating-point values and a small header describing the audio and FFT settings suitable for deriving scale information. 
+The Spectrogram library has methods which can read and write SFF files, a file format specifically designed for storing spectrogram data. SFF files contain 2D spectrogram data (repeated FFTs) with a [small header](dev/sff) describing the audio and FFT settings suitable for deriving scale information. 
 
-SFF files can store `Complex` values (with real and imaginary values for each point) to faithfully represent the FFT output, or stored with `double` values to represent magnitude (with an optional pre-conversion to Decibels to represent power). 
+SFF files store `double` values (8-byte floating-point data) which is far superior to saving spectrograms as indexed color images (which represent intensity with a single `byte` per pixel).
+
+SFF files be saved using `Complex` data format (with real and imaginary values for each point) to faithfully represent the FFT output, or `double` format to represent magnitude (with an optional pre-conversion to Decibels to represent power). 
 
 ```cs
 double[] audio = Read.WavInt16mono("hal.wav");
@@ -140,14 +142,14 @@ spec.Add(audio);
 spec.SaveData("hal.sff");
 ```
 
-This file can now be read in any language. A Python module to read SFF files has been created (in [dev/sff/](dev/sff/)) which allows Spectrograms created by this library and stored in SFF format to be loaded as 2D numpy arrays in Python.
+The `hal.sff` file can now be read in any language. A Python module to read SFF files has been created (in [dev/sff](dev/sff)) which allows Spectrograms created by this library and stored in SFF format to be loaded as 2D numpy arrays in Python.
 
 ```python
 import matplotlib.pyplot as plt
 import sffLib
 
 # load spectrogram data as a 2D numpy array
-sf = sffLib.SpectrogramFile("/hal.sff")
+sf = sffLib.SpectrogramFile("hal.sff")
 
 # plot the spectrogram as a heatmap
 freqs = np.arange(sf.values.shape[1]) * sf.hzPerPx / 1000
