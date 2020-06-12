@@ -133,6 +133,10 @@ SFF files store `double` values (8-byte floating-point data) which is far superi
 
 SFF files be saved using `Complex` data format (with real and imaginary values for each point) to faithfully represent the FFT output, or `double` format to represent magnitude (with an optional pre-conversion to Decibels to represent power). 
 
+### Create SFF Files with C#
+
+This example creates a spectrogram but saves it using the SFF file format instead of saving it as an image. The SFF file can then be read in any language.
+
 ```cs
 double[] audio = Read.WavInt16mono("hal.wav");
 int sampleRate = 44100;
@@ -142,7 +146,10 @@ spec.Add(audio);
 spec.SaveData("hal.sff");
 ```
 
-The `hal.sff` file can now be read in any language. A Python module to read SFF files has been created (in [dev/sff](dev/sff)) which allows Spectrograms created by this library and stored in SFF format to be loaded as 2D numpy arrays in Python.
+### Read SFF Files with Python
+A Python module to read SFF files has been created (in [dev/sff](dev/sff)) which allows Spectrograms created by this library and stored in SFF format to be loaded as 2D numpy arrays in Python. 
+
+This example demonstrates how the SFF file created in the previous C# example can be loaded into Python and displayed with matplotlib:
 
 ```python
 import matplotlib.pyplot as plt
