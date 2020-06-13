@@ -23,7 +23,7 @@ namespace Spectrogram
         public int OffsetHz { get { return settings.OffsetHz; } set { settings.OffsetHz = value; } }
 
         private readonly Settings settings;
-        public readonly List<double[]> ffts = new List<double[]>(); // TODO: private
+        private readonly List<double[]> ffts = new List<double[]>();
         private readonly List<double> newAudio = new List<double>();
         private Colormap cmap = Colormap.Viridis;
 
@@ -156,6 +156,9 @@ namespace Spectrogram
 
         private static Bitmap _GetBitmap(List<double[]> ffts, Colormap cmap, double intensity = 1, bool dB = false, bool roll = false, int rollOffset = 0)
         {
+            if (ffts.Count == 0)
+                throw new ArgumentException("no audio has been added to this Spectrogram");
+
             int Width = ffts.Count;
             int Height = ffts[0].Length;
 
@@ -322,6 +325,12 @@ namespace Spectrogram
             int pixelsFromMinFreq = pixelsFromZeroHz - settings.FftIndex1 / reduction + 1;
             int pixelRow = settings.Height / reduction - 1 - pixelsFromMinFreq;
             return pixelRow - 1;
+        }
+
+        // provide access to the raw FFT data
+        public List<double[]> GetFFTs()
+        {
+            return ffts;
         }
     }
 }
