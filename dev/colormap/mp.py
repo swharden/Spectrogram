@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import pyperclip
 import numpy as np
-
+import turbo
 
 def cmapToCode(cmapName="inferno"):
     cmap = plt.get_cmap(cmapName)
@@ -74,7 +74,7 @@ def colormapToIntegerText(cmapName="viridis"):
 if __name__ == "__main__":
 
     cmapNames = ["cividis", "gray", "gray_r", "inferno",
-                 "jet", "magma", "plasma", "viridis"]
+                 "jet", "magma", "plasma", "viridis", "turbo"]
 
     for cmapName in cmapNames:
         print(f"analyzing {cmapName}...")
