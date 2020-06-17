@@ -1,3 +1,11 @@
+/* Plasma is a colormap by Nathaniel J. Smith and Stefan van der Walt
+ * https://bids.github.io/colormap/
+ * https://github.com/BIDS/colormap/blob/master/colormaps.py
+ * 
+ * This colormap is provided under the CC0 license / public domain dedication
+ * http://creativecommons.org/publicdomain/zero/1.0/
+ */
+
 using System;
 
 namespace Spectrogram.Colormaps

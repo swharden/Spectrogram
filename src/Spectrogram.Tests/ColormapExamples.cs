@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Spectrogram.Tests
 {
@@ -21,7 +22,11 @@ namespace Spectrogram.Tests
             spec.SetWindow(FftSharp.Window.Hanning(fftSize / 3)); // sharper window than typical
             spec.Add(audio);
 
-            foreach(var cmap in Colormap.GetColormaps())
+            // delete old colormap files
+            foreach (var filePath in System.IO.Directory.GetFiles("../../../../../dev/graphics/", "hal-*.png"))
+                System.IO.File.Delete(filePath);
+
+            foreach (var cmap in Colormap.GetColormaps())
             {
                 spec.SetColormap(cmap);
                 spec.SaveImage($"../../../../../dev/graphics/hal-{cmap.Name}.png", intensity: .5);

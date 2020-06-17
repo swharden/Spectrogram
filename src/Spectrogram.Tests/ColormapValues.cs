@@ -12,7 +12,7 @@ namespace Spectrogram.Tests
         [Test]
         public void Test_Colormap_ExtendedFractionsReturnEdgeValues()
         {
-            var cmap = global::Spectrogram.Colormap.Viridis;
+            var cmap = Colormap.Viridis;
 
             Random rand = new Random(0);
             for (double frac = -3; frac < 3; frac += rand.NextDouble() * .2)
@@ -30,7 +30,7 @@ namespace Spectrogram.Tests
         [Test]
         public void Test_Colormap_IntegerMatchesRGBColors()
         {
-            global::Spectrogram.Colormap cmap = global::Spectrogram.Colormap.Viridis;
+            var cmap = Colormap.Viridis;
 
             byte pixelIntensity = 123;
             var (r, g, b) = cmap.GetRGB(pixelIntensity);

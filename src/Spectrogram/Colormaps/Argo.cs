@@ -1,6 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿/* Argo is a closed-source weak signal spectrogram.
+ * This colormap was created to mimic the colors used by Argo.
+ * https://www.i2phd.org/argo/index.html
+ * https://digilander.libero.it/i2phd/argo/
+ */
+
+using System;
 
 namespace Spectrogram.Colormaps
 {
