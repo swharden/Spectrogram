@@ -18,7 +18,6 @@ namespace Spectrogram.Colormaps
             return (bytes[2], bytes[1], bytes[0]);
         }
 
-        // RGB values are derived from the Plasma colormap in Matplotlib 3.2.1 (https://matplotlib.org)
         private readonly int[] rgb =
         {
             00788358, 01050503, 01246857, 01377930, 01574539, 01771148, 01902221, 02033038, 

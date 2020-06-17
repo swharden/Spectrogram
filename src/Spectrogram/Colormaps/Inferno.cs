@@ -18,7 +18,6 @@ namespace Spectrogram.Colormaps
             return (bytes[2], bytes[1], bytes[0]);
         }
 
-        // RGB values are derived from the Inferno colormap in Matplotlib 3.2.1 (https://matplotlib.org)
         private readonly int[] rgb =
         {
             00000003, 00000004, 00000006, 00065543, 00065801, 00065803, 00131342, 00131600, 

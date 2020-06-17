@@ -18,7 +18,6 @@ namespace Spectrogram.Colormaps
             return (bytes[2], bytes[1], bytes[0]);
         }
 
-        // RGB values are derived from the Viridis colormap in Matplotlib 3.2.1 (https://matplotlib.org)
         private readonly int[] rgb =
         {
             04456788, 04457045, 04457303, 04523352, 04523610, 04524123, 04589916, 04590430, 
