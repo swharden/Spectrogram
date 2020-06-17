@@ -16,6 +16,7 @@ namespace Spectrogram
         public static Colormap Inferno => new Colormap(new Colormaps.Inferno());
         public static Colormap Magma => new Colormap(new Colormaps.Magma());
         public static Colormap Plasma => new Colormap(new Colormaps.Plasma());
+        public static Colormap Turbo => new Colormap(new Colormaps.Turbo());
         public static Colormap Viridis => new Colormap(new Colormaps.Viridis());
 
         private readonly IColormap cmap;

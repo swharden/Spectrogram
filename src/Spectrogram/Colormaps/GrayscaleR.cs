@@ -2,7 +2,7 @@
 
 namespace Spectrogram.Colormaps
 {
-    public class GrayscaleReversed : IColormap
+    public class GrayscaleR : IColormap
     {
         public (byte r, byte g, byte b) GetRGB(byte value)
         {

@@ -119,9 +119,9 @@ spec.SetColormap(Colormap.Jet);
 spec.SaveImage($"hal-Jet.png", intensity: .5);
 ```
 
-Viridis | Jet | GrayReversed | GreensReversed
----|---|---|---
-![](dev/graphics/hal-Viridis.png)|![](dev/graphics/hal-Jet.png)|![](dev/graphics/hal-GrayReversed.png)|![](dev/graphics/hal-GreensReversed.png)
+Viridis | Greens | Blues | Grayscale | GrayscaleR
+---|---|---|---|---
+![](dev/graphics/hal-Viridis.png)|![](dev/graphics/hal-Greens.png)|![](dev/graphics/hal-Blues.png)|![](dev/graphics/hal-Grayscale.png)|![](dev/graphics/hal-GrayscaleR.png)
 
 See all colormaps in [dev/colormap/](dev/colormap/)
 
