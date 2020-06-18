@@ -234,14 +234,12 @@ namespace Spectrogram
 
         public int PixelY(double frequency, int reduction = 1)
         {
-            // TODO: tick generation should use this method
             int pixelsFromZeroHz = (int)(settings.PxPerHz * frequency / reduction);
             int pixelsFromMinFreq = pixelsFromZeroHz - settings.FftIndex1 / reduction + 1;
             int pixelRow = settings.Height / reduction - 1 - pixelsFromMinFreq;
             return pixelRow - 1;
         }
 
-        // provide access to the raw FFT data
         public List<double[]> GetFFTs()
         {
             return ffts;
