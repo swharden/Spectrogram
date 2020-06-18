@@ -74,6 +74,15 @@ namespace Spectrogram
             Array.Copy(newWindow, 0, settings.Window, offset, newWindow.Length);
         }
 
+        [Obsolete("use the Add() method", true)]
+        public void AddExtend(float[] values) { }
+
+        [Obsolete("use the Add() method", true)]
+        public void AddCircular(float[] values) { }
+
+        [Obsolete("use the Add() method", true)]
+        public void AddScroll(float[] values) { }
+
         public void Add(double[] audio, bool process = true)
         {
             newAudio.AddRange(audio);
@@ -121,6 +130,9 @@ namespace Spectrogram
 
         public Bitmap GetBitmap(double intensity = 1, bool dB = false, bool roll = false) =>
             _GetBitmap(ffts, cmap, intensity, dB, roll, NextColumnIndex);
+
+        [Obsolete("use SaveImage()", true)]
+        public void SaveBitmap(Bitmap bmp, string fileName) { }
 
         public void SaveImage(string fileName, double intensity = 1, bool dB = false, bool roll = false)
         {
