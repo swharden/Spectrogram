@@ -49,14 +49,14 @@ steps:
   condition: eq(variables['purpose'], 'library')
   inputs:
     command: 'build'
-    projects: 'Spectrogram.Tests/Spectrogram.Tests.csproj'
+    projects: 'src/Spectrogram.Tests/Spectrogram.Tests.csproj'
 
 - task: DotNetCoreCLI@2
   displayName: 'Run Tests'
   condition: eq(variables['purpose'], 'library')
   inputs:
     command: test
-    projects: 'Spectrogram.Tests/Spectrogram.Tests.csproj'
+    projects: 'src/Spectrogram.Tests/Spectrogram.Tests.csproj'
 
 ### REBUILD FULL SOLUTION
     
