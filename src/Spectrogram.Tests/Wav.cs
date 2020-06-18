@@ -12,10 +12,8 @@ namespace Spectrogram.Tests
         public void Test_WavFile_ReadHal1()
         {
             string wavFilePath = "../../../../../data/cant-do-that-44100.wav";
-            (int sampleRate, double[] L, double[] R) = WavFile.Read(wavFilePath);
+            (int sampleRate, double[] L) = WavFile.ReadMono(wavFilePath);
             Assert.AreEqual(44100, sampleRate);
-            Assert.IsNotNull(L);
-            Assert.IsNull(R);
 
             double lengthSec = (double)L.Length / sampleRate;
             Assert.AreEqual(3.779, lengthSec, .01);
@@ -29,10 +27,8 @@ namespace Spectrogram.Tests
         public void Test_WavFile_ReadHal2()
         {
             string wavFilePath = "../../../../../data/cant-do-that-11025-stereo.wav";
-            (int sampleRate, double[] L, double[] R) = WavFile.Read(wavFilePath);
+            (int sampleRate, double[] L, double[] R) = WavFile.ReadStereo(wavFilePath);
             Assert.AreEqual(11025, sampleRate);
-            Assert.IsNotNull(L);
-            Assert.IsNotNull(R);
 
             double lengthSec = (double)L.Length / sampleRate;
             Assert.AreEqual(3.779, lengthSec, .01);

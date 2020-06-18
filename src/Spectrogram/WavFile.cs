@@ -8,7 +8,13 @@ namespace Spectrogram
 {
     public static class WavFile
     {
-        public static (int sampleRate, double[] L, double[] R) Read(string filePath)
+        public static (int sampleRate, double[] L) ReadMono(string filePath)
+        {
+            (int sampleRate, double[] L, _) = ReadStereo(filePath);
+            return (sampleRate, L);
+        }
+
+        public static (int sampleRate, double[] L, double[] R) ReadStereo(string filePath)
         {
             using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             using (BinaryReader br = new BinaryReader(fs))
