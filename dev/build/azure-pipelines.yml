@@ -1,33 +1,68 @@
-# .NET Desktop
-# Build and run tests for .NET Desktop or Windows classic desktop solutions.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/apps/windows/dot-net
-
 trigger:
 - master
 
-pool:
-  vmImage: 'windows-latest'
+strategy:
+  matrix:
 
-variables:
-  solution: 'src/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
+    'Build and Test on MacOS':
+      purpose: 'library'
+      imageName: 'macOS-latest'
+
+    'Build and Test on Linux':
+      purpose: 'library'
+      imageName: 'ubuntu-latest'
+
+    'Build and Test on Windows':
+      purpose: 'library'
+      imageName: 'windows-latest'
+
+    'Rebuild Solution on Windows':
+      purpose: 'solution'
+      imageName: 'windows-latest'
+
+pool:
+  vmImage: $(imageName)
 
 steps:
+
+### INSTALL NUGET AND RESTORE PACKAGES
+
 - task: NuGetToolInstaller@1
-
+  displayName: 'Install NuGet'
+    
 - task: NuGetCommand@2
+  displayName: 'Restore packages'
   inputs:
-    restoreSolution: '$(solution)'
+    restoreSolution: 'src/Spectrogram.sln'
 
+### BUILD THE CORE LIBRARY AND RUN TESTS
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build Spectrogram'
+  condition: eq(variables['purpose'], 'library')
+  inputs:
+    command: 'build'
+    projects: 'src/Spectrogram/Spectrogram.csproj'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build Tests'
+  condition: eq(variables['purpose'], 'library')
+  inputs:
+    command: 'build'
+    projects: 'Spectrogram.Tests/Spectrogram.Tests.csproj'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Run Tests'
+  condition: eq(variables['purpose'], 'library')
+  inputs:
+    command: test
+    projects: 'Spectrogram.Tests/Spectrogram.Tests.csproj'
+
+### REBUILD FULL SOLUTION
+    
 - task: VSBuild@1
+  displayName: 'Build Release (Windows)'
+  condition: eq(variables['purpose'], 'solution')
   inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    solution: 'src/Spectrogram.sln'
+    configuration: 'release'
