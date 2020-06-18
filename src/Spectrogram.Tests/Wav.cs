@@ -38,5 +38,20 @@ namespace Spectrogram.Tests
             plt.PlotSignal(R);
             plt.SaveFig("hal2.png");
         }
+
+        [Test]
+        public void Test_WavFile_ReadDoor()
+        {
+            string wavFilePath = "../../../../../data/03-02-03-01-02-01-19.wav";
+            (int sampleRate, double[] L) = WavFile.ReadMono(wavFilePath);
+            Assert.AreEqual(48000, sampleRate);
+
+            double lengthSec = (double)L.Length / sampleRate;
+            Assert.AreEqual(4.471, lengthSec, .5);
+
+            var plt = new Plot();
+            plt.PlotSignal(L);
+            plt.SaveFig("door.png");
+        }
     }
 }
