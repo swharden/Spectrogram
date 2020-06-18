@@ -10,9 +10,7 @@ namespace Spectrogram.Tests
         [Test]
         public void Test_Quickstart_Hal()
         {
-            double[] audio = Read.WavInt16mono("../../../../../data/cant-do-that-44100.wav");
-            int sampleRate = 44100;
-
+            (int sampleRate, double[] audio, _) = WavFile.Read("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 4096;
             var spec = new Spectrogram(sampleRate, fftSize, stepSize: 500, maxFreq: 3000);
             spec.Add(audio);

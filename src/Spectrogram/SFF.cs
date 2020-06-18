@@ -7,6 +7,7 @@ using System.Text;
 
 namespace Spectrogram
 {
+    // Spectrogram File Format reader/writer
     public class SFF
     {
         public readonly byte VersionMajor = 1;
