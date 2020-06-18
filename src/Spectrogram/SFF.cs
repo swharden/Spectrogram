@@ -14,19 +14,35 @@ namespace Spectrogram
         public readonly byte VersionMinor = 1;
 
         // time information
-        int SampleRate = 44100;
-        int StepSize = 1024;
-        int StepCount = 123;
+        public int SampleRate { get; private set; }
+        public int StepSize { get; private set; }
+        public int Width { get; private set; }
 
         // frequency information
-        int FftSize = 1024;
-        int FftFirstIndex = 100;
-        int FftHeight = 824;
-        int OffsetHz = 0;
+        public int FftSize { get; private set; }
+        public int FftFirstIndex { get; private set; }
+        public int Height { get; private set; }
+        public int OffsetHz { get; private set; }
 
         public SFF()
         {
 
+        }
+
+        public SFF(string loadFilePath)
+        {
+            Load(loadFilePath);
+        }
+
+        public SFF(Spectrogram spec)
+        {
+            SampleRate = spec.SampleRate;
+            StepSize = spec.StepSize;
+            Width = spec.Width;
+            FftSize = spec.FftSize;
+            FftFirstIndex = spec.NextColumnIndex;
+            Height = spec.Height;
+            OffsetHz = spec.OffsetHz;
         }
 
         public void Load(string filePath)
@@ -44,40 +60,27 @@ namespace Spectrogram
             Console.WriteLine($"SFF version {versionMajor}.{versionMinor}");
 
             // read time information
-            int sampleRate = BitConverter.ToInt32(bytes, 42);
-            int stepSize = BitConverter.ToInt32(bytes, 46);
-            int stepCount = BitConverter.ToInt32(bytes, 50);
-            Console.WriteLine($"Sample rate: {sampleRate} Hz");
-            Console.WriteLine($"Step size: {stepSize} samples");
-            Console.WriteLine($"Step count: {stepCount} steps");
+            SampleRate = BitConverter.ToInt32(bytes, 42);
+            StepSize = BitConverter.ToInt32(bytes, 46);
+            Width = BitConverter.ToInt32(bytes, 50);
 
             // read frequency information
-            int fftSize = BitConverter.ToInt32(bytes, 54);
-            int fftFirstIndex = BitConverter.ToInt32(bytes, 58);
-            int fftHeight = BitConverter.ToInt32(bytes, 62);
-            int offsetHz = BitConverter.ToInt32(bytes, 66);
-            Console.WriteLine($"FFT size: {fftSize}");
-            Console.WriteLine($"FFT first index: {fftFirstIndex}");
-            Console.WriteLine($"FFT height: {fftHeight}");
-            Console.WriteLine($"FFT offset: {offsetHz} Hz");
+            FftSize = BitConverter.ToInt32(bytes, 54);
+            FftFirstIndex = BitConverter.ToInt32(bytes, 58);
+            Height = BitConverter.ToInt32(bytes, 62);
+            OffsetHz = BitConverter.ToInt32(bytes, 66);
 
             // data format
             byte valuesPerPoint = bytes[70];
             bool isComplex = valuesPerPoint == 2;
             byte bytesPerValue = bytes[71];
             bool decibels = bytes[72] == 1;
-            Console.WriteLine($"Values per point: {valuesPerPoint}");
-            Console.WriteLine($"Complex values: {isComplex}");
-            Console.WriteLine($"Bytes per point: {bytesPerValue}");
-            Console.WriteLine($"Decibels: {decibels}");
 
             // recording start time
             DateTime dt = new DateTime(bytes[74] + 2000, bytes[75], bytes[76], bytes[77], bytes[78], bytes[79]);
-            Console.WriteLine($"Recording start (UTC): {dt}");
 
             // data storage
             UInt32 firstDataByte = BitConverter.ToUInt32(bytes, 80);
-            Console.WriteLine($"First data byte: {firstDataByte}");
         }
 
         public void Save(string filePath)
@@ -112,12 +115,12 @@ namespace Spectrogram
             // time information
             Array.Copy(BitConverter.GetBytes(SampleRate), 0, header, 42, 4);
             Array.Copy(BitConverter.GetBytes(StepSize), 0, header, 46, 4);
-            Array.Copy(BitConverter.GetBytes(StepCount), 0, header, 50, 4);
+            Array.Copy(BitConverter.GetBytes(Width), 0, header, 50, 4);
 
             // frequency information
             Array.Copy(BitConverter.GetBytes(FftSize), 0, header, 54, 4);
             Array.Copy(BitConverter.GetBytes(FftFirstIndex), 0, header, 58, 4);
-            Array.Copy(BitConverter.GetBytes(FftHeight), 0, header, 62, 4);
+            Array.Copy(BitConverter.GetBytes(Height), 0, header, 62, 4);
             Array.Copy(BitConverter.GetBytes(OffsetHz), 0, header, 66, 4);
 
             // data encoding details
@@ -143,17 +146,17 @@ namespace Spectrogram
             Array.Copy(BitConverter.GetBytes(firstDataByte), 0, header, 80, 4);
 
             // create bytes to write to file
-            int dataPointCount = FftHeight * StepCount;
+            int dataPointCount = Height * Width;
             int bytesPerPoint = bytesPerValue * valuesPerPoint;
             byte[] fileBytes = new byte[header.Length + dataPointCount * bytesPerPoint];
             Array.Copy(header, 0, fileBytes, 0, header.Length);
 
             // copy data into byte area
-            int bytesPerColumn = FftHeight * bytesPerPoint;
-            for (int x = 0; x < StepCount; x++)
+            int bytesPerColumn = Height * bytesPerPoint;
+            for (int x = 0; x < Width; x++)
             {
                 int columnOffset = bytesPerColumn * x;
-                for (int y = 0; y < FftHeight; y++)
+                for (int y = 0; y < Height; y++)
                 {
                     int rowOffset = y * bytesPerPoint;
                     int valueOffset = firstDataByte + columnOffset + rowOffset;
