@@ -9,6 +9,14 @@ namespace Spectrogram
 {
     public static class WavFile
     {
+        private static (string id, uint length) ChunkInfo(BinaryReader br, long position)
+        {
+            br.BaseStream.Seek(position, SeekOrigin.Begin);
+            string chunkID = new string(br.ReadChars(4));
+            uint chunkBytes = br.ReadUInt32();
+            return (chunkID, chunkBytes);
+        }
+
         public static (int sampleRate, double[] L) ReadMono(string filePath)
         {
             (int sampleRate, double[] L, _) = ReadStereo(filePath);
@@ -20,84 +28,95 @@ namespace Spectrogram
             using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             using (BinaryReader br = new BinaryReader(fs))
             {
-                // read and verify content of the header
-                if (new string(br.ReadChars(4)) != "RIFF")
-                    throw new ArgumentException("invalid WAV header (no RIFF)");
+                // The first chunk is RIFF section
+                // Length should be the number of bytes in the file minus 4
+                var riffChunk = ChunkInfo(br, 0);
+                Console.WriteLine($"First chunk '{riffChunk.id}' indicates {riffChunk.length:N0} bytes");
+                if (riffChunk.id != "RIFF")
+                    throw new InvalidOperationException($"Unsupported WAV format (first chunk ID was '{riffChunk.id}', not 'RIFF')");
 
-                uint chunkSize = br.ReadUInt32();
-                if (new string(br.ReadChars(4)) != "WAVE")
-                    throw new ArgumentException("invalid WAV file (expected 'WAVE' at byte 8)");
+                // The second chunk is FORMAT section
+                var fmtChunk = ChunkInfo(br, 12);
+                Console.WriteLine($"Format chunk '{fmtChunk.id}' indicates {fmtChunk.length:N0} bytes");
+                if (fmtChunk.id != "fmt ")
+                    throw new InvalidOperationException($"Unsupported WAV format (first chunk ID was '{fmtChunk.id}', not 'fmt ')");
+                if (fmtChunk.length != 16)
+                    throw new InvalidOperationException($"Unsupported WAV format (expect 16 byte 'fmt' chunk, got {fmtChunk.length} bytes)");
 
-                string formatString = new string(br.ReadChars(4));
-                if (formatString != "fmt ")
-                    throw new NotImplementedException("unsupported WAV header (expected 'fmt ' at byte 12)");
-
-                int chunkOneSize = (int)br.ReadUInt32();
-                int firstByteAfterChunk1 = (int)br.BaseStream.Position + chunkOneSize;
-                if (chunkOneSize != 16)
-                    throw new NotImplementedException("unsupported WAV header (chunk 1 must be 16 bytes in length)");
-
+                // By now we verified this is probably a valid FORMAT section, so read its values.
                 int audioFormat = br.ReadUInt16();
-                Debug.WriteLine($"audio format: {audioFormat}");
+                Console.WriteLine($"audio format: {audioFormat}");
                 if (audioFormat != 1)
-                    throw new NotImplementedException("unsupported WAV header (audio format must be 1, indicating uncompressed PCM data)");
+                    throw new NotImplementedException("Unsupported WAV format (audio format must be 1, indicating uncompressed PCM data)");
 
                 int channelCount = br.ReadUInt16();
-                Debug.WriteLine($"channel count: {channelCount}");
+                Console.WriteLine($"channel count: {channelCount}");
+                if (channelCount < 0 || channelCount > 2)
+                    throw new NotImplementedException($"Unsupported WAV format (must be 1 or 2 channel, file has {channelCount})");
 
                 int sampleRate = (int)br.ReadUInt32();
-                Debug.WriteLine($"sample rate: {sampleRate} Hz");
+                Console.WriteLine($"sample rate: {sampleRate} Hz");
 
                 int byteRate = (int)br.ReadUInt32();
-                Debug.WriteLine($"byteRate: {byteRate}");
+                Console.WriteLine($"byteRate: {byteRate}");
 
                 ushort blockSize = br.ReadUInt16();
-                Debug.WriteLine($"block size: {blockSize} bytes per sample");
+                Console.WriteLine($"block size: {blockSize} bytes per sample");
 
                 ushort bitsPerSample = br.ReadUInt16();
-                Debug.WriteLine($"resolution: {bitsPerSample}-bit");
+                Console.WriteLine($"resolution: {bitsPerSample}-bit");
                 if (bitsPerSample != 16)
                     throw new NotImplementedException("Only 16-bit WAV files are supported");
 
-                string dataChars = new string(br.ReadChars(4));
-                Debug.WriteLine($"Data characters: {dataChars}");
+                // Cycle custom chunks until we get to the DATA chunk
+                // Various chunks may exist until the data chunk appears
+                long nextChunkPosition = 36;
+                int maximumChunkNumber = 42;
+                long firstDataByte = 0;
+                long dataByteCount = 0;
+                for (int i = 0; i < maximumChunkNumber; i++)
+                {
+                    var chunk = ChunkInfo(br, nextChunkPosition);
+                    Console.WriteLine($"Chunk at {nextChunkPosition} ('{chunk.id}') indicates {chunk.length:N0} bytes");
+                    if (chunk.id == "data")
+                    {
+                        firstDataByte = nextChunkPosition + 8;
+                        dataByteCount = chunk.length;
+                        break;
+                    }
+                    nextChunkPosition += chunk.length + 8;
+                }
+                if (firstDataByte == 0 || dataByteCount == 0)
+                    throw new InvalidOperationException("Unsupported WAV format (no 'data' chunk found)");
+                Console.WriteLine($"PCM data starts at {firstDataByte} and contains {dataByteCount} bytes");
 
-                // this may be the number of data bytes, but don't rely on it to be.
-                int finalNumber = (int)br.ReadUInt32();
-                Debug.WriteLine($"Final UInt32: {finalNumber}");
-
-                int bytesRemaining = (int)(fs.Length - br.BaseStream.Position);
-                Debug.WriteLine($"Bytes remaining: {bytesRemaining}");
-                int sampleCount = bytesRemaining / blockSize;
+                // Now read PCM data values into an array and return it
+                long sampleCount = dataByteCount / blockSize;
                 Debug.WriteLine($"Samples in file: {sampleCount}");
-                int timePoints = sampleCount / channelCount;
-                Debug.WriteLine($"Time points in file: {timePoints}");
-                Debug.WriteLine($"First data byte: {br.BaseStream.Position}");
+
+                double[] L = null;
+                double[] R = null;
 
                 if (channelCount == 1)
                 {
-                    double[] L = new double[timePoints];
-                    for (int i = 0; i < timePoints; i++)
+                    L = new double[sampleCount];
+                    for (int i = 0; i < sampleCount; i++)
                     {
                         L[i] = br.ReadInt16();
                     }
-                    return (sampleRate, L, null);
                 }
                 else if (channelCount == 2)
                 {
-                    double[] L = new double[timePoints];
-                    double[] R = new double[timePoints];
-                    for (int i = 0; i < timePoints; i++)
+                    L = new double[sampleCount];
+                    R = new double[sampleCount];
+                    for (int i = 0; i < sampleCount; i++)
                     {
                         L[i] = br.ReadInt16();
                         R[i] = br.ReadInt16();
                     }
-                    return (sampleRate, L, R);
                 }
-                else
-                {
-                    throw new InvalidOperationException("channel must be 1 or 2");
-                }
+
+                return (sampleRate, L, R);
             }
         }
     }
