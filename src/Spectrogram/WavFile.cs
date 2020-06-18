@@ -2,6 +2,7 @@
 // Format here is based on http://soundfile.sapp.org/doc/WaveFormat/
 
 using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace Spectrogram
@@ -37,23 +38,42 @@ namespace Spectrogram
                     throw new NotImplementedException("unsupported WAV header (chunk 1 must be 16 bytes in length)");
 
                 int audioFormat = br.ReadUInt16();
+                Debug.WriteLine($"audio format: {audioFormat}");
                 if (audioFormat != 1)
                     throw new NotImplementedException("unsupported WAV header (audio format must be 1, indicating uncompressed PCM data)");
 
                 int channelCount = br.ReadUInt16();
+                Debug.WriteLine($"channel count: {channelCount}");
+
                 int sampleRate = (int)br.ReadUInt32();
+                Debug.WriteLine($"sample rate: {sampleRate} Hz");
+
                 int byteRate = (int)br.ReadUInt32();
+                Debug.WriteLine($"byteRate: {byteRate}");
+
                 ushort blockSize = br.ReadUInt16();
+                Debug.WriteLine($"block size: {blockSize} bytes per sample");
+
                 ushort bitsPerSample = br.ReadUInt16();
+                Debug.WriteLine($"resolution: {bitsPerSample}-bit");
                 if (bitsPerSample != 16)
                     throw new NotImplementedException("Only 16-bit WAV files are supported");
 
-                if (new string(br.ReadChars(4)) != "data")
-                    throw new ArgumentException($"invalid WAV file (expected 'data' at byte {br.BaseStream.Position - 4})");
+                string dataChars = new string(br.ReadChars(4));
+                Debug.WriteLine($"Data characters: {dataChars}");
 
-                // read data values from the WAV file
-                int dataByteCount = (int)br.ReadUInt32();
-                int timePoints = dataByteCount / blockSize;
+                // this may be the number of data bytes, but don't rely on it to be.
+                int finalNumber = (int)br.ReadUInt32();
+                Debug.WriteLine($"Final UInt32: {finalNumber}");
+
+                int bytesRemaining = (int)(fs.Length - br.BaseStream.Position);
+                Debug.WriteLine($"Bytes remaining: {bytesRemaining}");
+                int sampleCount = bytesRemaining / blockSize;
+                Debug.WriteLine($"Samples in file: {sampleCount}");
+                int timePoints = sampleCount / channelCount;
+                Debug.WriteLine($"Time points in file: {timePoints}");
+                Debug.WriteLine($"First data byte: {br.BaseStream.Position}");
+
                 if (channelCount == 1)
                 {
                     double[] L = new double[timePoints];
