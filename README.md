@@ -15,8 +15,7 @@ _"I'm sorry Dave... I'm afraid I can't do that"_
 _Spectrogram is [available on NuGet](https://www.nuget.org/packages/Spectrogram)_
 
 ```cs
-double[] audio = Read.WavInt16mono("hal.wav");
-int sampleRate = 44100;
+(int sampleRate, double[] audio) = WavFile.ReadMono("hal.wav");
 
 var spec = new Spectrogram(sampleRate, fftSize: 4096, stepSize: 500, maxFreq: 3000);
 spec.Add(audio);
@@ -77,8 +76,7 @@ Review the source code of the demo application for additional details and consid
 This example demonstrates how to convert a MP3 file to a spectrogram image. A sample MP3 audio file in the [data folder](data) contains the audio track from Ken Barker's excellent piano performance of George Frideric Handel's Suite No. 5 in E major for harpsichord ([_The Harmonious Blacksmith_](https://en.wikipedia.org/wiki/The_Harmonious_Blacksmith)). This audio file is included [with permission](dev/Handel%20-%20Air%20and%20Variations.txt), and the [original video can be viewed on YouTube](https://www.youtube.com/watch?v=Mza-xqk770k).
 
 ```cs
-double[] audio = Read.WavInt16mono("Handel.wav");
-int sampleRate = 44100;
+(int sampleRate, double[] audio) = WavFile.ReadMono("Handel.wav");
 
 var spec = new Spectrogram(sampleRate, fftSize: 16384, stepSize: 2500, maxFreq: 2200);
 spec.Add(audio);
@@ -110,8 +108,7 @@ Spectrogram (2993, 817)
 These examples demonstrate the identical spectrogram analyzed with a variety of different colormaps. Spectrogram colormaps can be changed by calling the `SetColormap()` method:
 
 ```cs
-double[] audio = Read.WavInt16mono("hal.wav");
-int sampleRate = 44100;
+(int sampleRate, double[] audio) = WavFile.ReadMono("hal.wav");
 int fftSize = 8192;
 var spec = new Spectrogram(sampleRate, fftSize, stepSize: 200, maxFreq: 3000);
 spec.Add(audio);
@@ -122,8 +119,6 @@ spec.SaveImage($"hal-Jet.png", intensity: .5);
 Viridis | Greens | Blues | Grayscale | GrayscaleR
 ---|---|---|---|---
 ![](dev/graphics/hal-Viridis.png)|![](dev/graphics/hal-Greens.png)|![](dev/graphics/hal-Blues.png)|![](dev/graphics/hal-Grayscale.png)|![](dev/graphics/hal-GrayscaleR.png)
-
-See all colormaps in [dev/colormap/](dev/colormap/)
 
 ## Spectrogram File Format (SFF)
 
@@ -138,8 +133,7 @@ SFF files be saved using `Complex` data format (with real and imaginary values f
 This example creates a spectrogram but saves it using the SFF file format instead of saving it as an image. The SFF file can then be read in any language.
 
 ```cs
-double[] audio = Read.WavInt16mono("hal.wav");
-int sampleRate = 44100;
+(int sampleRate, double[] audio) = WavFile.ReadMono("hal.wav");
 int fftSize = 1 << 12;
 var spec = new Spectrogram(sampleRate, fftSize, stepSize: 700, maxFreq: 2000);
 spec.Add(audio);
