@@ -1,0 +1,9 @@
+Sep 3, 2019, 9:47 AM
+
+Hi Scott.
+
+I confirm that I am the sole copyright owner of the recording of the Handel piece "Air and Variations (The Harmonious Blacksmith)" in the following video published on YouTube: https://www.youtube.com/watch?v=Mza-xqk770k  
+
+I hereby grant Scott W. Harden permission to use the above recording in whole or in part as a sample audio file for the Spectrogram audio analysis library (https://github.com/swharden/Spectrogram).
+
+Ken Barker <kbub6f@gmail.com>

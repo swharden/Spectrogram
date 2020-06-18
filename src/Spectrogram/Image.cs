@@ -1,104 +1,67 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Spectrogram
 {
-    class Image
+    public static class Image
     {
-        public static Bitmap BitmapFromFFTs(float[][] ffts, Settings.DisplaySettings displaySettings)
+        public static Bitmap Create(byte[,] pixelValues, int wrapIndex = 0)
         {
+            int height = pixelValues.GetLength(1);
+            int width = pixelValues.GetLength(0);
 
-            if (ffts == null || ffts.Length == 0)
-                throw new ArgumentException("ffts must contain float arrays");
+            Bitmap bmp = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
 
-            Bitmap bmp = new Bitmap(ffts.Length, displaySettings.height, PixelFormat.Format8bppIndexed);
-            ApplyColormap(bmp, displaySettings.colormap);
+            var lockRect = new Rectangle(0, 0, width, height);
+            BitmapData bitmapData = bmp.LockBits(lockRect, ImageLockMode.ReadOnly, bmp.PixelFormat);
+            int stride = bitmapData.Stride;
 
-            var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
-            BitmapData bitmapData = bmp.LockBits(rect, ImageLockMode.ReadOnly, bmp.PixelFormat);
-            byte[] pixels = new byte[bitmapData.Stride * bmp.Height];
-
-            for (int col = 0; col < bmp.Width; col++)
+            byte[] bytes = new byte[bitmapData.Stride * height];
+            for (int col = 0; col < width; col++)
             {
-                if (col >= bmp.Width)
-                    continue;
-
-                if (col == displaySettings.highlightColumn)
+                for (int row = 0; row < height; row++)
                 {
-                    for (int row = 0; row < bmp.Height; row++)
-                    {
-                        int bytePosition = (bmp.Height - 1 - row) * bitmapData.Stride + col;
-                        pixels[bytePosition] = 255;
-                    }
-                    continue;
-                }
-
-                if (ffts[col] == null)
-                    continue;
-
-                for (int row = 0; row < bmp.Height; row++)
-                {
-                    int bytePosition = (bmp.Height - 1 - row) * bitmapData.Stride + col;
-                    float pixelValue;
-                    pixelValue = ffts[col][row + displaySettings.pixelLower];
-                    if (displaySettings.decibels)
-                        pixelValue = (float)(Math.Log10(pixelValue) * 20);
-                    pixelValue = (pixelValue * displaySettings.brightness);
-                    pixelValue = Math.Max(0, pixelValue);
-                    pixelValue = Math.Min(255, pixelValue);
-                    pixels[bytePosition] = (byte)(pixelValue);
+                    int bytePosition = (height - 1 - row) * stride + col;
+                    bytes[bytePosition] = pixelValues[col, row];
                 }
             }
 
-            Marshal.Copy(pixels, 0, bitmapData.Scan0, pixels.Length);
+            Marshal.Copy(bytes, 0, bitmapData.Scan0, bytes.Length);
             bmp.UnlockBits(bitmapData);
 
             return bmp;
         }
 
-        public static Bitmap Rotate(Bitmap bmpIn, float angle = 90)
+        public static Bitmap CreateMax(byte[,] pixelValues, int wrapIndex = 0, int pxPerPx = 1)
         {
-            // TODO: this could be faster with byte manipulation since it's 90 degrees
+            int height = pixelValues.GetLength(1) / pxPerPx;
+            int width = pixelValues.GetLength(0);
 
-            if (bmpIn == null)
-                return null;
+            Bitmap bmp = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
 
-            Bitmap bmp = new Bitmap(bmpIn);
-            Bitmap bmpRotated = new Bitmap(bmp.Height, bmp.Width);
+            var lockRect = new Rectangle(0, 0, width, height);
+            BitmapData bitmapData = bmp.LockBits(lockRect, ImageLockMode.ReadOnly, bmp.PixelFormat);
+            int stride = bitmapData.Stride;
 
-            Graphics gfx = Graphics.FromImage(bmpRotated);
-            gfx.RotateTransform(angle);
-            gfx.DrawImage(bmp, new Point(0, -bmp.Height));
-
-            return bmpRotated;
-        }
-
-        public static void ApplyColormap(Bitmap bmp, Colormap colormap)
-        {
-            switch (colormap)
+            byte[] bytes = new byte[bitmapData.Stride * height];
+            for (int col = 0; col < width; col++)
             {
-                case Colormap.grayscale:
-                    new Colormaps.Grayscale().Apply(bmp);
-                    break;
-                case Colormap.grayscaleInverted:
-                    new Colormaps.GrayscaleInverted().Apply(bmp);
-                    break;
-                case Colormap.vdBlue:
-                    new Colormaps.VdBlues().Apply(bmp);
-                    break;
-                case Colormap.vdGreen:
-                    new Colormaps.VdGreens().Apply(bmp);
-                    break;
-                case Colormap.viridis:
-                    new Colormaps.Viridis().Apply(bmp);
-                    break;
-                default:
-                    throw new NotImplementedException();
+                for (int row = 0; row < height; row++)
+                {
+                    int bytePosition = (height - 1 - row) * stride + col;
+                    for (int i = 0; i < pxPerPx; i++)
+                        bytes[bytePosition] = Math.Max(bytes[bytePosition], pixelValues[col, row * pxPerPx + i]);
+                }
             }
+
+            Marshal.Copy(bytes, 0, bitmapData.Scan0, bytes.Length);
+            bmp.UnlockBits(bitmapData);
+
+            return bmp;
         }
     }
 }

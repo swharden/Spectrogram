@@ -2,192 +2,247 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Spectrogram
 {
     public class Spectrogram
     {
-        public readonly Settings.FftSettings fftSettings;
-        public readonly Settings.DisplaySettings displaySettings;
+        public int Width { get { return ffts.Count; } }
+        public int Height { get { return settings.Height; } }
+        public int FftSize { get { return settings.FftSize; } }
+        public double HzPerPx { get { return settings.HzPerPixel; } }
+        public double SecPerPx { get { return settings.StepLengthSec; } }
+        public int FftsToProcess { get { return (newAudio.Count - settings.FftSize) / settings.StepSize; } }
+        public int FftsProcessed { get; private set; }
+        public int NextColumnIndex { get { return (FftsProcessed + rollOffset) % Width; } }
+        public int OffsetHz { get { return settings.OffsetHz; } set { settings.OffsetHz = value; } }
+        public int SampleRate { get { return settings.SampleRate; } }
+        public int StepSize { get { return settings.StepSize; } }
 
-        public List<float[]> fftList = new List<float[]>();
-        public List<float> signal = new List<float>();
+        private readonly Settings settings;
+        private readonly List<double[]> ffts = new List<double[]>();
+        private readonly List<double> newAudio = new List<double>();
+        private Colormap cmap = Colormap.Viridis;
 
-        public int nextIndex;
-        public float[] latestFFT;
-
-        public Spectrogram(int sampleRate = 8000, int fftSize = 1024, int? step = null)
+        public Spectrogram(int sampleRate, int fftSize, int stepSize,
+            double minFreq = 0, double maxFreq = double.PositiveInfinity,
+            int? fixedWidth = null, int offsetHz = 0)
         {
-            if (step == null)
-                step = sampleRate;
-            fftSettings = new Settings.FftSettings(sampleRate, fftSize, (int)step);
-            displaySettings = new Settings.DisplaySettings();
-            displaySettings.fftResolution = fftSettings.fftResolution;
-            displaySettings.freqHigh = fftSettings.maxFreq;
+            settings = new Settings(sampleRate, fftSize, stepSize, minFreq, maxFreq, offsetHz);
+
+            if (fixedWidth.HasValue)
+                SetFixedWidth(fixedWidth.Value);
         }
 
         public override string ToString()
         {
-            return $"Spectrogram ({fftSettings.sampleRate} Hz) " +
-                "with {ffts.Count} segments in memory " +
-                "({fftSettings.fftSize} points each)";
+            double processedSamples = ffts.Count * settings.StepSize + settings.FftSize;
+            double processedSec = processedSamples / settings.SampleRate;
+            string processedTime = (processedSec < 60) ? $"{processedSec:N2} sec" : $"{processedSec / 60.0:N2} min";
+
+            return $"Spectrogram ({Width}, {Height})" +
+                   $"\n  Vertical ({Height} px): " +
+                   $"{settings.FreqMin:N0} - {settings.FreqMax:N0} Hz, " +
+                   $"FFT size: {settings.FftSize:N0} samples, " +
+                   $"{settings.HzPerPixel:N2} Hz/px" +
+                   $"\n  Horizontal ({Width} px): " +
+                   $"{processedTime}, " +
+                   $"window: {settings.FftLengthSec:N2} sec, " +
+                   $"step: {settings.StepLengthSec:N2} sec, " +
+                   $"overlap: {settings.StepOverlapFrac * 100:N0}%";
         }
 
-        public string GetFftInfo()
+        public void SetColormap(Colormap cmap)
         {
-            return fftSettings.ToString();
-        }
-        
-        public void AddExtend(float[] values)
-        {
-            signal.AddRange(values);
-            ProcessNewSegments(scroll: false, fixedSize: null);
+            this.cmap = cmap ?? this.cmap;
         }
 
-        public void AddCircular(float[] values, int fixedSize)
+        public void SetWindow(double[] newWindow)
         {
-            signal.AddRange(values);
-            ProcessNewSegments(scroll: false, fixedSize: fixedSize);
+            if (newWindow.Length > settings.FftSize)
+                throw new ArgumentException("window length cannot exceed FFT size");
+
+            for (int i = 0; i < settings.FftSize; i++)
+                settings.Window[i] = 0;
+
+            int offset = (settings.FftSize - newWindow.Length) / 2;
+            Array.Copy(newWindow, 0, settings.Window, offset, newWindow.Length);
         }
 
-        public void AddScroll(float[] values, int fixedSize)
+        public void Add(double[] audio, bool process = true)
         {
-            signal.AddRange(values);
-            ProcessNewSegments(scroll: true, fixedSize: fixedSize);
+            newAudio.AddRange(audio);
+            if (process)
+                Process();
         }
 
-        private void ProcessNewSegments(bool scroll, int? fixedSize)
+        private int rollOffset = 0;
+        public void RollReset(int offset = 0)
         {
-            int segmentsRemaining = (signal.Count - fftSettings.fftSize) / fftSettings.step;
-            float[] segment = new float[fftSettings.fftSize];
-
-            while (signal.Count > (fftSettings.fftSize + fftSettings.step))
-            {
-
-                int remainingSegments = (signal.Count - fftSettings.fftSize) / fftSettings.step;
-                if (remainingSegments % 10 == 0)
-                {
-                    Console.WriteLine(string.Format("Processing segment {0} of {1} ({2:0.0}%)",
-                        fftList.Count + 1, segmentsRemaining, 100.0 * (fftList.Count + 1) / segmentsRemaining));
-                }
-
-                signal.CopyTo(0, segment, 0, fftSettings.fftSize);
-                signal.RemoveRange(0, fftSettings.step);
-
-                latestFFT = Operations.FFT(segment);
-
-                if (fixedSize == null)
-                    AddNewFftExtend(latestFFT);
-                else
-                    AddNewFftFixed(latestFFT, (int)fixedSize, scroll);
-            }
-
-            displaySettings.width = fftList.Count;
-            displaySettings.renderNeeded = true;
+            rollOffset = -FftsProcessed + offset;
         }
 
-        private void AddNewFftExtend(float[] fft)
+        public double[][] Process()
         {
-            fftList.Add(fft);
-        }
-
-        private void AddNewFftFixed(float[] fft, int fixedSize, bool scroll)
-        {
-            while (fftList.Count < fixedSize)
-                fftList.Add(null);
-            while (fftList.Count > fixedSize)
-                fftList.RemoveAt(fftList.Count - 1);
-
-            if (scroll)
-            {
-                fftList.Add(fft);
-                fftList.RemoveAt(0);
-            }
-            else
-            {
-                nextIndex = Math.Min(nextIndex, fftList.Count - 1);
-                fftList[nextIndex] = fft;
-                nextIndex += 1;
-                if (nextIndex >= fftList.Count)
-                    nextIndex = 0;
-            }
-        }
-
-        public Bitmap GetBitmap(
-            double? intensity = null,
-            bool decibels = false,
-            bool vertical = false,
-            Colormap? colormap = null,
-            bool? showTicks = null,
-            double? tickSpacingHz = null,
-            double? tickSpacingSec = null,
-            double? freqLow = null, 
-            double? freqHigh = null,
-            bool highlightLatestColumn = false
-            )
-        {
-            if (fftList.Count == 0)
+            if (FftsToProcess < 1)
                 return null;
 
-            if (displaySettings.height < 1)
-                throw new ArgumentException("FFT frequency range is too small");
+            int newFftCount = FftsToProcess;
+            double[][] newFfts = new double[newFftCount][];
 
-            if (intensity != null)
-                displaySettings.brightness = (float)intensity;
-
-            displaySettings.decibels = decibels;
-            displaySettings.colormap = (colormap == null) ? displaySettings.colormap : (Colormap)colormap;
-            displaySettings.freqLow = (freqLow == null) ? 0 : (double)freqLow;
-            displaySettings.freqHigh = (freqHigh == null) ? fftSettings.maxFreq : (double)freqHigh;
-            displaySettings.showTicks = (showTicks == null) ? displaySettings.showTicks : (bool)showTicks;
-            displaySettings.tickSpacingHz = (tickSpacingHz == null) ? displaySettings.tickSpacingHz : (double)tickSpacingHz;
-            displaySettings.tickSpacingSec = (tickSpacingSec == null) ? displaySettings.tickSpacingSec : (double)tickSpacingSec;
-
-            if (highlightLatestColumn)
-                displaySettings.highlightColumn = nextIndex;
-            else
-                displaySettings.highlightColumn = null;
-
-            Bitmap bmpIndexed;
-            Bitmap bmpRgb;
-
-            using (var benchmark = new Benchmark(true))
+            Parallel.For(0, newFftCount, newFftIndex =>
             {
-                bmpIndexed = Image.BitmapFromFFTs(fftList.ToArray(), displaySettings);
-                if (vertical)
-                    bmpIndexed = Image.Rotate(bmpIndexed);
-                bmpRgb = bmpIndexed.Clone(new Rectangle(0, 0, bmpIndexed.Width, bmpIndexed.Height), PixelFormat.Format32bppPArgb);
-                displaySettings.lastRenderMsec = benchmark.elapsedMilliseconds;
+                FftSharp.Complex[] buffer = new FftSharp.Complex[settings.FftSize];
+                int sourceIndex = newFftIndex * settings.StepSize;
+                for (int i = 0; i < settings.FftSize; i++)
+                    buffer[i].Real = newAudio[sourceIndex + i] * settings.Window[i];
+
+                FftSharp.Transform.FFT(buffer);
+
+                newFfts[newFftIndex] = new double[settings.Height];
+                for (int i = 0; i < settings.Height; i++)
+                    newFfts[newFftIndex][i] = buffer[settings.FftIndex1 + i].Magnitude / settings.FftSize;
+            });
+
+            foreach (var newFft in newFfts)
+                ffts.Add(newFft);
+            FftsProcessed += newFfts.Length;
+
+            newAudio.RemoveRange(0, newFftCount * settings.StepSize);
+            PadOrTrimForFixedWidth();
+
+            return newFfts;
+        }
+
+        public Bitmap GetBitmap(double intensity = 1, bool dB = false, bool roll = false) =>
+            _GetBitmap(ffts, cmap, intensity, dB, roll, NextColumnIndex);
+
+        public void SaveImage(string fileName, double intensity = 1, bool dB = false, bool roll = false)
+        {
+            string extension = System.IO.Path.GetExtension(fileName).ToLower();
+
+            ImageFormat fmt;
+            if (extension == ".bmp")
+                fmt = ImageFormat.Bmp;
+            else if (extension == ".png")
+                fmt = ImageFormat.Png;
+            else if (extension == ".jpg" || extension == ".jpeg")
+                fmt = ImageFormat.Jpeg;
+            else if (extension == ".gif")
+                fmt = ImageFormat.Gif;
+            else
+                throw new ArgumentException("unknown file extension");
+
+            _GetBitmap(ffts, cmap, intensity, dB, roll, NextColumnIndex).Save(fileName, fmt);
+        }
+
+        public Bitmap GetBitmapMax(double intensity = 1, bool dB = false, bool roll = false, int reduction = 4)
+        {
+            List<double[]> ffts2 = new List<double[]>();
+            for (int i = 0; i < ffts.Count; i++)
+            {
+                double[] d1 = ffts[i];
+                double[] d2 = new double[d1.Length / reduction];
+                for (int j = 0; j < d2.Length; j++)
+                    for (int k = 0; k < reduction; k++)
+                        d2[j] = Math.Max(d2[j], d1[j * reduction + k]);
+                ffts2.Add(d2);
             }
-
-            // TODO: put spacing in displaySettings
-            if (displaySettings.showTicks)
-                Annotations.drawTicks(bmpRgb, fftSettings, displaySettings);
-
-            return bmpRgb;
+            return _GetBitmap(ffts2, cmap, intensity, dB, roll, NextColumnIndex);
         }
 
-        public void SaveBitmap(Bitmap bmp, string fileName)
+        private static Bitmap _GetBitmap(List<double[]> ffts, Colormap cmap, double intensity = 1, bool dB = false, bool roll = false, int rollOffset = 0)
         {
-            string filePath = System.IO.Path.GetFullPath(fileName);
-            string extension = System.IO.Path.GetExtension(fileName).ToUpper();
+            if (ffts.Count == 0)
+                throw new ArgumentException("no audio has been added to this Spectrogram");
 
-            var imageFormat = System.Drawing.Imaging.ImageFormat.Bmp;
-            if (extension == ".JPG" || extension == ".JPEG")
-                imageFormat = System.Drawing.Imaging.ImageFormat.Jpeg;
-            else if (extension == ".PNG")
-                imageFormat = System.Drawing.Imaging.ImageFormat.Png;
-            else if (extension == ".TIF" || extension == ".TIFF")
-                imageFormat = System.Drawing.Imaging.ImageFormat.Tiff;
+            int Width = ffts.Count;
+            int Height = ffts[0].Length;
 
-            bmp.Save(filePath, imageFormat);
-            Console.WriteLine($"Saved: {filePath}");
+            Bitmap bmp = new Bitmap(Width, Height, PixelFormat.Format8bppIndexed);
+            cmap.Apply(bmp);
+
+            var lockRect = new Rectangle(0, 0, Width, Height);
+            BitmapData bitmapData = bmp.LockBits(lockRect, ImageLockMode.ReadOnly, bmp.PixelFormat);
+            int stride = bitmapData.Stride;
+
+            byte[] bytes = new byte[bitmapData.Stride * bmp.Height];
+            Parallel.For(0, Width, col =>
+            {
+                int sourceCol = col;
+                if (roll)
+                {
+                    sourceCol += Width - rollOffset % Width;
+                    if (sourceCol >= Width)
+                        sourceCol -= Width;
+                }
+
+                for (int row = 0; row < Height; row++)
+                {
+                    double value = ffts[sourceCol][row];
+                    if (dB)
+                        value = 20 * Math.Log10(value + 1);
+                    value *= intensity;
+                    value = Math.Min(value, 255);
+                    int bytePosition = (Height - 1 - row) * stride + col;
+                    bytes[bytePosition] = (byte)value;
+                }
+            });
+
+            Marshal.Copy(bytes, 0, bitmapData.Scan0, bytes.Length);
+            bmp.UnlockBits(bitmapData);
+
+            return bmp;
         }
 
-        public double GetLastRenderTime()
+        public void SaveData(string filePath)
         {
-            return displaySettings.lastRenderMsec;
+            if (!filePath.EndsWith(".sff", StringComparison.OrdinalIgnoreCase))
+                filePath += ".sff";
+            new SFF(this).Save(filePath);
         }
 
+        private int fixedWidth = 0;
+        public void SetFixedWidth(int width)
+        {
+            fixedWidth = width;
+            PadOrTrimForFixedWidth();
+        }
+
+        private void PadOrTrimForFixedWidth()
+        {
+            if (fixedWidth > 0)
+            {
+                int overhang = Width - fixedWidth;
+                if (overhang > 0)
+                    ffts.RemoveRange(0, overhang);
+
+                while (ffts.Count < fixedWidth)
+                    ffts.Insert(0, new double[Height]);
+            }
+        }
+
+        public Bitmap GetVerticalScale(int width, int offsetHz = 0, int tickSize = 3, int reduction = 1)
+        {
+            return Scale.Vertical(width, settings, offsetHz, tickSize, reduction);
+        }
+
+        public int PixelY(double frequency, int reduction = 1)
+        {
+            int pixelsFromZeroHz = (int)(settings.PxPerHz * frequency / reduction);
+            int pixelsFromMinFreq = pixelsFromZeroHz - settings.FftIndex1 / reduction + 1;
+            int pixelRow = settings.Height / reduction - 1 - pixelsFromMinFreq;
+            return pixelRow - 1;
+        }
+
+        public List<double[]> GetFFTs()
+        {
+            return ffts;
+        }
     }
 }

@@ -1,27 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Text;
+﻿// This colormap was created by Scott Harden on 2020-06-16 and is released under a MIT license.
 
 namespace Spectrogram.Colormaps
 {
-    class Grayscale : Colormap
+    class Grayscale : IColormap
     {
-        public override string GetName()
+        public (byte r, byte g, byte b) GetRGB(byte value)
         {
-            return "Grayscale";
+            return (value, value, value);
         }
-
-        public override void Apply(Bitmap bmp)
-        {
-            ColorPalette pal = bmp.Palette;
-
-            for (int i=0; i<256; i++)
-                pal.Entries[i] = Color.FromArgb(255, i, i, i);
-
-            bmp.Palette = pal;
-        }
-
     }
 }

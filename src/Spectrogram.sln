@@ -1,17 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.29209.62
+VisualStudioVersion = 16.0.30128.74
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleDemo", "ConsoleDemo\ConsoleDemo.csproj", "{DA5009A8-9036-4BDA-B591-3244DEB759E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spectrogram", "Spectrogram\Spectrogram.csproj", "{6FF83EDD-E18A-4EDD-8D53-D2281515AC47}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spectrogram", "Spectrogram\Spectrogram.csproj", "{8717F4CE-4497-4EAA-B95D-0F7A04FB397D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spectrogram.MicrophoneDemo", "Spectrogram.MicrophoneDemo\Spectrogram.MicrophoneDemo.csproj", "{D51ABC6A-53F4-4620-88A1-14EA1D779538}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioMonitor", "AudioMonitor\AudioMonitor.csproj", "{806D56D1-077A-4E8C-A742-2AEED037AF17}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demos", "Demos", "{9B6B9DCD-7360-4E63-A39C-4084F5CFF869}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaterfallDemo", "WaterfallDemo\WaterfallDemo.csproj", "{3264BE41-10B0-4121-B837-D7B134BD1A9B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spectrogram.Tests", "Spectrogram.Tests\Spectrogram.Tests.csproj", "{E7482801-78C7-41FD-88D1-72A7ED3EFC9D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,32 +15,23 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DA5009A8-9036-4BDA-B591-3244DEB759E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DA5009A8-9036-4BDA-B591-3244DEB759E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DA5009A8-9036-4BDA-B591-3244DEB759E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DA5009A8-9036-4BDA-B591-3244DEB759E9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8717F4CE-4497-4EAA-B95D-0F7A04FB397D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8717F4CE-4497-4EAA-B95D-0F7A04FB397D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8717F4CE-4497-4EAA-B95D-0F7A04FB397D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8717F4CE-4497-4EAA-B95D-0F7A04FB397D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{806D56D1-077A-4E8C-A742-2AEED037AF17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{806D56D1-077A-4E8C-A742-2AEED037AF17}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{806D56D1-077A-4E8C-A742-2AEED037AF17}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{806D56D1-077A-4E8C-A742-2AEED037AF17}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3264BE41-10B0-4121-B837-D7B134BD1A9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3264BE41-10B0-4121-B837-D7B134BD1A9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3264BE41-10B0-4121-B837-D7B134BD1A9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3264BE41-10B0-4121-B837-D7B134BD1A9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FF83EDD-E18A-4EDD-8D53-D2281515AC47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FF83EDD-E18A-4EDD-8D53-D2281515AC47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FF83EDD-E18A-4EDD-8D53-D2281515AC47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FF83EDD-E18A-4EDD-8D53-D2281515AC47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D51ABC6A-53F4-4620-88A1-14EA1D779538}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D51ABC6A-53F4-4620-88A1-14EA1D779538}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D51ABC6A-53F4-4620-88A1-14EA1D779538}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D51ABC6A-53F4-4620-88A1-14EA1D779538}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7482801-78C7-41FD-88D1-72A7ED3EFC9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7482801-78C7-41FD-88D1-72A7ED3EFC9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7482801-78C7-41FD-88D1-72A7ED3EFC9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7482801-78C7-41FD-88D1-72A7ED3EFC9D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{DA5009A8-9036-4BDA-B591-3244DEB759E9} = {9B6B9DCD-7360-4E63-A39C-4084F5CFF869}
-		{806D56D1-077A-4E8C-A742-2AEED037AF17} = {9B6B9DCD-7360-4E63-A39C-4084F5CFF869}
-		{3264BE41-10B0-4121-B837-D7B134BD1A9B} = {9B6B9DCD-7360-4E63-A39C-4084F5CFF869}
-	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {7D18DDFF-2D40-4E8A-9EA7-3F7B658062D3}
+		SolutionGuid = {027B0366-F1D7-426F-B064-71E97E3248C1}
 	EndGlobalSection
 EndGlobal
