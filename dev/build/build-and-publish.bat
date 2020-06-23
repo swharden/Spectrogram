@@ -43,6 +43,7 @@ nuget update -self
 echo.
 echo ### UPLOADING TO NUGET ###
 nuget push *.nupkg -Source https://api.nuget.org/v3/index.json
+nuget push *.snupkg -Source https://api.nuget.org/v3/index.json
 
 echo.
 pause

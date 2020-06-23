@@ -14,6 +14,8 @@
     <PackageReleaseNotes>Releases: https://github.com/swharden/Spectrogram/releases
 Quickstart: https://github.com/swharden/Spectrogram</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<IncludeSymbols>true</IncludeSymbols>
+	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
