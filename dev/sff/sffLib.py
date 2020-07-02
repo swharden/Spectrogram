@@ -58,6 +58,14 @@ class SpectrogramFile:
         print(f"Bytes per point: {self.bytesPerValue}")
         print(f"Decibels: {self.decibels}")
 
+        # new variables
+        self.melBinCount = int(filebytes[84])
+        self.imageHeight = int(filebytes[88])
+        self.imageWidth = int(filebytes[92])
+        print(f"Mel bin count: {self.melBinCount}")
+        print(f"image width: {self.imageWidth}")
+        print(f"image height: {self.imageHeight}")
+
         # useful class properties
         self.secPerPx = self.stepSize / self.sampleRate
         self.hzPerPx = self.sampleRate / self.fftSize
@@ -75,15 +83,15 @@ class SpectrogramFile:
         print(f"First data byte: {self.firstDataByte}")
 
         # read data values
-        dataShape = (self.stepCount, self.fftHeight)
+        dataShape = (self.imageWidth, self.imageHeight)
         bytesPerPoint = self.bytesPerValue * self.valuesPerPoint
-        bytesPerColumn = self.fftHeight * bytesPerPoint
+        bytesPerColumn = self.imageHeight * bytesPerPoint
 
         if (self.isComplex):
             self.values = np.zeros(dataShape, dtype=np.complex_)
-            for x in range(self.stepCount):
+            for x in range(self.imageWidth):
                 columnOffset = bytesPerColumn * x
-                for y in range(self.fftHeight):
+                for y in range(self.imageHeight):
                     rowOffset = y * bytesPerPoint
                     valueOffset = self.firstDataByte + columnOffset + rowOffset
                     bytesReal = filebytes[valueOffset:valueOffset+8]
@@ -93,14 +101,14 @@ class SpectrogramFile:
                     self.values[x, y] = valueReal + valueImag * 1j
         else:
             self.values = np.zeros(dataShape, dtype=np.float)
-            for x in range(self.stepCount):
+            for x in range(self.imageWidth):
                 columnOffset = bytesPerColumn * x
-                for y in range(self.fftHeight):
+                for y in range(self.imageHeight):
                     rowOffset = y * bytesPerPoint
                     valueOffset = self.firstDataByte + columnOffset + rowOffset
                     bytesMag = filebytes[valueOffset:valueOffset+8]
                     self.values[x, y] = struct.unpack("<d", bytesMag)[0]
 
         print(f"Loaded {os.path.basename(self.filePath)} " +
-              f"({self.valuesPerPoint * self.fftHeight * self.stepCount:,} values) " +
+              f"({self.valuesPerPoint * self.imageWidth * self.imageHeight:,} values) " +
               f"in {(time.perf_counter() - timeStart)*1000:.02f} ms")
