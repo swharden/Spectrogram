@@ -15,9 +15,9 @@ namespace Spectrogram.Tests
             var spec = new Spectrogram(sampleRate, fftSize, stepSize: 700, maxFreq: 2000);
             spec.SetWindow(FftSharp.Window.Hanning(fftSize / 3)); // sharper window than typical
             spec.Add(audio);
-            spec.SaveData("hal.sff");
+            spec.SaveData("../../../../../dev/sff/hal.sff");
 
-            var spec2 = new SFF("hal.sff");
+            var spec2 = new SFF("../../../../../dev/sff/hal.sff");
             Assert.AreEqual(spec.SampleRate, spec2.SampleRate);
             Assert.AreEqual(spec.StepSize, spec2.StepSize);
             Assert.AreEqual(spec.Width, spec2.Width);
@@ -35,9 +35,9 @@ namespace Spectrogram.Tests
             var spec = new Spectrogram(sampleRate, fftSize, stepSize: 700, maxFreq: 2000);
             spec.SetWindow(FftSharp.Window.Hanning(fftSize / 3)); // sharper window than typical
             spec.Add(audio);
-            spec.SaveData("halMel.sff", melBinCount: 25);
+            spec.SaveData("../../../../../dev/sff/halMel.sff", melBinCount: 50);
 
-            var spec2 = new SFF("halMel.sff");
+            var spec2 = new SFF("../../../../../dev/sff/halMel.sff");
             Assert.AreEqual(spec.SampleRate, spec2.SampleRate);
             Assert.AreEqual(spec.StepSize, spec2.StepSize);
             Assert.AreEqual(spec.Width, spec2.Width);
