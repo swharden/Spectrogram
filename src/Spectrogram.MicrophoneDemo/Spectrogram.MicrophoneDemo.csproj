@@ -61,29 +61,11 @@
     <Compile Include="FormMicrophone.Designer.cs">
       <DependentUpon>FormMicrophone.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormMenu.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FormMenu.Designer.cs">
-      <DependentUpon>FormMenu.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FormAnalysis.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FormAnalysis.Designer.cs">
-      <DependentUpon>FormAnalysis.cs</DependentUpon>
-    </Compile>
     <Compile Include="Listener.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FormMicrophone.resx">
       <DependentUpon>FormMicrophone.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FormMenu.resx">
-      <DependentUpon>FormMenu.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FormAnalysis.resx">
-      <DependentUpon>FormAnalysis.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
