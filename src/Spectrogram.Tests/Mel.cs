@@ -1,12 +1,27 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Text;
 
 namespace Spectrogram.Tests
 {
     class Mel
     {
+        [Test]
+        public void Test_Mel_Spectrogram()
+        {
+            (int sampleRate, double[] audio) = WavFile.ReadMono("../../../../../data/cant-do-that-44100.wav");
+            int fftSize = 4096;
+            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 500);
+            spec.Add(audio);
+            spec.SaveImage("halNotMel.png", 4, true);
+            
+            Bitmap bmp = spec.GetBitmapMel(250, 4, true);
+            bmp.Save("../../../../../dev/graphics/halMel.png", ImageFormat.Png);
+        }
+
         [Test]
         public void Test_Mel_Graph()
         {

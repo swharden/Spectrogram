@@ -129,7 +129,50 @@ namespace Spectrogram
         }
 
         public Bitmap GetBitmap(double intensity = 1, bool dB = false, bool roll = false) =>
-            _GetBitmap(ffts, cmap, intensity, dB, roll, NextColumnIndex);
+            Image.GetBitmap(ffts, cmap, intensity, dB, roll, NextColumnIndex);
+
+        public Bitmap GetBitmapMel(int melSizePoints = 25, double intensity = 1, bool dB = false, bool roll = false)
+        {
+            if (settings.FreqMin != 0)
+                throw new InvalidOperationException("cannot get Mel spectrogram unless minimum frequency is 0Hz");
+
+            // determine the bin locations (on the Mel scale)
+            double maxMel = 2595 * Math.Log10(1 + settings.FreqMax / 700);
+            double[] binStartFreqs = new double[melSizePoints + 1];
+            for (int i = 0; i < melSizePoints + 1; i++)
+            {
+                double thisMel = maxMel * i / melSizePoints;
+                binStartFreqs[i] = 700 * (Math.Pow(10, thisMel / 2595d) - 1);
+            }
+
+            // calculate mel FFT for each FFT
+            var fftsMel = new List<double[]>();
+            for (int fftIndex = 0; fftIndex < Width; fftIndex++)
+            {
+                double[] thisFftMel = new double[melSizePoints];
+                for (int binIndex = 0; binIndex < binStartFreqs.Length - 2; binIndex++)
+                {
+                    double freqLow = binStartFreqs[binIndex];
+                    double freqHigh = binStartFreqs[binIndex + 2];
+                    int indexLow = (int)(Height * freqLow / settings.FreqMax);
+                    int indexHigh = (int)(Height * freqHigh / settings.FreqMax);
+                    int indexSpan = indexHigh - indexLow;
+
+                    double binScaleSum = 0;
+                    for (int i = 0; i < indexSpan; i++)
+                    {
+                        double frac = (double)i / indexSpan;
+                        frac = (frac < .5) ? frac * 2 : 1 - frac;
+                        binScaleSum += frac;
+                        thisFftMel[binIndex] += ffts[fftIndex][indexLow + i] * frac;
+                    }
+                    thisFftMel[binIndex] /= binScaleSum;
+                }
+                fftsMel.Add(thisFftMel);
+            }
+
+            return Image.GetBitmap(fftsMel, cmap, intensity, dB, roll, NextColumnIndex);
+        }
 
         [Obsolete("use SaveImage()", true)]
         public void SaveBitmap(Bitmap bmp, string fileName) { }
@@ -150,7 +193,7 @@ namespace Spectrogram
             else
                 throw new ArgumentException("unknown file extension");
 
-            _GetBitmap(ffts, cmap, intensity, dB, roll, NextColumnIndex).Save(fileName, fmt);
+            Image.GetBitmap(ffts, cmap, intensity, dB, roll, NextColumnIndex).Save(fileName, fmt);
         }
 
         public Bitmap GetBitmapMax(double intensity = 1, bool dB = false, bool roll = false, int reduction = 4)
@@ -165,51 +208,7 @@ namespace Spectrogram
                         d2[j] = Math.Max(d2[j], d1[j * reduction + k]);
                 ffts2.Add(d2);
             }
-            return _GetBitmap(ffts2, cmap, intensity, dB, roll, NextColumnIndex);
-        }
-
-        private static Bitmap _GetBitmap(List<double[]> ffts, Colormap cmap, double intensity = 1, bool dB = false, bool roll = false, int rollOffset = 0)
-        {
-            if (ffts.Count == 0)
-                throw new ArgumentException("no audio has been added to this Spectrogram");
-
-            int Width = ffts.Count;
-            int Height = ffts[0].Length;
-
-            Bitmap bmp = new Bitmap(Width, Height, PixelFormat.Format8bppIndexed);
-            cmap.Apply(bmp);
-
-            var lockRect = new Rectangle(0, 0, Width, Height);
-            BitmapData bitmapData = bmp.LockBits(lockRect, ImageLockMode.ReadOnly, bmp.PixelFormat);
-            int stride = bitmapData.Stride;
-
-            byte[] bytes = new byte[bitmapData.Stride * bmp.Height];
-            Parallel.For(0, Width, col =>
-            {
-                int sourceCol = col;
-                if (roll)
-                {
-                    sourceCol += Width - rollOffset % Width;
-                    if (sourceCol >= Width)
-                        sourceCol -= Width;
-                }
-
-                for (int row = 0; row < Height; row++)
-                {
-                    double value = ffts[sourceCol][row];
-                    if (dB)
-                        value = 20 * Math.Log10(value + 1);
-                    value *= intensity;
-                    value = Math.Min(value, 255);
-                    int bytePosition = (Height - 1 - row) * stride + col;
-                    bytes[bytePosition] = (byte)value;
-                }
-            });
-
-            Marshal.Copy(bytes, 0, bitmapData.Scan0, bytes.Length);
-            bmp.UnlockBits(bitmapData);
-
-            return bmp;
+            return Image.GetBitmap(ffts2, cmap, intensity, dB, roll, NextColumnIndex);
         }
 
         public void SaveData(string filePath)

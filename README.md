@@ -171,6 +171,30 @@ plt.show()
 
 ![](dev/sff/hal.png)
 
+## Mel Spectrogram
+
+By default spectrograms are created using linear scaling (every row of frequency pixels spans the same frequency width). However, human hearing is logarithmic, and the human ear can better differentiate frequency shifts at lower frequencies than at higher ones. To visualize the spectrum in a way that mimics human perception, we can apply more frequency resolution weight to the lower frequencies, and condense larger ranges of higher frequencies into single pixel rows. The [Mel Scale](https://en.wikipedia.org/wiki/Mel_scale) is typically used to transform audio data, and the resulting _Mel Spectrogram_ has greatly reduced vertical resolution, but is a better representation of human frequency perception. 
+
+Cropped Linear Scale (0-1kHz) | Full Linear Scale (0-22 kHz) | Mel Scale (0-22 kHz)
+---|---|---
+![](dev/graphics/halMelLinearCropped.png)|![](dev/graphics/halMelLinearFull.png)|![](dev/graphics/halMel.png)
+
+Amplitude perception in humans, like frequency perception, is logarithmic. Therefore Mel spectrograms are typically presented with power transformed to Decibels.
+
+```cs
+// Load "I'm sorry dave, I'm afraid I can't do that" audio
+(int sampleRate, double[] audio) = WavFile.ReadMono("hal.wav");
+
+// Create a traditional (linear) Spectrogram with dB units
+var spec = new Spectrogram(sampleRate, fftSize: 4096, stepSize: 500, maxFreq: 3000);
+spec.Add(audio);
+spec.SaveImage("hal.png", intensity: 4, dB: true);
+
+// Create a Mel Spectrogram with dB units
+Bitmap bmp = spec.GetBitmapMel(melSizePoints: 250, intensity: 4, dB: true);
+bmp.Save("halMel.png", ImageFormat.Png);
+```
+
 ## Resources
 * [FftSharp](https://github.com/swharden/FftSharp) - the module which actually performs the FFT and related transformations
 * [MP3Sharp](https://github.com/ZaneDubya/MP3Sharp) - a library I use to read MP3 files during testing
