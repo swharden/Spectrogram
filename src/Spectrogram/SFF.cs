@@ -133,7 +133,7 @@ namespace Spectrogram
             Array.Copy(BitConverter.GetBytes(OffsetHz), 0, header, 66, 4);
 
             // data encoding details
-            byte valuesPerPoint = 2; // 1 for magnitude or power data, 2 for complex data
+            byte valuesPerPoint = 1; // 1 for magnitude or power data, 2 for complex data
             byte bytesPerValue = 8; // a double is 8 bytes
             byte decibelUnits = 0; // 1 if units are in dB
             byte dataExtraByte = 0; // unused
@@ -151,15 +151,17 @@ namespace Spectrogram
             header[79] = (byte)DateTime.UtcNow.Second;
 
             // ADD NEW VALUES HERE (after byte 80)
+            int imageHeight = FFTs[0].Length;
+            int imageWidth = FFTs.Count;
             Array.Copy(BitConverter.GetBytes(MelBinCount), 0, header, 84, 4);
+            Array.Copy(BitConverter.GetBytes(imageHeight), 0, header, 88, 4);
+            Array.Copy(BitConverter.GetBytes(imageWidth), 0, header, 92, 4);
 
             // binary data location (keep this at byte 80)
             int firstDataByte = header.Length;
             Array.Copy(BitConverter.GetBytes(firstDataByte), 0, header, 80, 4);
 
             // create bytes to write to file
-            int imageHeight = FFTs[0].Length;
-            int imageWidth = FFTs.Count;
             int dataPointCount = imageHeight * imageWidth;
             int bytesPerPoint = bytesPerValue * valuesPerPoint;
             byte[] fileBytes = new byte[header.Length + dataPointCount * bytesPerPoint];
