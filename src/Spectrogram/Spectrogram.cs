@@ -128,20 +128,17 @@ namespace Spectrogram
             return newFfts;
         }
 
-        public Bitmap GetBitmap(double intensity = 1, bool dB = false, bool roll = false) =>
-            Image.GetBitmap(ffts, cmap, intensity, dB, roll, NextColumnIndex);
-
-        public Bitmap GetBitmapMel(int melSizePoints = 25, double intensity = 1, bool dB = false, bool roll = false)
+        private List<double[]> GetMelFFTs(int melBinCount)
         {
             if (settings.FreqMin != 0)
                 throw new InvalidOperationException("cannot get Mel spectrogram unless minimum frequency is 0Hz");
 
             // determine the bin locations (on the Mel scale)
             double maxMel = 2595 * Math.Log10(1 + settings.FreqMax / 700);
-            double[] binStartFreqs = new double[melSizePoints + 1];
-            for (int i = 0; i < melSizePoints + 1; i++)
+            double[] binStartFreqs = new double[melBinCount + 1];
+            for (int i = 0; i < melBinCount + 1; i++)
             {
-                double thisMel = maxMel * i / melSizePoints;
+                double thisMel = maxMel * i / melBinCount;
                 binStartFreqs[i] = 700 * (Math.Pow(10, thisMel / 2595d) - 1);
             }
 
@@ -149,7 +146,7 @@ namespace Spectrogram
             var fftsMel = new List<double[]>();
             for (int fftIndex = 0; fftIndex < Width; fftIndex++)
             {
-                double[] thisFftMel = new double[melSizePoints];
+                double[] thisFftMel = new double[melBinCount];
                 for (int binIndex = 0; binIndex < binStartFreqs.Length - 2; binIndex++)
                 {
                     double freqLow = binStartFreqs[binIndex];
@@ -171,8 +168,14 @@ namespace Spectrogram
                 fftsMel.Add(thisFftMel);
             }
 
-            return Image.GetBitmap(fftsMel, cmap, intensity, dB, roll, NextColumnIndex);
+            return fftsMel;
         }
+
+        public Bitmap GetBitmap(double intensity = 1, bool dB = false, bool roll = false) =>
+            Image.GetBitmap(ffts, cmap, intensity, dB, roll, NextColumnIndex);
+
+        public Bitmap GetBitmapMel(int melBinCount = 25, double intensity = 1, bool dB = false, bool roll = false) =>
+            Image.GetBitmap(GetMelFFTs(melBinCount), cmap, intensity, dB, roll, NextColumnIndex);
 
         [Obsolete("use SaveImage()", true)]
         public void SaveBitmap(Bitmap bmp, string fileName) { }
