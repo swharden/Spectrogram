@@ -23,6 +23,9 @@ namespace Spectrogram
         public int FftFirstIndex { get; private set; }
         public int Height { get; private set; }
         public int OffsetHz { get; private set; }
+        public int MelBinCount { get; private set; }
+
+        public List<double[]> FFTs { get; private set; }
 
         public SFF()
         {
@@ -34,7 +37,7 @@ namespace Spectrogram
             Load(loadFilePath);
         }
 
-        public SFF(Spectrogram spec)
+        public SFF(Spectrogram spec, int melBinCount = 0)
         {
             SampleRate = spec.SampleRate;
             StepSize = spec.StepSize;
@@ -43,6 +46,11 @@ namespace Spectrogram
             FftFirstIndex = spec.NextColumnIndex;
             Height = spec.Height;
             OffsetHz = spec.OffsetHz;
+            MelBinCount = melBinCount;
+            if (MelBinCount > 0)
+                FFTs = spec.GetMelFFTs(melBinCount);
+            else
+                FFTs = spec.GetFFTs();
         }
 
         public void Load(string filePath)
@@ -69,6 +77,7 @@ namespace Spectrogram
             FftFirstIndex = BitConverter.ToInt32(bytes, 58);
             Height = BitConverter.ToInt32(bytes, 62);
             OffsetHz = BitConverter.ToInt32(bytes, 66);
+            MelBinCount = BitConverter.ToInt32(bytes, 84);
 
             // data format
             byte valuesPerPoint = bytes[70];
@@ -141,28 +150,32 @@ namespace Spectrogram
             header[78] = (byte)DateTime.UtcNow.Minute;
             header[79] = (byte)DateTime.UtcNow.Second;
 
-            // binary data location
+            // ADD NEW VALUES HERE (after byte 80)
+            Array.Copy(BitConverter.GetBytes(MelBinCount), 0, header, 84, 4);
+
+            // binary data location (keep this at byte 80)
             int firstDataByte = header.Length;
             Array.Copy(BitConverter.GetBytes(firstDataByte), 0, header, 80, 4);
 
             // create bytes to write to file
-            int dataPointCount = Height * Width;
+            int imageHeight = FFTs[0].Length;
+            int imageWidth = FFTs.Count;
+            int dataPointCount = imageHeight * imageWidth;
             int bytesPerPoint = bytesPerValue * valuesPerPoint;
             byte[] fileBytes = new byte[header.Length + dataPointCount * bytesPerPoint];
             Array.Copy(header, 0, fileBytes, 0, header.Length);
 
             // copy data into byte area
-            int bytesPerColumn = Height * bytesPerPoint;
-            for (int x = 0; x < Width; x++)
+            int bytesPerColumn = imageHeight * bytesPerPoint;
+            for (int x = 0; x < imageWidth; x++)
             {
                 int columnOffset = bytesPerColumn * x;
-                for (int y = 0; y < Height; y++)
+                for (int y = 0; y < imageHeight; y++)
                 {
                     int rowOffset = y * bytesPerPoint;
                     int valueOffset = firstDataByte + columnOffset + rowOffset;
-                    double value = double.Parse($"{x}.{y}");
+                    double value = FFTs[x][y];
                     Array.Copy(BitConverter.GetBytes(value), 0, fileBytes, valueOffset, 8);
-                    Array.Copy(BitConverter.GetBytes(-value), 0, fileBytes, valueOffset + 8, 8);
                 }
             }
 

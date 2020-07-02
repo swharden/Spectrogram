@@ -128,7 +128,7 @@ namespace Spectrogram
             return newFfts;
         }
 
-        private List<double[]> GetMelFFTs(int melBinCount)
+        public List<double[]> GetMelFFTs(int melBinCount)
         {
             if (settings.FreqMin != 0)
                 throw new InvalidOperationException("cannot get Mel spectrogram unless minimum frequency is 0Hz");
@@ -214,11 +214,11 @@ namespace Spectrogram
             return Image.GetBitmap(ffts2, cmap, intensity, dB, roll, NextColumnIndex);
         }
 
-        public void SaveData(string filePath)
+        public void SaveData(string filePath, int melBinCount = 0)
         {
             if (!filePath.EndsWith(".sff", StringComparison.OrdinalIgnoreCase))
                 filePath += ".sff";
-            new SFF(this).Save(filePath);
+            new SFF(this, melBinCount).Save(filePath);
         }
 
         private int fixedWidth = 0;
