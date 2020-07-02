@@ -173,13 +173,15 @@ plt.show()
 
 ## Mel Spectrogram
 
-By default spectrograms are created using linear scaling (every row of frequency pixels spans the same frequency width). However, human hearing is logarithmic, and the human ear can better differentiate frequency shifts at lower frequencies than at higher ones. To visualize the spectrum in a way that mimics human perception, we can apply more frequency resolution weight to the lower frequencies, and condense larger ranges of higher frequencies into single pixel rows. The [Mel Scale](https://en.wikipedia.org/wiki/Mel_scale) is typically used to transform audio data, and the resulting _Mel Spectrogram_ has greatly reduced vertical resolution, but is a better representation of human frequency perception. 
+Analytical spectrograms aimed at achieving maximum frequency resolution are presented using linear scaling, where every row of pixels is evenly spaced in the frequency domain. However, biological sensory systems tend to be logarithmic, and the human ear can differentiate frequency shifts better at lower frequencies than at higher ones. 
+
+**To visualize frequency in a way that mimics human perception** we create a spectrogram that represents lower frequencies using a large portion of the image, and condense higher frequency ranges into smaller rows of pixels toward the top of the image. The [Mel Scale](https://en.wikipedia.org/wiki/Mel_scale) is typically used to represent frequency perception on a linear scale, and the resulting _Mel Spectrogram_ has greatly reduced vertical resolution, but is a better representation of human frequency perception. 
 
 Cropped Linear Scale (0-1kHz) | Full Linear Scale (0-22 kHz) | Mel Scale (0-22 kHz)
 ---|---|---
 ![](dev/graphics/halMelLinearCropped.png)|![](dev/graphics/halMelLinearFull.png)|![](dev/graphics/halMel.png)
 
-Amplitude perception in humans, like frequency perception, is logarithmic. Therefore Mel spectrograms are typically presented with power transformed to Decibels.
+Amplitude perception in humans, like frequency perception, is logarithmic. Therefore, Mel spectrograms typically display log-transformed spectral power and are presented using Decibel units.
 
 ```cs
 // Load "I'm sorry dave, I'm afraid I can't do that" audio
