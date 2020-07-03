@@ -13,7 +13,7 @@ namespace Spectrogram
         public static Bitmap GetBitmap(List<double[]> ffts, Colormap cmap, double intensity = 1, bool dB = false, bool roll = false, int rollOffset = 0)
         {
             if (ffts.Count == 0)
-                throw new ArgumentException("no audio has been added to this Spectrogram");
+                throw new ArgumentException("This Spectrogram contains no FFTs (likely because no signal was added)");
 
             int Width = ffts.Count;
             int Height = ffts[0].Length;
