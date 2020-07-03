@@ -27,8 +27,8 @@ namespace Spectrogram
         public int MelBinCount { get; private set; }
 
         // FFT details
-        public int FftHeight { get; private set; }
-        public int FftWidth { get; private set; }
+        public int FftHeight { get { return Ffts[0].Length; } }
+        public int FftWidth { get { return Ffts.Count; } }
         public List<double[]> Ffts { get; private set; }
 
         public SFF()
@@ -103,8 +103,8 @@ namespace Spectrogram
 
             // FFT dimensions
             MelBinCount = BitConverter.ToInt32(bytes, 84);
-            FftHeight = BitConverter.ToInt32(bytes, 88);
-            FftWidth = BitConverter.ToInt32(bytes, 92);
+            int FftHeight = BitConverter.ToInt32(bytes, 88);
+            int FftWidth = BitConverter.ToInt32(bytes, 92);
 
             // create the FFT by reading data from file
             Ffts = new List<double[]>();
