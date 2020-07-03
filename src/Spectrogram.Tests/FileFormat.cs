@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 
 namespace Spectrogram.Tests
@@ -32,10 +33,13 @@ namespace Spectrogram.Tests
         {
             (int sampleRate, double[] audio) = WavFile.ReadMono("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 1 << 12;
-            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 700, maxFreq: 2000);
+            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 700);
             spec.SetWindow(FftSharp.Window.Hanning(fftSize / 3)); // sharper window than typical
             spec.Add(audio);
-            spec.SaveData("../../../../../dev/sff/halMel.sff", melBinCount: 50);
+
+            Bitmap bmp = spec.GetBitmapMel(250, 3, true);
+            bmp.Save("../../../../../dev/sff/halMel.png", System.Drawing.Imaging.ImageFormat.Png);
+            spec.SaveData("../../../../../dev/sff/halMel.sff", melBinCount: 250);
 
             var spec2 = new SFF("../../../../../dev/sff/halMel.sff");
             Assert.AreEqual(spec.SampleRate, spec2.SampleRate);
