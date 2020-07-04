@@ -19,8 +19,10 @@ namespace SffViewer
             InitializeComponent();
             cbColormap.Items.AddRange(colormaps.Select(x => x.Name).ToArray());
             cbColormap.SelectedIndex = cbColormap.Items.IndexOf("Viridis");
-            string defaultPath = "../../../hal.sff";
-            LoadSFF(defaultPath);
+
+            string startupSffFile = "../../../hal.sff";
+            if (System.IO.File.Exists(startupSffFile))
+                LoadSFF(startupSffFile);
         }
 
         private void Form1_Load(object sender, EventArgs e)

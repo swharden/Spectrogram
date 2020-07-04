@@ -33,6 +33,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FftSharp, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\src\packages\FftSharp.1.0.5\lib\netstandard2.0\FftSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Spectrogram, Version=1.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\src\packages\Spectrogram.1.2.3\lib\netstandard2.0\Spectrogram.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing.Common, Version=4.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -82,12 +88,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Spectrogram\Spectrogram.csproj">
-      <Project>{c7cfb0df-ce0a-421f-8843-33c542724709}</Project>
-      <Name>Spectrogram</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
