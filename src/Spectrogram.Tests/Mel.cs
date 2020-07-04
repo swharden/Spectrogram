@@ -82,5 +82,15 @@ namespace Spectrogram.Tests
 
             plt1.SaveFig("mel1.png");
         }
+
+        [Test]
+        public void Test_SaveEmpty_Throws()
+        {
+            (int sampleRate, double[] audio) = WavFile.ReadMono("../../../../../data/cant-do-that-44100.wav");
+            int fftSize = 4096;
+            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 500);
+            //spec.Add(audio);
+            Assert.Throws<InvalidOperationException>(() => { spec.SaveImage("empty.png"); });
+        }
     }
 }

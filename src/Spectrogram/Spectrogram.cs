@@ -182,7 +182,10 @@ namespace Spectrogram
 
         public void SaveImage(string fileName, double intensity = 1, bool dB = false, bool roll = false)
         {
-            string extension = System.IO.Path.GetExtension(fileName).ToLower();
+            if (ffts.Count == 0)
+                throw new InvalidOperationException("Spectrogram contains no data. Use Add() to add signal data.");
+
+            string extension = Path.GetExtension(fileName).ToLower();
 
             ImageFormat fmt;
             if (extension == ".bmp")
