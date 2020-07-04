@@ -98,8 +98,8 @@ namespace Spectrogram
             byte bytesPerValue = bytes[71];
             Decibels = bytes[72] == 1;
 
-            // recording start time
-            DateTime dt = new DateTime(bytes[74] + 2000, bytes[75], bytes[76], bytes[77], bytes[78], bytes[79]);
+            // recording start time - no longer stored in the SFF file
+            //DateTime dt = new DateTime(bytes[74] + 2000, bytes[75], bytes[76], bytes[77], bytes[78], bytes[79]);
 
             // data storage
             int firstDataByte = (int)BitConverter.ToUInt32(bytes, 80);
@@ -178,12 +178,13 @@ namespace Spectrogram
             header[73] = dataExtraByte;
 
             // source file date and time
-            header[74] = (byte)(DateTime.UtcNow.Year - 2000); // 2-digit year
-            header[75] = (byte)DateTime.UtcNow.Month;
-            header[76] = (byte)DateTime.UtcNow.Day;
-            header[77] = (byte)DateTime.UtcNow.Hour;
-            header[78] = (byte)DateTime.UtcNow.Minute;
-            header[79] = (byte)DateTime.UtcNow.Second;
+            // dont store this because it makes SFF files different every time they are generated
+            //header[74] = (byte)(DateTime.UtcNow.Year - 2000);
+            //header[75] = (byte)DateTime.UtcNow.Month;
+            //header[76] = (byte)DateTime.UtcNow.Day;
+            //header[77] = (byte)DateTime.UtcNow.Hour;
+            //header[78] = (byte)DateTime.UtcNow.Minute;
+            //header[79] = (byte)DateTime.UtcNow.Second;
 
             // ADD NEW VALUES HERE (after byte 80)
             Array.Copy(BitConverter.GetBytes(MelBinCount), 0, header, 84, 4);
