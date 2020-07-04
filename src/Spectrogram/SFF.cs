@@ -25,6 +25,7 @@ namespace Spectrogram
         public int Height { get; private set; }
         public int OffsetHz { get; private set; }
         public int MelBinCount { get; private set; }
+        public bool Decibels { get; private set; }
 
         // FFT details
         public int FftHeight { get { return Ffts[0].Length; } }
@@ -92,8 +93,10 @@ namespace Spectrogram
             // data format
             byte valuesPerPoint = bytes[70];
             bool isComplex = valuesPerPoint == 2;
+            if (isComplex)
+                throw new NotImplementedException("complex data is not yet supported");
             byte bytesPerValue = bytes[71];
-            bool decibels = bytes[72] == 1;
+            Decibels = bytes[72] == 1;
 
             // recording start time
             DateTime dt = new DateTime(bytes[74] + 2000, bytes[75], bytes[76], bytes[77], bytes[78], bytes[79]);
