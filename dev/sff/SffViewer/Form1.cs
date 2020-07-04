@@ -57,6 +57,7 @@ namespace SffViewer
             {
                 if (path.EndsWith(".sff", StringComparison.OrdinalIgnoreCase))
                 {
+                    lblFileName.Text = System.IO.Path.GetFileName(path);
                     LoadSFF(path);
                     return;
                 }

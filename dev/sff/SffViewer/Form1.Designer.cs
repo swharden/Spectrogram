@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblFileName = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.cbColormap = new System.Windows.Forms.ComboBox();
             this.tbBrightness = new System.Windows.Forms.TrackBar();
@@ -36,18 +36,19 @@
             this.label4 = new System.Windows.Forms.Label();
             this.cbDecibels = new System.Windows.Forms.CheckBox();
             this.cbStretch = new System.Windows.Forms.CheckBox();
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).BeginInit();
             this.SuspendLayout();
             // 
-            // label1
+            // lblFileName
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(259, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "drag/drop a SFF file onto this program to get started...";
+            this.lblFileName.AutoSize = true;
+            this.lblFileName.Location = new System.Drawing.Point(12, 9);
+            this.lblFileName.Name = "lblFileName";
+            this.lblFileName.Size = new System.Drawing.Size(226, 13);
+            this.lblFileName.TabIndex = 0;
+            this.lblFileName.Text = "Load a SFF file by dragging it onto this window";
             // 
             // pictureBox1
             // 
@@ -89,14 +90,14 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(12, 40);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(54, 13);
+            this.label2.Size = new System.Drawing.Size(51, 13);
             this.label2.TabIndex = 4;
-            this.label2.Text = "Colormap:";
+            this.label2.Text = "Colormap";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(344, 40);
+            this.label4.Location = new System.Drawing.Point(271, 40);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(56, 13);
             this.label4.TabIndex = 6;
@@ -124,6 +125,15 @@
             this.cbStretch.UseVisualStyleBackColor = true;
             this.cbStretch.CheckedChanged += new System.EventHandler(this.cbStretch_CheckedChanged);
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(139, 40);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(77, 13);
+            this.label3.TabIndex = 9;
+            this.label3.Text = "Image Settings";
+            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -131,6 +141,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(568, 387);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.cbStretch);
             this.Controls.Add(this.cbDecibels);
             this.Controls.Add(this.label4);
@@ -138,7 +149,7 @@
             this.Controls.Add(this.tbBrightness);
             this.Controls.Add(this.cbColormap);
             this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lblFileName);
             this.Name = "Form1";
             this.Text = "SFF Viewer";
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
@@ -152,7 +163,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblFileName;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.ComboBox cbColormap;
         private System.Windows.Forms.TrackBar tbBrightness;
@@ -160,6 +171,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.CheckBox cbDecibels;
         private System.Windows.Forms.CheckBox cbStretch;
+        private System.Windows.Forms.Label label3;
     }
 }
 
