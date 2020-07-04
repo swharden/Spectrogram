@@ -72,11 +72,11 @@ class SpectrogramFile:
         print(f"Time Resolution: {self.secPerPx} sec/px")
         print(f"Frequency Resolution: {self.hzPerPx} Hz/px")
 
-        # recording start time
-        dt = datetime.datetime(
-            int(filebytes[74])+2000, int(filebytes[75]), int(filebytes[76]),
-            int(filebytes[77]), int(filebytes[78]), int(filebytes[79]))
-        print(f"Recording start (UTC): {dt}")
+        # recording start time - no longer used
+        #dt = datetime.datetime(
+            #int(filebytes[74])+2000, int(filebytes[75]), int(filebytes[76]),
+            #int(filebytes[77]), int(filebytes[78]), int(filebytes[79]))
+        #print(f"Recording start (UTC): {dt}")
 
         # data storage
         self.firstDataByte = struct.unpack("<l", filebytes[80:84])[0]
