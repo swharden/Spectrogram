@@ -23,6 +23,8 @@ namespace Spectrogram
         public int OffsetHz { get { return settings.OffsetHz; } set { settings.OffsetHz = value; } }
         public int SampleRate { get { return settings.SampleRate; } }
         public int StepSize { get { return settings.StepSize; } }
+        public double FreqMax { get { return settings.FreqMax; } }
+        public double FreqMin { get { return settings.FreqMin; } }
 
         private readonly Settings settings;
         private readonly List<double[]> ffts = new List<double[]>();
