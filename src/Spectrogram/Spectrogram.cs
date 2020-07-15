@@ -135,40 +135,9 @@ namespace Spectrogram
             if (settings.FreqMin != 0)
                 throw new InvalidOperationException("cannot get Mel spectrogram unless minimum frequency is 0Hz");
 
-            // determine the bin locations (on the Mel scale)
-            double maxMel = 2595 * Math.Log10(1 + settings.FreqMax / 700);
-            double[] binStartFreqs = new double[melBinCount + 1];
-            for (int i = 0; i < melBinCount + 1; i++)
-            {
-                double thisMel = maxMel * i / melBinCount;
-                binStartFreqs[i] = 700 * (Math.Pow(10, thisMel / 2595d) - 1);
-            }
-
-            // calculate mel FFT for each FFT
             var fftsMel = new List<double[]>();
-            for (int fftIndex = 0; fftIndex < Width; fftIndex++)
-            {
-                double[] thisFftMel = new double[melBinCount];
-                for (int binIndex = 0; binIndex < binStartFreqs.Length - 2; binIndex++)
-                {
-                    double freqLow = binStartFreqs[binIndex];
-                    double freqHigh = binStartFreqs[binIndex + 2];
-                    int indexLow = (int)(Height * freqLow / settings.FreqMax);
-                    int indexHigh = (int)(Height * freqHigh / settings.FreqMax);
-                    int indexSpan = indexHigh - indexLow;
-
-                    double binScaleSum = 0;
-                    for (int i = 0; i < indexSpan; i++)
-                    {
-                        double frac = (double)i / indexSpan;
-                        frac = (frac < .5) ? frac * 2 : 1 - frac;
-                        binScaleSum += frac;
-                        thisFftMel[binIndex] += ffts[fftIndex][indexLow + i] * frac;
-                    }
-                    thisFftMel[binIndex] /= binScaleSum;
-                }
-                fftsMel.Add(thisFftMel);
-            }
+            foreach(var fft in ffts)
+                fftsMel.Add(FftSharp.Transform.MelScale(fft, SampleRate, melBinCount));
 
             return fftsMel;
         }
