@@ -13,6 +13,7 @@ namespace Spectrogram
     {
         public readonly byte VersionMajor = 1;
         public readonly byte VersionMinor = 1;
+        public string FilePath { get; private set; }
 
         // time information
         public int SampleRate { get; private set; }
@@ -66,6 +67,7 @@ namespace Spectrogram
 
         public void Load(string filePath)
         {
+            FilePath = Path.GetFullPath(filePath);
             byte[] bytes = File.ReadAllBytes(filePath);
 
             // ensure the first 4 bytes match what we expect
@@ -128,6 +130,7 @@ namespace Spectrogram
 
         public void Save(string filePath)
         {
+            FilePath = Path.GetFullPath(filePath);
             byte[] header = new byte[256];
 
             // file type designator
