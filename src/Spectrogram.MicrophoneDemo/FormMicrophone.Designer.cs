@@ -49,6 +49,7 @@
             this.cbColormap = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.btnResetRoll = new System.Windows.Forms.Button();
+            this.lblStatus4 = new System.Windows.Forms.ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)(this.pbSpectrogram)).BeginInit();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).BeginInit();
@@ -92,6 +93,7 @@
             this.lblStatus1,
             this.lblStatus2,
             this.lblStatus3,
+            this.lblStatus4,
             this.pbAmplitude});
             this.statusStrip1.Location = new System.Drawing.Point(0, 567);
             this.statusStrip1.Name = "statusStrip1";
@@ -103,7 +105,7 @@
             // 
             this.lblStatus1.AutoSize = false;
             this.lblStatus1.Name = "lblStatus1";
-            this.lblStatus1.Size = new System.Drawing.Size(200, 17);
+            this.lblStatus1.Size = new System.Drawing.Size(150, 17);
             this.lblStatus1.Text = "toolStripStatusLabel1";
             this.lblStatus1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -111,7 +113,7 @@
             // 
             this.lblStatus2.AutoSize = false;
             this.lblStatus2.Name = "lblStatus2";
-            this.lblStatus2.Size = new System.Drawing.Size(200, 17);
+            this.lblStatus2.Size = new System.Drawing.Size(150, 17);
             this.lblStatus2.Text = "toolStripStatusLabel1";
             this.lblStatus2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -119,8 +121,7 @@
             // 
             this.lblStatus3.AutoSize = false;
             this.lblStatus3.Name = "lblStatus3";
-            this.lblStatus3.Size = new System.Drawing.Size(415, 17);
-            this.lblStatus3.Spring = true;
+            this.lblStatus3.Size = new System.Drawing.Size(150, 17);
             this.lblStatus3.Text = "toolStripStatusLabel1";
             this.lblStatus3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -251,6 +252,14 @@
             this.btnResetRoll.UseVisualStyleBackColor = true;
             this.btnResetRoll.Click += new System.EventHandler(this.btnResetRoll_Click);
             // 
+            // lblStatus4
+            // 
+            this.lblStatus4.Name = "lblStatus4";
+            this.lblStatus4.Size = new System.Drawing.Size(365, 17);
+            this.lblStatus4.Spring = true;
+            this.lblStatus4.Text = "toolStripStatusLabel1";
+            this.lblStatus4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // FormMicrophone
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -305,6 +314,7 @@
         private System.Windows.Forms.ComboBox cbColormap;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button btnResetRoll;
+        private System.Windows.Forms.ToolStripStatusLabel lblStatus4;
     }
 }
 

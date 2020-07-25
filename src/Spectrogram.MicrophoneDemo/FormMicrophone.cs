@@ -61,6 +61,7 @@ namespace Spectrogram.MicrophoneDemo
             listener?.Dispose();
             listener = new Listener(cbDevice.SelectedIndex, sampleRate);
             spec = new Spectrogram(sampleRate, fftSize, stepSize);
+            //spec.SetWindow(FftSharp.Window.Rectangular(fftSize));
             pbSpectrogram.Height = spec.Height;
 
             pbScaleVert.Image?.Dispose();
@@ -95,6 +96,7 @@ namespace Spectrogram.MicrophoneDemo
                 pbSpectrogram.Image?.Dispose();
                 pbSpectrogram.Image = bmpSpec;
                 lblStatus3.Text = $"Render time: {sw.ElapsedMilliseconds:D2} ms";
+                lblStatus4.Text = $"Peak (Hz): {spec.GetPeak().freqHz:N0}";
             }
 
             lblStatus1.Text = $"Time: {listener.TotalTimeSec:N3} sec";
