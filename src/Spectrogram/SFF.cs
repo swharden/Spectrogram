@@ -76,7 +76,6 @@ namespace Spectrogram
             // read file version
             byte versionMajor = bytes[40];
             byte versionMinor = bytes[41];
-            Console.WriteLine($"SFF version {versionMajor}.{versionMinor}");
 
             // read time information
             SampleRate = BitConverter.ToInt32(bytes, 42);
