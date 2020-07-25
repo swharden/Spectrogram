@@ -21,66 +21,46 @@ class SpectrogramFile:
         # validate file format
         magicNumber = struct.unpack("<l", filebytes[0:4])[0]
         if magicNumber != 1179014099:
-            raise Exception("invalid file format")
-        else:
-            print(f"Validated file format (magic number: {magicNumber:,})")
+            raise Exception("invalid file format (based on first 4 bytes)")
 
         # read version
         self.versionMajor = int(filebytes[40])
         self.versionMinor = int(filebytes[41])
-        print(f"SFF version: {self.versionMajor}.{self.versionMinor}")
 
         # read time information
         self.sampleRate = struct.unpack("<l", filebytes[42:46])[0]
         self.stepSize = struct.unpack("<l", filebytes[46:50])[0]
         self.stepCount = struct.unpack("<l", filebytes[50:54])[0]
-        print(f"Sample rate: {self.sampleRate} Hz")
-        print(f"Step size: {self.stepSize} samples")
-        print(f"Step count: {self.stepCount} steps")
 
         # read frequency information
         self.fftSize = struct.unpack("<l", filebytes[54:58])[0]
         self.fftFirstIndex = struct.unpack("<l", filebytes[58:62])[0]
         self.fftHeight = struct.unpack("<l", filebytes[62:66])[0]
         self.offsetHz = struct.unpack("<l", filebytes[66:70])[0]
-        print(f"FFT size: {self.fftSize}")
-        print(f"FFT first index: {self.fftFirstIndex}")
-        print(f"FFT height: {self.fftHeight}")
-        print(f"FFT offset: {self.offsetHz} Hz")
 
         # data format
         self.valuesPerPoint = int(filebytes[70])
         self.isComplex = int(self.valuesPerPoint) == 2
         self.bytesPerValue = int(filebytes[71])
         self.decibels = int(filebytes[72]) == 1
-        print(f"Values per point: {self.valuesPerPoint}")
-        print(f"Complex values: {self.isComplex}")
-        print(f"Bytes per point: {self.bytesPerValue}")
-        print(f"Decibels: {self.decibels}")
 
         # new variables
         self.melBinCount = int(filebytes[84])
         self.imageHeight = int(filebytes[88])
         self.imageWidth = int(filebytes[92])
-        print(f"Mel bin count: {self.melBinCount}")
-        print(f"image width: {self.imageWidth}")
-        print(f"image height: {self.imageHeight}")
 
         # useful class properties
         self.secPerPx = self.stepSize / self.sampleRate
         self.hzPerPx = self.sampleRate / self.fftSize
-        print(f"Time Resolution: {self.secPerPx} sec/px")
-        print(f"Frequency Resolution: {self.hzPerPx} Hz/px")
 
         # recording start time - no longer used
-        #dt = datetime.datetime(
-            #int(filebytes[74])+2000, int(filebytes[75]), int(filebytes[76]),
-            #int(filebytes[77]), int(filebytes[78]), int(filebytes[79]))
+        # dt = datetime.datetime(
+        #int(filebytes[74])+2000, int(filebytes[75]), int(filebytes[76]),
+        # int(filebytes[77]), int(filebytes[78]), int(filebytes[79]))
         #print(f"Recording start (UTC): {dt}")
 
         # data storage
         self.firstDataByte = struct.unpack("<l", filebytes[80:84])[0]
-        print(f"First data byte: {self.firstDataByte}")
 
         # read data values
         dataShape = (self.imageWidth, self.imageHeight)
@@ -109,6 +89,37 @@ class SpectrogramFile:
                     bytesMag = filebytes[valueOffset:valueOffset+8]
                     self.values[x, y] = struct.unpack("<d", bytesMag)[0]
 
-        print(f"Loaded {os.path.basename(self.filePath)} " +
-              f"({self.valuesPerPoint * self.imageWidth * self.imageHeight:,} values) " +
-              f"in {(time.perf_counter() - timeStart)*1000:.02f} ms")
+        self.loadTimeMsec = (time.perf_counter() - timeStart)*1000
+
+    def getDescription(self):
+        d = ""
+        d += f"SFF version: {self.versionMajor}.{self.versionMinor}"
+        d += "\n"
+        d += f"\nSample rate: {self.sampleRate} Hz"
+        d += f"\nStep size: {self.stepSize} samples"
+        d += f"\nStep count: {self.stepCount} steps"
+        d += "\n"
+        d += f"\nFFT size: {self.fftSize}"
+        d += f"\nFFT first index: {self.fftFirstIndex}"
+        d += f"\nFFT height: {self.fftHeight}"
+        d += f"\nFFT offset: {self.offsetHz} Hz"
+        d += "\n"
+        d += f"\nValues per point: {self.valuesPerPoint}"
+        d += f"\nComplex values: {self.isComplex}"
+        d += f"\nBytes per point: {self.bytesPerValue}"
+        d += f"\nDecibels: {self.decibels}"
+        d += "\n"
+        d += f"\nMel bin count: {self.melBinCount}"
+        d += f"\nimage width: {self.imageWidth}"
+        d += f"\nimage height: {self.imageHeight}"
+        d += "\n"
+        d += f"\nTime Resolution: {self.secPerPx} sec/px"
+        d += f"\nFrequency Resolution: {self.hzPerPx} Hz/px"
+        d += "\n"
+        d += f"\nFirst data byte: {self.firstDataByte}"
+        d += "\n"
+        d += f"\nLoaded {os.path.basename(self.filePath)} " +\
+            f"({self.valuesPerPoint * self.imageWidth * self.imageHeight:,} values) " +\
+            f"in {self.loadTimeMsec:.02f} ms"
+        d += "\n"
+        return d
