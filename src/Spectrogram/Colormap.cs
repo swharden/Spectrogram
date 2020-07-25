@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -44,6 +45,20 @@ namespace Spectrogram
                                 .ToArray();
 
             return ics.Select(x => new Colormap(x)).ToArray();
+        }
+
+        public static string[] GetColormapNames()
+        {
+            return GetColormaps().Select(x => x.Name).ToArray();
+        }
+
+        public static Colormap GetColormap(string colormapName)
+        {
+            foreach (Colormap cmap in GetColormaps())
+                if (string.Equals(cmap.Name, colormapName, StringComparison.InvariantCultureIgnoreCase))
+                    return cmap;
+
+            throw new ArgumentException($"Colormap does not exist: {colormapName}");
         }
 
         public (byte r, byte g, byte b) GetRGB(byte value)

@@ -32,5 +32,15 @@ namespace Spectrogram.Tests
                 Debug.WriteLine($"![](dev/graphics/hal-{cmap.Name}.png)");
             }
         }
+
+        [Test]
+        public void Test_Colormaps_ByName()
+        {
+            string[] names = Colormap.GetColormapNames();
+            Console.WriteLine(string.Join(", ", names));
+
+            Colormap viridisCmap = Colormap.GetColormap("viridis");
+            Assert.AreEqual("Viridis", viridisCmap.Name);
+        }
     }
 }
