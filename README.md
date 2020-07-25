@@ -147,7 +147,7 @@ spec.SaveData("hal.sff");
 ### Read SFF Files with Python
 A Python module to read SFF files has been created (in [dev/sff](dev/sff)) which allows Spectrograms created by this library and stored in SFF format to be loaded as 2D numpy arrays in Python. 
 
-This example demonstrates how the SFF file created in the previous C# example can be loaded into Python and displayed with matplotlib:
+This example demonstrates how the SFF file created in the previous C# example can be loaded into Python and displayed with matplotlib. This example has a few lines related to styling omitted for brevity, but the full Python demo can be found in [dev/sff](dev/sff).
 
 ```python
 import matplotlib.pyplot as plt
@@ -156,16 +156,9 @@ import sffLib
 # load spectrogram data as a 2D numpy array
 sf = sffLib.SpectrogramFile("hal.sff")
 
-# plot the spectrogram as a heatmap
-freqs = np.arange(sf.values.shape[1]) * sf.hzPerPx / 1000
-times = np.arange(sf.values.shape[0]) * sf.secPerPx
+# display the spectrogram as a pseudocolor mesh 
 plt.pcolormesh(freqs, times, sf.values)
-
-# decorate the plot
 plt.colorbar()
-plt.title("Spectrogram Magnitude (RMS)")
-plt.ylabel("Time (seconds)")
-plt.xlabel("Frequency (kHz)")
 plt.show()
 ```
 
