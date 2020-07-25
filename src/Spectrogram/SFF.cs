@@ -27,6 +27,7 @@ namespace Spectrogram
         public int OffsetHz { get; private set; }
         public int MelBinCount { get; private set; }
         public bool Decibels { get; private set; }
+        public bool IsMel { get { return MelBinCount > 0; } }
 
         // FFT details
         public int FftHeight { get { return Ffts[0].Length; } }
@@ -219,6 +220,21 @@ namespace Spectrogram
 
             // write file to disk
             File.WriteAllBytes(filePath, fileBytes);
+        }
+
+        public (double timeSec, double freqHz, double magRms) GetPixelInfo(int x, int y)
+        {
+            double timeSec = (double)x * StepSize / SampleRate;
+
+            double maxFreq = SampleRate / 2;
+            double maxMel = FftSharp.Transform.MelFromFreq(maxFreq);
+            double frac = (FftHeight - y) / (double)FftHeight;
+            double freq = IsMel ? FftSharp.Transform.MelToFreq(frac * maxMel) : frac * maxFreq;
+
+            double mag = double.NaN;
+            try { mag = Ffts[x][FftHeight - y - 1]; } catch { }
+
+            return (timeSec, freq, mag);
         }
     }
 }
