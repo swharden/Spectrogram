@@ -144,6 +144,13 @@ spec.Add(audio);
 spec.SaveData("hal.sff");
 ```
 
+### Display SFF Files with C#
+Spectrogram data can be loaded from SFF files to facilitate rapid recall of data which can otherwise be resource-intensive to calculate. Spectrogram's `SFF` module facilitates this operation and has methods which can directly convert spectrograms to Bitmaps with options to customize the colormap, intensity, and Decibel scaling.
+
+![](dev/sff/SffViewer/screenshot.png)
+
+A simple SFF file viewer has been added to [dev/sff](dev/sff) and serves as a demonstration of how the `SFF` module can be used to generate spectrogram images from SFF files.
+
 ### Read SFF Files with Python
 A Python module to read SFF files has been created (in [dev/sff](dev/sff)) which allows Spectrograms created by this library and stored in SFF format to be loaded as 2D numpy arrays in Python. 
 
