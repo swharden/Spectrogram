@@ -124,6 +124,32 @@ Viridis | Greens | Blues | Grayscale | GrayscaleR
 ---|---|---|---|---
 ![](dev/graphics/hal-Viridis.png)|![](dev/graphics/hal-Greens.png)|![](dev/graphics/hal-Blues.png)|![](dev/graphics/hal-Grayscale.png)|![](dev/graphics/hal-GrayscaleR.png)
 
+## Mel Spectrogram
+
+Analytical spectrograms aimed at achieving maximum frequency resolution are presented using linear scaling, where every row of pixels is evenly spaced in the frequency domain. However, biological sensory systems tend to be logarithmic, and the human ear can differentiate frequency shifts better at lower frequencies than at higher ones. 
+
+**To visualize frequency in a way that mimics human perception** we create a spectrogram that represents lower frequencies using a large portion of the image, and condense higher frequency ranges into smaller rows of pixels toward the top of the image. The [Mel Scale](https://en.wikipedia.org/wiki/Mel_scale) is commonly used to represent power spectral density this way, and the resulting _Mel Spectrogram_ has greatly reduced vertical resolution but is a better representation of human frequency perception. 
+
+Cropped Linear Scale (0-1kHz) | Full Linear Scale (0-22 kHz) | Mel Scale (0-22 kHz)
+---|---|---
+![](dev/graphics/halMelLinearCropped.png)|![](dev/graphics/halMelLinearFull.png)|![](dev/graphics/halMel.png)
+
+Amplitude perception in humans, like frequency perception, is logarithmic. Therefore, Mel spectrograms typically display log-transformed spectral power and are presented using Decibel units.
+
+```cs
+// Load "I'm sorry dave, I'm afraid I can't do that" audio
+(int sampleRate, double[] audio) = WavFile.ReadMono("hal.wav");
+
+// Create a traditional (linear) Spectrogram with dB units
+var spec = new Spectrogram(sampleRate, fftSize: 4096, stepSize: 500, maxFreq: 3000);
+spec.Add(audio);
+spec.SaveImage("hal.png", intensity: 4, dB: true);
+
+// Create a Mel Spectrogram with dB units
+Bitmap bmp = spec.GetBitmapMel(melSizePoints: 250, intensity: 4, dB: true);
+bmp.Save("halMel.png", ImageFormat.Png);
+```
+
 ## Spectrogram File Format (SFF)
 
 The Spectrogram library has methods which can read and write SFF files, a file format specifically designed for storing spectrogram data. SFF files contain 2D spectrogram data (repeated FFTs) with a [small header](dev/sff) describing the audio and FFT settings suitable for deriving scale information. 
@@ -170,32 +196,6 @@ plt.show()
 ```
 
 ![](dev/sff/hal.png)
-
-## Mel Spectrogram
-
-Analytical spectrograms aimed at achieving maximum frequency resolution are presented using linear scaling, where every row of pixels is evenly spaced in the frequency domain. However, biological sensory systems tend to be logarithmic, and the human ear can differentiate frequency shifts better at lower frequencies than at higher ones. 
-
-**To visualize frequency in a way that mimics human perception** we create a spectrogram that represents lower frequencies using a large portion of the image, and condense higher frequency ranges into smaller rows of pixels toward the top of the image. The [Mel Scale](https://en.wikipedia.org/wiki/Mel_scale) is commonly used to represent power spectral density this way, and the resulting _Mel Spectrogram_ has greatly reduced vertical resolution but is a better representation of human frequency perception. 
-
-Cropped Linear Scale (0-1kHz) | Full Linear Scale (0-22 kHz) | Mel Scale (0-22 kHz)
----|---|---
-![](dev/graphics/halMelLinearCropped.png)|![](dev/graphics/halMelLinearFull.png)|![](dev/graphics/halMel.png)
-
-Amplitude perception in humans, like frequency perception, is logarithmic. Therefore, Mel spectrograms typically display log-transformed spectral power and are presented using Decibel units.
-
-```cs
-// Load "I'm sorry dave, I'm afraid I can't do that" audio
-(int sampleRate, double[] audio) = WavFile.ReadMono("hal.wav");
-
-// Create a traditional (linear) Spectrogram with dB units
-var spec = new Spectrogram(sampleRate, fftSize: 4096, stepSize: 500, maxFreq: 3000);
-spec.Add(audio);
-spec.SaveImage("hal.png", intensity: 4, dB: true);
-
-// Create a Mel Spectrogram with dB units
-Bitmap bmp = spec.GetBitmapMel(melSizePoints: 250, intensity: 4, dB: true);
-bmp.Save("halMel.png", ImageFormat.Png);
-```
 
 ## Resources
 * [FftSharp](https://github.com/swharden/FftSharp) - the module which actually performs the FFT and related transformations
