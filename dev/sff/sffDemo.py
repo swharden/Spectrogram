@@ -26,7 +26,7 @@ def plotSFF(filePath, show = False):
     plt.close()
 
 if __name__ == "__main__":
-    plotSFF("hal.sff")
-    #plotSFF("halMel.sff")
+    plotSFF("hal.sff", True)
+    plotSFF("halMel.sff", True)
 
 
