@@ -232,5 +232,33 @@ namespace Spectrogram
         {
             return ffts;
         }
+
+        public (double freqHz, double magRms) GetPeak(bool latestFft = true)
+        {
+            if (ffts.Count == 0)
+                return (double.NaN, double.NaN);
+
+            if (latestFft == false)
+                throw new NotImplementedException("peak of mean of all FFTs not yet supported");
+
+            double[] freqs = ffts[ffts.Count - 1];
+
+            int peakIndex = 0;
+            double peakMagnitude = 0;
+            for (int i = 0; i < freqs.Length; i++)
+            {
+                if (freqs[i] > peakMagnitude)
+                {
+                    peakMagnitude = freqs[i];
+                    peakIndex = i;
+                }
+            }
+
+            double maxFreq = SampleRate / 2;
+            double peakFreqFrac = peakIndex / (double)freqs.Length;
+            double peakFreqHz = maxFreq * peakFreqFrac;
+
+            return (peakFreqHz, peakMagnitude);
+        }
     }
 }
