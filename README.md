@@ -178,9 +178,9 @@ Spectrogram data can be loaded from SFF files to facilitate rapid recall of data
 A simple SFF file viewer has been added to [dev/sff](dev/sff) and serves as a demonstration of how the `SFF` module can be used to generate spectrogram images from SFF files.
 
 ### Read SFF Files with Python
-A Python module to read SFF files has been created (in [dev/sff](dev/sff)) which allows Spectrograms created by this library and stored in SFF format to be loaded as 2D numpy arrays in Python. 
+A Python module to read SFF files has been created (in [dev/sff/python](dev/sff/python)) which allows Spectrograms created by this library and stored in SFF format to be loaded as 2D numpy arrays in Python. 
 
-This example demonstrates how the SFF file created in the previous C# example can be loaded into Python and displayed with matplotlib. This example has a few lines related to styling omitted for brevity, but the full Python demo can be found in [dev/sff](dev/sff).
+This example demonstrates how the SFF file created in the previous C# example can be loaded into Python and displayed with matplotlib. This example has a few lines related to styling omitted for brevity, but the full Python demo can be found in [dev/sff/python](dev/sff/python).
 
 ```python
 import matplotlib.pyplot as plt
