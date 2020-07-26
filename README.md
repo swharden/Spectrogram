@@ -195,7 +195,7 @@ plt.colorbar()
 plt.show()
 ```
 
-![](dev/sff/hal.png)
+![](dev/sff/python/hal.sff.png)
 
 ## Resources
 * [FftSharp](https://github.com/swharden/FftSharp) - the module which actually performs the FFT and related transformations

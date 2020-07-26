@@ -19,13 +19,13 @@ def plotSFF(filePath, show=False):
     plt.figure()
     plt.pcolormesh(rotatedValues)
     plt.colorbar()
-    plt.title(f"{filePath} Spectrogram")
-    plt.savefig(filePath.replace(".sff", ".png"))
+    plt.title(f"{os.path.basename(filePath)} Spectrogram")
+    plt.savefig(os.path.basename(filePath)+".png")
     if show:
         plt.show()
     plt.close()
 
 
 if __name__ == "__main__":
-    plotSFF("hal.sff", True)
-    plotSFF("halMel.sff", True)
+    plotSFF("../hal.sff", True)
+    plotSFF("../halMel.sff", True)
