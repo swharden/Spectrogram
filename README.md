@@ -43,6 +43,8 @@ I find it helpful to put the Picturebox inside a Panel with auto-scroll enabled,
 
 An example program is included in this repository which demonstrates how to use [NAudio](https://github.com/naudio/NAudio) to get samples from the sound card and display them as a spectrogram. Spectrogram was designed to be able to display spectrograms with live or growing data, so this is exceptionally easy to implement.
 
+**Run this demo: [Spectrogram.MicrophoneDemo.exe](dev/SpectrogramDemo.zip)** 👈 64-bit Windows Application
+
 ![](dev/microphone-spectrogram.gif)
 
 To do this, keep your Spectrogram at the class level:
