@@ -50,5 +50,32 @@ namespace Spectrogram.Tests
             Assert.AreEqual(spec.Height, spec2.Height);
             Assert.AreEqual(spec.OffsetHz, spec2.OffsetHz);
         }
+
+        [Test]
+        public void Test_SFF_Linear2()
+        {
+            // test creating SFF file from 16-bit 48kHz mono WAV file
+
+            // read the wav file
+            (int sampleRate, double[] audio) = WavFile.ReadMono("../../../../../data/03-02-03-01-02-01-19.wav");
+            Assert.AreEqual(48000, sampleRate);
+
+            // save the SFF
+            int fftSize = 1 << 12;
+            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 700, maxFreq: 2000);
+            spec.SetWindow(FftSharp.Window.Hanning(fftSize / 3)); // sharper window than typical
+            spec.Add(audio);
+            spec.SaveData("testDoor.sff");
+
+            // load the SFF and verify all the values are the same
+            var spec2 = new SFF("testDoor.sff");
+            Assert.AreEqual(spec.SampleRate, spec2.SampleRate);
+            Assert.AreEqual(spec.StepSize, spec2.StepSize);
+            Assert.AreEqual(spec.Width, spec2.Width);
+            Assert.AreEqual(spec.FftSize, spec2.FftSize);
+            Assert.AreEqual(spec.NextColumnIndex, spec2.FftFirstIndex);
+            Assert.AreEqual(spec.Height, spec2.Height);
+            Assert.AreEqual(spec.OffsetHz, spec2.OffsetHz);
+        }
     }
 }
