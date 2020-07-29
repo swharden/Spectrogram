@@ -45,9 +45,9 @@ class SpectrogramFile:
         self.decibels = int(filebytes[72]) == 1
 
         # new variables
-        self.melBinCount = int(filebytes[84])
-        self.imageHeight = int(filebytes[88])
-        self.imageWidth = int(filebytes[92])
+        self.melBinCount = struct.unpack("<l", filebytes[84:88])[0]
+        self.imageHeight = struct.unpack("<l", filebytes[88:92])[0]
+        self.imageWidth = struct.unpack("<l", filebytes[92:96])[0]
 
         # useful class properties
         self.secPerPx = self.stepSize / self.sampleRate
@@ -121,5 +121,7 @@ class SpectrogramFile:
         d += f"\nLoaded {os.path.basename(self.filePath)} " +\
             f"({self.valuesPerPoint * self.imageWidth * self.imageHeight:,} values) " +\
             f"in {self.loadTimeMsec:.02f} ms"
+        d += "\n"
+        d += f"\nnumpy array shape: {self.values.shape}"
         d += "\n"
         return d
