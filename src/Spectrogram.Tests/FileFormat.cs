@@ -62,8 +62,7 @@ namespace Spectrogram.Tests
 
             // save the SFF
             int fftSize = 1 << 12;
-            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 700, maxFreq: 2000);
-            spec.SetWindow(FftSharp.Window.Hanning(fftSize / 3)); // sharper window than typical
+            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 300, maxFreq: 2000);
             spec.Add(audio);
             spec.SaveData("testDoor.sff");
 
@@ -76,6 +75,20 @@ namespace Spectrogram.Tests
             Assert.AreEqual(spec.NextColumnIndex, spec2.FftFirstIndex);
             Assert.AreEqual(spec.Height, spec2.Height);
             Assert.AreEqual(spec.OffsetHz, spec2.OffsetHz);
+        }
+
+        [Test]
+        public void Test_SFF_LinearBigMaxFreq()
+        {
+            // test creating SFF file from 16-bit 48kHz mono WAV file
+
+            (int sampleRate, double[] audio) = WavFile.ReadMono("../../../../../data/03-02-03-01-02-01-19.wav");
+            Assert.AreEqual(48000, sampleRate);
+
+            int fftSize = 1 << 12;
+            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 300, maxFreq: 7999);
+            spec.Add(audio);
+            spec.SaveData("testDoorBig.sff");
         }
     }
 }
