@@ -83,7 +83,7 @@ namespace Spectrogram
             return (int)Math.Round(pianoKey);
         }
 
-        public static int GetMidiNote(int frequencyHz)
+        public static int GetMidiNote(double frequencyHz)
         {
             return GetPianoKey(frequencyHz) + 20;
         }
