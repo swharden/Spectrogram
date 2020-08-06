@@ -33,6 +33,9 @@ namespace Spectrogram
         public List<double[]> Ffts { get; private set; }
         public int ImageHeight { get { return (Ffts is null) ? 0 : Ffts[0].Length; } }
         public int ImageWidth { get { return (Ffts is null) ? 0 : Ffts.Count; } }
+        public double[] times { get; private set; }
+        public double[] freqs { get; private set; }
+        public double[] mels { get; private set; }
 
         [Obsolete("use ImageWidth", error: false)]
         public int FftWidth { get { return ImageWidth; } }
@@ -53,6 +56,8 @@ namespace Spectrogram
         public SFF(string loadFilePath)
         {
             Load(loadFilePath);
+            CalculateTimes();
+            CalculateFrequencies();
         }
 
         public SFF(Spectrogram spec, int melBinCount = 0)
@@ -65,10 +70,9 @@ namespace Spectrogram
             Height = spec.Height;
             OffsetHz = spec.OffsetHz;
             MelBinCount = melBinCount;
-            if (MelBinCount > 0)
-                Ffts = spec.GetMelFFTs(melBinCount);
-            else
-                Ffts = spec.GetFFTs();
+            Ffts = (melBinCount > 0) ? spec.GetMelFFTs(melBinCount) : spec.GetFFTs();
+            CalculateTimes();
+            CalculateFrequencies();
         }
 
         public Bitmap GetBitmap(Colormap cmap = null, double intensity = 1, bool dB = false)
@@ -246,6 +250,37 @@ namespace Spectrogram
             try { mag = Ffts[x][ImageHeight - y - 1]; } catch { }
 
             return (timeSec, freq, mag);
+        }
+
+        private void CalculateTimes()
+        {
+            times = new double[ImageWidth];
+            double stepSec = (double)StepSize / SampleRate;
+            for (int i = 0; i < ImageWidth; i++)
+                times[i] = i * stepSec;
+        }
+
+        private void CalculateFrequencies()
+        {
+            freqs = new double[ImageHeight];
+            mels = new double[ImageHeight];
+
+            double maxFreq = SampleRate / 2;
+            double maxMel = FftSharp.Transform.MelFromFreq(maxFreq);
+            for (int y = 0; y < ImageHeight; y++)
+            {
+                double frac = (ImageHeight - y) / (double)ImageHeight;
+                if (IsMel)
+                {
+                    mels[y] = frac * maxMel;
+                    freqs[y] = FftSharp.Transform.MelToFreq(mels[y]);
+                }
+                else
+                {
+                    freqs[y] = frac * maxFreq;
+                    mels[y] = FftSharp.Transform.MelFromFreq(freqs[y]);
+                }
+            }
         }
     }
 }
