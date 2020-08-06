@@ -29,14 +29,25 @@ namespace Spectrogram
         public bool Decibels { get; private set; }
         public bool IsMel { get { return MelBinCount > 0; } }
 
-        // FFT details
-        public int FftHeight { get { return Ffts[0].Length; } }
-        public int FftWidth { get { return Ffts.Count; } }
+        // image details
         public List<double[]> Ffts { get; private set; }
+        public int ImageHeight { get { return (Ffts is null) ? 0 : Ffts[0].Length; } }
+        public int ImageWidth { get { return (Ffts is null) ? 0 : Ffts.Count; } }
+
+        [Obsolete("use ImageWidth", error: false)]
+        public int FftWidth { get { return ImageWidth; } }
+
+        [Obsolete("use ImageHeight", error: false)]
+        public int FftHeight { get { return ImageHeight; } }
 
         public SFF()
         {
 
+        }
+
+        public override string ToString()
+        {
+            return $"SFF {ImageWidth}x{ImageHeight}";
         }
 
         public SFF(string loadFilePath)
@@ -191,25 +202,25 @@ namespace Spectrogram
 
             // ADD NEW VALUES HERE (after byte 80)
             Array.Copy(BitConverter.GetBytes(MelBinCount), 0, header, 84, 4);
-            Array.Copy(BitConverter.GetBytes(FftHeight), 0, header, 88, 4);
-            Array.Copy(BitConverter.GetBytes(FftWidth), 0, header, 92, 4);
+            Array.Copy(BitConverter.GetBytes(ImageHeight), 0, header, 88, 4);
+            Array.Copy(BitConverter.GetBytes(ImageWidth), 0, header, 92, 4);
 
             // binary data location (keep this at byte 80)
             int firstDataByte = header.Length;
             Array.Copy(BitConverter.GetBytes(firstDataByte), 0, header, 80, 4);
 
             // create bytes to write to file
-            int dataPointCount = FftHeight * FftWidth;
+            int dataPointCount = ImageHeight * ImageWidth;
             int bytesPerPoint = bytesPerValue * valuesPerPoint;
             byte[] fileBytes = new byte[header.Length + dataPointCount * bytesPerPoint];
             Array.Copy(header, 0, fileBytes, 0, header.Length);
 
             // copy data into byte area
-            int bytesPerColumn = FftHeight * bytesPerPoint;
-            for (int x = 0; x < FftWidth; x++)
+            int bytesPerColumn = ImageHeight * bytesPerPoint;
+            for (int x = 0; x < ImageWidth; x++)
             {
                 int columnOffset = bytesPerColumn * x;
-                for (int y = 0; y < FftHeight; y++)
+                for (int y = 0; y < ImageHeight; y++)
                 {
                     int rowOffset = y * bytesPerPoint;
                     int valueOffset = firstDataByte + columnOffset + rowOffset;
@@ -228,11 +239,11 @@ namespace Spectrogram
 
             double maxFreq = SampleRate / 2;
             double maxMel = FftSharp.Transform.MelFromFreq(maxFreq);
-            double frac = (FftHeight - y) / (double)FftHeight;
+            double frac = (ImageHeight - y) / (double)ImageHeight;
             double freq = IsMel ? FftSharp.Transform.MelToFreq(frac * maxMel) : frac * maxFreq;
 
             double mag = double.NaN;
-            try { mag = Ffts[x][FftHeight - y - 1]; } catch { }
+            try { mag = Ffts[x][ImageHeight - y - 1]; } catch { }
 
             return (timeSec, freq, mag);
         }

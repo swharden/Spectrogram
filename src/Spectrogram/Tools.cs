@@ -64,7 +64,7 @@ namespace Spectrogram
             }
 
             double maxFreq = sff.SampleRate / 2;
-            double frac = peakIndex / (double)sff.FftHeight;
+            double frac = peakIndex / (double)sff.ImageHeight;
 
             if (sff.MelBinCount > 0)
             {
