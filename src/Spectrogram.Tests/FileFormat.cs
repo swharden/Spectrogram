@@ -75,6 +75,7 @@ namespace Spectrogram.Tests
             Assert.AreEqual(spec.NextColumnIndex, spec2.FftFirstIndex);
             Assert.AreEqual(spec.Height, spec2.Height);
             Assert.AreEqual(spec.OffsetHz, spec2.OffsetHz);
+            Assert.AreEqual("SFF 701x170", spec2.ToString());
         }
 
         [Test]
