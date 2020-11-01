@@ -12,7 +12,7 @@ namespace Spectrogram
         public static Colormap Argo => new Colormap(new Colormaps.Argo());
         public static Colormap Blues => new Colormap(new Colormaps.Blues());
         public static Colormap Grayscale => new Colormap(new Colormaps.Grayscale());
-        public static Colormap GrayscaleReversed => new Colormap(new Colormaps.Grayscale());
+        public static Colormap GrayscaleReversed => new Colormap(new Colormaps.GrayscaleR());
         public static Colormap Greens => new Colormap(new Colormaps.Greens());
         public static Colormap Inferno => new Colormap(new Colormaps.Inferno());
         public static Colormap Lopora => new Colormap(new Colormaps.Lopora());
