@@ -12,7 +12,7 @@ namespace Spectrogram.Tests
         {
             (int sampleRate, double[] audio) = WavFile.ReadMono("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 4096;
-            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 500, maxFreq: 3000);
+            var spec = new SGram(sampleRate, fftSize, stepSize: 500, maxFreq: 3000);
             spec.Add(audio);
             spec.SaveImage("../../../../../dev/graphics/hal.png", intensity: .2);
             
@@ -29,7 +29,7 @@ namespace Spectrogram.Tests
             int targetWidthPx = 3000;
             int stepSize = audio.Length / targetWidthPx;
 
-            var spec = new Spectrogram(sampleRate, fftSize, stepSize, maxFreq: 2200);
+            var spec = new SGram(sampleRate, fftSize, stepSize, maxFreq: 2200);
             spec.Add(audio);
             spec.SaveImage("../../../../../dev/spectrogram-song.jpg", intensity: 5, dB: true);
 

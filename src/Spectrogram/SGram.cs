@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Spectrogram
 {
-    public class Spectrogram
+    /// <summary>
+    /// Spectrogram generator.
+    /// Instantiate with FFT settings, use Add() methods to add signal data, then GetBitmap() or GetFfts()
+    /// </summary>
+    public class SGram
     {
         public int Width { get { return ffts.Count; } }
         public int Height { get { return settings.Height; } }
@@ -31,7 +32,7 @@ namespace Spectrogram
         private readonly List<double> newAudio = new List<double>();
         private Colormap cmap = Colormap.Viridis;
 
-        public Spectrogram(int sampleRate, int fftSize, int stepSize,
+        public SGram(int sampleRate, int fftSize, int stepSize,
             double minFreq = 0, double maxFreq = double.PositiveInfinity,
             int? fixedWidth = null, int offsetHz = 0)
         {
@@ -136,7 +137,7 @@ namespace Spectrogram
                 throw new InvalidOperationException("cannot get Mel spectrogram unless minimum frequency is 0Hz");
 
             var fftsMel = new List<double[]>();
-            foreach(var fft in ffts)
+            foreach (var fft in ffts)
                 fftsMel.Add(FftSharp.Transform.MelScale(fft, SampleRate, melBinCount));
 
             return fftsMel;

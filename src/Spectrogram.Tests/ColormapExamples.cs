@@ -17,7 +17,7 @@ namespace Spectrogram.Tests
         {
             (int sampleRate, double[] audio) = WavFile.ReadMono("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 1 << 12;
-            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 700, maxFreq: 2000);
+            var spec = new SGram(sampleRate, fftSize, stepSize: 700, maxFreq: 2000);
             spec.SetWindow(FftSharp.Window.Hanning(fftSize / 3)); // sharper window than typical
             spec.Add(audio);
 

@@ -48,7 +48,7 @@ namespace Spectrogram.MicrophoneDemo
         private void cbDevice_SelectedIndexChanged(object sender, EventArgs e) => StartListening();
         private void cbFftSize_SelectedIndexChanged(object sender, EventArgs e) => StartListening();
 
-        private Spectrogram spec;
+        private SGram spec;
         private Listener listener;
         private void StartListening()
         {
@@ -60,7 +60,7 @@ namespace Spectrogram.MicrophoneDemo
             pbSpectrogram.Image = null;
             listener?.Dispose();
             listener = new Listener(cbDevice.SelectedIndex, sampleRate);
-            spec = new Spectrogram(sampleRate, fftSize, stepSize);
+            spec = new SGram(sampleRate, fftSize, stepSize);
             //spec.SetWindow(FftSharp.Window.Rectangular(fftSize));
             pbSpectrogram.Height = spec.Height;
 

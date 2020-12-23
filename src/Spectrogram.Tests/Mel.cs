@@ -14,7 +14,7 @@ namespace Spectrogram.Tests
         {
             (int sampleRate, double[] audio) = WavFile.ReadMono("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 4096;
-            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 500);
+            var spec = new SGram(sampleRate, fftSize, stepSize: 500);
             spec.Add(audio);
             spec.SaveImage("halNotMel.png", 4, true);
             
@@ -88,7 +88,7 @@ namespace Spectrogram.Tests
         {
             (int sampleRate, double[] audio) = WavFile.ReadMono("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 4096;
-            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 500);
+            var spec = new SGram(sampleRate, fftSize, stepSize: 500);
             //spec.Add(audio);
             Assert.Throws<InvalidOperationException>(() => { spec.SaveImage("empty.png"); });
         }

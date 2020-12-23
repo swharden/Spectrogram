@@ -35,7 +35,7 @@ namespace Spectrogram.Tests
 
             // CREATE THE SPECTROGRAM
             int fftSize = 8192;
-            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 4_000, maxFreq: 2_000);
+            var spec = new SGram(sampleRate, fftSize, stepSize: 4_000, maxFreq: 2_000);
             spec.Add(audio);
             spec.SaveImage("asehgal.png", intensity: 10_000, dB: true);
         }

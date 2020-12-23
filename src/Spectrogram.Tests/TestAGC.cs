@@ -15,7 +15,7 @@ namespace Spectrogram.Tests
             (int sampleRate, double[] L) = WavFile.ReadMono(wavFilePath);
 
             int fftSize = 8192;
-            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 2000, maxFreq: 3000);
+            var spec = new SGram(sampleRate, fftSize, stepSize: 2000, maxFreq: 3000);
             spec.Add(L);
             spec.SaveImage("qrss-agc-off.png", intensity: 3);
         }
@@ -29,7 +29,7 @@ namespace Spectrogram.Tests
             (int sampleRate, double[] L) = WavFile.ReadMono(wavFilePath);
 
             int fftSize = 8192;
-            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 2000, maxFreq: 3000);
+            var spec = new SGram(sampleRate, fftSize, stepSize: 2000, maxFreq: 3000);
             spec.Add(L);
 
             var ffts = spec.GetFFTs();
@@ -64,7 +64,7 @@ namespace Spectrogram.Tests
             (int sampleRate, double[] L) = WavFile.ReadMono(wavFilePath);
 
             int fftSize = 8192;
-            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 2000, maxFreq: 3000);
+            var spec = new SGram(sampleRate, fftSize, stepSize: 2000, maxFreq: 3000);
             spec.Add(L);
 
             var ffts = spec.GetFFTs();
