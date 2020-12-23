@@ -85,9 +85,9 @@ private void GotNewBuffer(double[] audio)
 Then set up a timer to trigger rendering:
 ```cs
 private void timer1_Tick(object sender, EventArgs e){
-    Bitmap bmp = sg.GetBitmap(intensity: .4);
-    pictureBox1.Image?.Dispose();
-    pictureBox1.Image = bmp;
+    Bitmap oldBitmap = pictureBox1.Image;
+    pictureBox1.Image = sg.GetBitmap(intensity: .4);
+    oldBitmap?.Dispose();
 }
 ```
 
