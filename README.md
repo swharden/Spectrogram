@@ -16,24 +16,40 @@ _"I'm sorry Dave... I'm afraid I can't do that"_
 
 ## Quickstart
 
-_Spectrogram is [available on NuGet](https://www.nuget.org/packages/Spectrogram)_
-
 ```cs
-(int sampleRate, double[] audio) = WavFile.ReadMono("hal.wav");
+(double[] audio, int sampleRate) = ReadWavWithNAudio("hal.wav");
 
-var spec = new Spectrogram(sampleRate, fftSize: 4096, stepSize: 500, maxFreq: 3000);
-spec.Add(audio);
-spec.SaveImage("hal.png", intensity: .4);
+var sg = new SGram(sampleRate, fftSize: 4096, stepSize: 500, maxFreq: 3000);
+sg.Add(audio);
+sg.SaveImage("hal.png", intensity: .4);
 ```
 
-This code generates the image displayed at the top of this page.
+This code above generates the spectrogram image displayed at the top of this page.
+I use this versatile function to read audio data out of WAV files for examples on this page, 
+but you probably want something more performant specific for your application:
+
+```cs
+static (double[] audio, int sampleRate) ReadWavWithNAudio(string filePath)
+{
+    using var afr = new NAudio.Wave.AudioFileReader(filePath);
+    int sampleRate = afr.WaveFormat.SampleRate;
+    int sampleCount = (int)(afr.Length / afr.WaveFormat.BitsPerSample / 8);
+    int channelCount = afr.WaveFormat.Channels;
+    var audio = new List<double>(sampleCount);
+    var buffer = new float[sampleRate * channelCount];
+    int samplesRead = 0;
+    while ((samplesRead = afr.Read(buffer, 0, buffer.Length)) > 0)
+        audio.AddRange(buffer.Take(samplesRead).Select(x => (double)x));
+    return (audio.ToArray(), sampleRate);
+}
+```
 
 ## Windows Forms
 
 If you're using Spectrogram in a graphical application you may find it helpful to retrieve the output as a Bitmap which can be displayed on a Picturebox:
 
 ```cs
-Bitmap bmp = spec.GetBitmap();
+Bitmap bmp = sg.GetBitmap();
 pictureBox1.Image = bmp;
 ```
 
@@ -49,12 +65,12 @@ An example program is included in this repository which demonstrates how to use 
 
 To do this, keep your Spectrogram at the class level:
 ```cs
-Spectrogram spec;
+SGram sg;
 
 public Form1()
 {
     InitializeComponent();
-    spec = new Spectrogram(sampleRate, fftSize: 4096, stepSize: 500, maxFreq: 3000);
+    sg = new SGram(sampleRate, fftSize: 4096, stepSize: 500, maxFreq: 3000);
 }
 ```
 
@@ -62,14 +78,14 @@ Whenever an audio buffer gets filled, add the data to your Spectrogram:
 ```cs
 private void GotNewBuffer(double[] audio)
 {
-    spec.Add(audio);
+    sg.Add(audio);
 }
 ```
 
 Then set up a timer to trigger rendering:
 ```cs
 private void timer1_Tick(object sender, EventArgs e){
-    Bitmap bmp = spec.GetBitmap(intensity: .4);
+    Bitmap bmp = sg.GetBitmap(intensity: .4);
     pictureBox1.Image?.Dispose();
     pictureBox1.Image = bmp;
 }
@@ -82,11 +98,11 @@ Review the source code of the demo application for additional details and consid
 This example demonstrates how to convert a MP3 file to a spectrogram image. A sample MP3 audio file in the [data folder](data) contains the audio track from Ken Barker's excellent piano performance of George Frideric Handel's Suite No. 5 in E major for harpsichord ([_The Harmonious Blacksmith_](https://en.wikipedia.org/wiki/The_Harmonious_Blacksmith)). This audio file is included [with permission](dev/Handel%20-%20Air%20and%20Variations.txt), and the [original video can be viewed on YouTube](https://www.youtube.com/watch?v=Mza-xqk770k).
 
 ```cs
-(int sampleRate, double[] audio) = WavFile.ReadMono("Handel.wav");
+(double[] audio, int sampleRate) = ReadWavWithNAudio("Handel.wav");
 
-var spec = new Spectrogram(sampleRate, fftSize: 16384, stepSize: 2500, maxFreq: 2200);
-spec.Add(audio);
-spec.SaveImage("spectrogram-song.jpg", intensity: 5, dB: true);
+var sg = new SGram(sampleRate, fftSize: 16384, stepSize: 2500, maxFreq: 2200);
+sg.Add(audio);
+sg.SaveImage("spectrogram-song.jpg", intensity: 5, dB: true);
 ```
 
 Notice the optional conversion to Decibels while saving the image.
@@ -100,7 +116,7 @@ If you [listen to the audio track](https://www.youtube.com/watch?v=Mza-xqk770k) 
 The Spectrogram's `ToString()` method displays detailed information about the spectrogram:
 
 ```cs
-Console.WriteLine(spec);
+Console.WriteLine(sg);
 ```
 
 ```
@@ -114,12 +130,12 @@ Spectrogram (2993, 817)
 These examples demonstrate the identical spectrogram analyzed with a variety of different colormaps. Spectrogram colormaps can be changed by calling the `SetColormap()` method:
 
 ```cs
-(int sampleRate, double[] audio) = WavFile.ReadMono("hal.wav");
+(double[] audio, int sampleRate) = ReadWavWithNAudio("hal.wav");
 int fftSize = 8192;
-var spec = new Spectrogram(sampleRate, fftSize, stepSize: 200, maxFreq: 3000);
-spec.Add(audio);
-spec.SetColormap(Colormap.Jet);
-spec.SaveImage($"hal-Jet.png", intensity: .5);
+var sg = new SGram(sampleRate, fftSize, stepSize: 200, maxFreq: 3000);
+sg.Add(audio);
+sg.SetColormap(Colormap.Jet);
+sg.SaveImage($"hal-Jet.png", intensity: .5);
 ```
 
 Viridis | Greens | Blues | Grayscale | GrayscaleR
@@ -140,15 +156,15 @@ Amplitude perception in humans, like frequency perception, is logarithmic. There
 
 ```cs
 // Load "I'm sorry dave, I'm afraid I can't do that" audio
-(int sampleRate, double[] audio) = WavFile.ReadMono("hal.wav");
+(double[] audio, int sampleRate) = ReadWavWithNAudio("hal.wav");
 
 // Create a traditional (linear) Spectrogram with dB units
-var spec = new Spectrogram(sampleRate, fftSize: 4096, stepSize: 500, maxFreq: 3000);
-spec.Add(audio);
-spec.SaveImage("hal.png", intensity: 4, dB: true);
+var sg = new SGram(sampleRate, fftSize: 4096, stepSize: 500, maxFreq: 3000);
+sg.Add(audio);
+sg.SaveImage("hal.png", intensity: 4, dB: true);
 
 // Create a Mel Spectrogram with dB units
-Bitmap bmp = spec.GetBitmapMel(melSizePoints: 250, intensity: 4, dB: true);
+Bitmap bmp = sg.GetBitmapMel(melSizePoints: 250, intensity: 4, dB: true);
 bmp.Save("halMel.png", ImageFormat.Png);
 ```
 
@@ -165,11 +181,11 @@ SFF files be saved using `Complex` data format (with real and imaginary values f
 This example creates a spectrogram but saves it using the SFF file format instead of saving it as an image. The SFF file can then be read in any language.
 
 ```cs
-(int sampleRate, double[] audio) = WavFile.ReadMono("hal.wav");
+(double[] audio, int sampleRate) = ReadWavWithNAudio("hal.wav");
 int fftSize = 1 << 12;
-var spec = new Spectrogram(sampleRate, fftSize, stepSize: 700, maxFreq: 2000);
-spec.Add(audio);
-spec.SaveData("hal.sff");
+var sg = new SGram(sampleRate, fftSize, stepSize: 700, maxFreq: 2000);
+sg.Add(audio);
+sg.SaveData("hal.sff");
 ```
 
 ### Display SFF Files with C#
