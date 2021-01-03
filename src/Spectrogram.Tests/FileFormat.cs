@@ -11,7 +11,7 @@ namespace Spectrogram.Tests
         [Test]
         public void Test_SFF_Linear()
         {
-            (int sampleRate, double[] audio) = WavFile.ReadMono("../../../../../data/cant-do-that-44100.wav");
+            (double[] audio, int sampleRate) = TestTools.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 1 << 12;
             var spec = new Spectrogram(sampleRate, fftSize, stepSize: 700, maxFreq: 2000);
             spec.SetWindow(FftSharp.Window.Hanning(fftSize / 3)); // sharper window than typical
@@ -31,13 +31,13 @@ namespace Spectrogram.Tests
         [Test]
         public void Test_SFF_Mel()
         {
-            (int sampleRate, double[] audio) = WavFile.ReadMono("../../../../../data/cant-do-that-44100.wav");
+            (double[] audio, int sampleRate) = TestTools.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 1 << 12;
             var spec = new Spectrogram(sampleRate, fftSize, stepSize: 700);
             spec.SetWindow(FftSharp.Window.Hanning(fftSize / 3)); // sharper window than typical
             spec.Add(audio);
 
-            Bitmap bmp = spec.GetBitmapMel(250, 3, true);
+            Bitmap bmp = spec.GetBitmapMel(250, 2_000, true);
             bmp.Save("../../../../../dev/sff/halMel.png", System.Drawing.Imaging.ImageFormat.Png);
             spec.SaveData("../../../../../dev/sff/halMel.sff", melBinCount: 250);
 
@@ -57,7 +57,7 @@ namespace Spectrogram.Tests
             // test creating SFF file from 16-bit 48kHz mono WAV file
 
             // read the wav file
-            (int sampleRate, double[] audio) = WavFile.ReadMono("../../../../../data/03-02-03-01-02-01-19.wav");
+            (double[] audio, int sampleRate) = TestTools.ReadWavWithNAudio("../../../../../data/03-02-03-01-02-01-19.wav");
             Assert.AreEqual(48000, sampleRate);
 
             // save the SFF
@@ -83,7 +83,7 @@ namespace Spectrogram.Tests
         {
             // test creating SFF file from 16-bit 48kHz mono WAV file
 
-            (int sampleRate, double[] audio) = WavFile.ReadMono("../../../../../data/03-02-03-01-02-01-19.wav");
+            (double[] audio, int sampleRate) = TestTools.ReadWavWithNAudio("../../../../../data/03-02-03-01-02-01-19.wav");
             Assert.AreEqual(48000, sampleRate);
 
             int fftSize = 1 << 12;

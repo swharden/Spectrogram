@@ -12,13 +12,13 @@ namespace Spectrogram.Tests
         [Test]
         public void Test_Mel_Spectrogram()
         {
-            (int sampleRate, double[] audio) = WavFile.ReadMono("../../../../../data/cant-do-that-44100.wav");
+            (double[] audio, int sampleRate) = TestTools.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 4096;
             var spec = new Spectrogram(sampleRate, fftSize, stepSize: 500);
             spec.Add(audio);
-            spec.SaveImage("halNotMel.png", 4, true);
+            //spec.SaveImage("../../../../../dev/graphics/halNotMel.png", 2_000, true);
             
-            Bitmap bmp = spec.GetBitmapMel(250, 4, true);
+            Bitmap bmp = spec.GetBitmapMel(250, 2_000, true);
             bmp.Save("../../../../../dev/graphics/halMel.png", ImageFormat.Png);
         }
 
@@ -86,7 +86,7 @@ namespace Spectrogram.Tests
         [Test]
         public void Test_SaveEmpty_Throws()
         {
-            (int sampleRate, double[] audio) = WavFile.ReadMono("../../../../../data/cant-do-that-44100.wav");
+            (double[] audio, int sampleRate) = TestTools.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 4096;
             var spec = new Spectrogram(sampleRate, fftSize, stepSize: 500);
             //spec.Add(audio);
