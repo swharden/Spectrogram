@@ -12,11 +12,11 @@ namespace Spectrogram.Tests
         public void Test_AGC_off()
         {
             string wavFilePath = "../../../../../data/qrss-10min.wav";
-            (int sampleRate, double[] L) = WavFile.ReadMono(wavFilePath);
+            (double[] audio, int sampleRate) = TestTools.ReadWavWithNAudio(wavFilePath);
 
             int fftSize = 8192;
             var spec = new Spectrogram(sampleRate, fftSize, stepSize: 2000, maxFreq: 3000);
-            spec.Add(L);
+            spec.Add(audio);
             spec.SaveImage("qrss-agc-off.png", intensity: 3);
         }
 
@@ -26,11 +26,11 @@ namespace Spectrogram.Tests
             // strategy here is to normalize to the magnitude of the quietest 20% of frequencies
 
             string wavFilePath = "../../../../../data/qrss-10min.wav";
-            (int sampleRate, double[] L) = WavFile.ReadMono(wavFilePath);
+            (double[] audio, int sampleRate) = TestTools.ReadWavWithNAudio(wavFilePath);
 
             int fftSize = 8192;
             var spec = new Spectrogram(sampleRate, fftSize, stepSize: 2000, maxFreq: 3000);
-            spec.Add(L);
+            spec.Add(audio);
 
             var ffts = spec.GetFFTs();
             double normalIntensity = 2;
@@ -61,11 +61,11 @@ namespace Spectrogram.Tests
             // strategy here is to create a weighted moving window mean and normalize to that
 
             string wavFilePath = "../../../../../data/qrss-10min.wav";
-            (int sampleRate, double[] L) = WavFile.ReadMono(wavFilePath);
+            (double[] audio, int sampleRate) = TestTools.ReadWavWithNAudio(wavFilePath);
 
             int fftSize = 8192;
             var spec = new Spectrogram(sampleRate, fftSize, stepSize: 2000, maxFreq: 3000);
-            spec.Add(L);
+            spec.Add(audio);
 
             var ffts = spec.GetFFTs();
             for (int i = 0; i < ffts.Count; i++)

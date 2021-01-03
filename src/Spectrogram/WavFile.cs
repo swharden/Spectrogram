@@ -7,6 +7,7 @@ using System.IO;
 
 namespace Spectrogram
 {
+    [Obsolete("Use a library like NAudio to extract data from WAV files (see spectrogram quickstart for examples)", true)]
     public static class WavFile
     {
         private static (string id, uint length) ChunkInfo(BinaryReader br, long position)

@@ -1,20 +1,34 @@
 using NUnit.Framework;
 using System;
-using System.Drawing;
-using System.Drawing.Imaging;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Spectrogram.Tests
 {
     public class Quickstart
     {
+        private static (double[] audio, int sampleRate) ReadWavWithNAudio(string filePath)
+        {
+            using var afr = new NAudio.Wave.AudioFileReader(filePath);
+            int sampleRate = afr.WaveFormat.SampleRate;
+            int sampleCount = (int)(afr.Length / afr.WaveFormat.BitsPerSample / 8);
+            int channelCount = afr.WaveFormat.Channels;
+            var audio = new List<double>(sampleCount);
+            var buffer = new float[sampleRate * channelCount];
+            int samplesRead = 0;
+            while ((samplesRead = afr.Read(buffer, 0, buffer.Length)) > 0)
+                audio.AddRange(buffer.Take(samplesRead).Select(x => (double)x));
+            return (audio.ToArray(), sampleRate);
+        }
+
         [Test]
         public void Test_Quickstart_Hal()
         {
-            (int sampleRate, double[] audio) = WavFile.ReadMono("../../../../../data/cant-do-that-44100.wav");
+            (double[] audio, int sampleRate) = TestTools.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 4096;
             var spec = new Spectrogram(sampleRate, fftSize, stepSize: 500, maxFreq: 3000);
             spec.Add(audio);
-            spec.SaveImage("../../../../../dev/graphics/hal.png", intensity: .2);
+            spec.SaveImage("../../../../../dev/graphics/hal.png", intensity: 8_000);
             
             Console.WriteLine(spec);
         }
