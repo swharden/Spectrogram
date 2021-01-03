@@ -132,9 +132,9 @@ Analytical spectrograms aimed at achieving maximum frequency resolution are pres
 
 **To visualize frequency in a way that mimics human perception** we create a spectrogram that represents lower frequencies using a large portion of the image, and condense higher frequency ranges into smaller rows of pixels toward the top of the image. The [Mel Scale](https://en.wikipedia.org/wiki/Mel_scale) is commonly used to represent power spectral density this way, and the resulting _Mel Spectrogram_ has greatly reduced vertical resolution but is a better representation of human frequency perception. 
 
-Cropped Linear Scale (0-1kHz) | Full Linear Scale (0-22 kHz) | Mel Scale (0-22 kHz)
+Cropped Linear Scale (0-3kHz) | Mel Scale (0-22 kHz)
 ---|---|---
-![](dev/graphics/halMelLinearCropped.png)|![](dev/graphics/halMelLinearFull.png)|![](dev/graphics/halMel.png)
+![](dev/graphics/halMel-LinearCropped.png)|![](dev/graphics/halMel-MelScale.png)
 
 Amplitude perception in humans, like frequency perception, is logarithmic. Therefore, Mel spectrograms typically display log-transformed spectral power and are presented using Decibel units.
 
@@ -145,10 +145,10 @@ Amplitude perception in humans, like frequency perception, is logarithmic. There
 // Create a traditional (linear) Spectrogram with dB units
 var spec = new Spectrogram(sampleRate, fftSize: 4096, stepSize: 500, maxFreq: 3000);
 spec.Add(audio);
-spec.SaveImage("hal.png", intensity: 4, dB: true);
+spec.SaveImage("hal.png", intensity: 4);
 
 // Create a Mel Spectrogram with dB units
-Bitmap bmp = spec.GetBitmapMel(melSizePoints: 250, intensity: 4, dB: true);
+Bitmap bmp = spec.GetBitmapMel(melSizePoints: 250, intensity: 4);
 bmp.Save("halMel.png", ImageFormat.Png);
 ```
 

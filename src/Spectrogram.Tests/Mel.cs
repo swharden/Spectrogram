@@ -10,16 +10,23 @@ namespace Spectrogram.Tests
     class Mel
     {
         [Test]
-        public void Test_Mel_Spectrogram()
+        public void Test_MelSpectrogram_MelScale()
         {
             (double[] audio, int sampleRate) = TestTools.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 4096;
             var spec = new Spectrogram(sampleRate, fftSize, stepSize: 500);
             spec.Add(audio);
-            //spec.SaveImage("../../../../../dev/graphics/halNotMel.png", 2_000, true);
-            
-            Bitmap bmp = spec.GetBitmapMel(250, 2_000, true);
-            bmp.Save("../../../../../dev/graphics/halMel.png", ImageFormat.Png);
+
+            Bitmap bmpMel = spec.GetBitmapMel(250, 8_000);
+            bmpMel.Save("../../../../../dev/graphics/halMel-MelScale.png", ImageFormat.Png);
+
+            Bitmap bmpRaw = spec.GetBitmap(8_000);
+            Bitmap bmpCropped = new Bitmap(bmpRaw.Width, bmpMel.Height);
+            using (Graphics gfx = Graphics.FromImage(bmpCropped))
+            {
+                gfx.DrawImage(bmpRaw, 0, bmpMel.Height - bmpRaw.Height);
+            }
+            bmpCropped.Save("../../../../../dev/graphics/halMel-LinearCropped.png", ImageFormat.Png);
         }
 
         [Test]
