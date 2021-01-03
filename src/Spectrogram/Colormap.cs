@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 
 namespace Spectrogram
 {
@@ -34,18 +31,10 @@ namespace Spectrogram
             return $"Colormap {Name}";
         }
 
-        public static Colormap[] GetColormaps()
-        {
-            IColormap[] ics = AppDomain.CurrentDomain.GetAssemblies()
-                                .SelectMany(s => s.GetTypes())
-                                .Where(p => p.IsInterface == false)
-                                .Where(p => p.ToString().StartsWith("Spectrogram.Colormaps."))
-                                .Select(x => x.ToString())
-                                .Select(path => (IColormap)Activator.CreateInstance(Type.GetType(path)))
-                                .ToArray();
-
-            return ics.Select(x => new Colormap(x)).ToArray();
-        }
+        public static Colormap[] GetColormaps() =>
+            typeof(Colormap).GetProperties()
+                            .Select(x => (Colormap)x.GetValue(x.Name))
+                            .ToArray();
 
         public static string[] GetColormapNames()
         {
