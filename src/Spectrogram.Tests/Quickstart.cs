@@ -7,36 +7,21 @@ namespace Spectrogram.Tests
 {
     public class Quickstart
     {
-        private static (double[] audio, int sampleRate) ReadWavWithNAudio(string filePath)
-        {
-            using var afr = new NAudio.Wave.AudioFileReader(filePath);
-            int sampleRate = afr.WaveFormat.SampleRate;
-            int sampleCount = (int)(afr.Length / afr.WaveFormat.BitsPerSample / 8);
-            int channelCount = afr.WaveFormat.Channels;
-            var audio = new List<double>(sampleCount);
-            var buffer = new float[sampleRate * channelCount];
-            int samplesRead = 0;
-            while ((samplesRead = afr.Read(buffer, 0, buffer.Length)) > 0)
-                audio.AddRange(buffer.Take(samplesRead).Select(x => (double)x));
-            return (audio.ToArray(), sampleRate);
-        }
-
         [Test]
         public void Test_Quickstart_Hal()
         {
-            (double[] audio, int sampleRate) = WavFile.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
-            int fftSize = 4096;
-            var spec = new SpectrogramGenerator(sampleRate, fftSize, stepSize: 500, maxFreq: 3000);
-            spec.Add(audio);
-            spec.SaveImage("../../../../../dev/graphics/hal.png");
+            (double[] audio, int sampleRate) = AudioFile.ReadWAV("../../../../../data/cant-do-that-44100.wav");
+            var sg = new SpectrogramGenerator(sampleRate, fftSize: 4096, stepSize: 500, maxFreq: 3000);
+            sg.Add(audio);
+            sg.SaveImage("../../../../../dev/graphics/hal.png");
             
-            Console.WriteLine(spec);
+            Console.WriteLine(sg);
         }
 
         [Test]
         public void Test_Readme_HeaderImage()
         {
-            (double[] audio, int sampleRate) = WavFile.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
+            (double[] audio, int sampleRate) = AudioFile.ReadWAV("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 2048;
             var spec = new SpectrogramGenerator(sampleRate, fftSize, stepSize: 400, maxFreq: 6000);
             spec.Add(audio);
@@ -48,18 +33,18 @@ namespace Spectrogram.Tests
         [Test]
         public void Test_Quickstart_Handel()
         {
-            double[] audio = Mp3.Read("../../../../../data/Handel - Air and Variations.mp3");
+            double[] audio = AudioFile.ReadMP3("../../../../../data/Handel - Air and Variations.mp3");
             int sampleRate = 44100;
 
             int fftSize = 16384;
             int targetWidthPx = 3000;
             int stepSize = audio.Length / targetWidthPx;
 
-            var spec = new SpectrogramGenerator(sampleRate, fftSize, stepSize, maxFreq: 2200);
-            spec.Add(audio);
-            spec.SaveImage("../../../../../dev/graphics/spectrogram-song.png", intensity: 5, dB: true);
+            var sg = new SpectrogramGenerator(sampleRate, fftSize, stepSize, maxFreq: 2200);
+            sg.Add(audio);
+            sg.SaveImage("../../../../../dev/graphics/spectrogram-song.png", intensity: 5, dB: true);
 
-            Console.WriteLine(spec);
+            Console.WriteLine(sg);
             /*
              Spectrogram (2993, 817)
                Vertical (817 px): 0 - 2,199 Hz, FFT size: 16,384 samples, 2.69 Hz/px

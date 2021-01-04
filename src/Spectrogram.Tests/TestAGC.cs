@@ -12,7 +12,7 @@ namespace Spectrogram.Tests
         public void Test_AGC_off()
         {
             string wavFilePath = "../../../../../data/qrss-10min.wav";
-            (double[] audio, int sampleRate) = WavFile.ReadWavWithNAudio(wavFilePath);
+            (double[] audio, int sampleRate) = AudioFile.ReadWAV(wavFilePath);
 
             int fftSize = 8192;
             var spec = new SpectrogramGenerator(sampleRate, fftSize, stepSize: 2000, maxFreq: 3000);
@@ -26,7 +26,7 @@ namespace Spectrogram.Tests
             // strategy here is to normalize to the magnitude of the quietest 20% of frequencies
 
             string wavFilePath = "../../../../../data/qrss-10min.wav";
-            (double[] audio, int sampleRate) = WavFile.ReadWavWithNAudio(wavFilePath);
+            (double[] audio, int sampleRate) = AudioFile.ReadWAV(wavFilePath);
 
             int fftSize = 8192;
             var spec = new SpectrogramGenerator(sampleRate, fftSize, stepSize: 2000, maxFreq: 3000);
@@ -61,7 +61,7 @@ namespace Spectrogram.Tests
             // strategy here is to create a weighted moving window mean and normalize to that
 
             string wavFilePath = "../../../../../data/qrss-10min.wav";
-            (double[] audio, int sampleRate) = WavFile.ReadWavWithNAudio(wavFilePath);
+            (double[] audio, int sampleRate) = AudioFile.ReadWAV(wavFilePath);
 
             int fftSize = 8192;
             var spec = new SpectrogramGenerator(sampleRate, fftSize, stepSize: 2000, maxFreq: 3000);

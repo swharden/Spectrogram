@@ -16,45 +16,44 @@ _"I'm sorry Dave... I'm afraid I can't do that"_
 
 ## Quickstart
 
-_Spectrogram is [available on NuGet](https://www.nuget.org/packages/Spectrogram)_
+* This code generates the spectrogram above.
+
+* Source code for the WAV reading method is at the bottom of this page.
 
 ```cs
-(int sampleRate, double[] audio) = WavFile.ReadMono("hal.wav");
-
-var spec = new Spectrogram(sampleRate, fftSize: 4096, stepSize: 500, maxFreq: 3000);
-spec.Add(audio);
-spec.SaveImage("hal.png", intensity: .4);
+(double[] audio, int sampleRate) = ReadWAV("hal.wav");
+var sg = new SpectrogramGenerator(sampleRate, fftSize: 4096, stepSize: 500, maxFreq: 3000);
+sg.Add(audio);
+sg.SaveImage("hal.png");
 ```
 
-This code generates the image displayed at the top of this page.
 
 ## Windows Forms
 
 If you're using Spectrogram in a graphical application you may find it helpful to retrieve the output as a Bitmap which can be displayed on a Picturebox:
 
 ```cs
-Bitmap bmp = spec.GetBitmap();
-pictureBox1.Image = bmp;
+pictureBox1.Image = sg.GetBitmap();
 ```
 
 I find it helpful to put the Picturebox inside a Panel with auto-scroll enabled, so large spectrograms which are bigger than the size of the window can be interactively displayed.
 
 ## Real-Time Spectrogram
 
-An example program is included in this repository which demonstrates how to use [NAudio](https://github.com/naudio/NAudio) to get samples from the sound card and display them as a spectrogram. Spectrogram was designed to be able to display spectrograms with live or growing data, so this is exceptionally easy to implement.
+An example program is included in this repository which demonstrates how to use NAudio to get samples from the sound card and display them as a spectrogram. Spectrogram was designed to be able to display spectrograms with live or growing data, so this is exceptionally easy to implement.
 
-**Run this demo: [Spectrogram.MicrophoneDemo.exe](dev/SpectrogramDemo.zip)** 👈 64-bit Windows Application
+* **Click-to-run demo** for 64-bit Windows: [SpectrogramDemo.exe](dev/SpectrogramDemo.zip)
 
 ![](dev/microphone-spectrogram.gif)
 
 To do this, keep your Spectrogram at the class level:
 ```cs
-Spectrogram spec;
+SpectrogramGenerator sg;
 
 public Form1()
 {
     InitializeComponent();
-    spec = new Spectrogram(sampleRate, fftSize: 4096, stepSize: 500, maxFreq: 3000);
+    sg = new SpectrogramGenerator(sampleRate, fftSize: 4096, stepSize: 500, maxFreq: 3000);
 }
 ```
 
@@ -62,14 +61,14 @@ Whenever an audio buffer gets filled, add the data to your Spectrogram:
 ```cs
 private void GotNewBuffer(double[] audio)
 {
-    spec.Add(audio);
+    sg.Add(audio);
 }
 ```
 
 Then set up a timer to trigger rendering:
 ```cs
 private void timer1_Tick(object sender, EventArgs e){
-    Bitmap bmp = spec.GetBitmap(intensity: .4);
+    Bitmap bmp = sg.GetBitmap(intensity: .4);
     pictureBox1.Image?.Dispose();
     pictureBox1.Image = bmp;
 }
@@ -82,11 +81,15 @@ Review the source code of the demo application for additional details and consid
 This example demonstrates how to convert a MP3 file to a spectrogram image. A sample MP3 audio file in the [data folder](data) contains the audio track from Ken Barker's excellent piano performance of George Frideric Handel's Suite No. 5 in E major for harpsichord ([_The Harmonious Blacksmith_](https://en.wikipedia.org/wiki/The_Harmonious_Blacksmith)). This audio file is included [with permission](dev/Handel%20-%20Air%20and%20Variations.txt), and the [original video can be viewed on YouTube](https://www.youtube.com/watch?v=Mza-xqk770k).
 
 ```cs
-(int sampleRate, double[] audio) = WavFile.ReadMono("Handel.wav");
+(double[] audio, int sampleRate) = ReadWAV("song.wav");
 
-var spec = new Spectrogram(sampleRate, fftSize: 16384, stepSize: 2500, maxFreq: 2200);
-spec.Add(audio);
-spec.SaveImage("spectrogram-song.jpg", intensity: 5, dB: true);
+int fftSize = 16384;
+int targetWidthPx = 3000;
+int stepSize = audio.Length / targetWidthPx;
+
+var sg = new SpectrogramGenerator(sampleRate, fftSize, stepSize, maxFreq: 2200);
+sg.Add(audio);
+sg.SaveImage("song.png", intensity: 5, dB: true);
 ```
 
 Notice the optional conversion to Decibels while saving the image.
@@ -100,7 +103,7 @@ If you [listen to the audio track](https://www.youtube.com/watch?v=Mza-xqk770k) 
 The Spectrogram's `ToString()` method displays detailed information about the spectrogram:
 
 ```cs
-Console.WriteLine(spec);
+Console.WriteLine(sg);
 ```
 
 ```
@@ -114,12 +117,11 @@ Spectrogram (2993, 817)
 These examples demonstrate the identical spectrogram analyzed with a variety of different colormaps. Spectrogram colormaps can be changed by calling the `SetColormap()` method:
 
 ```cs
-(int sampleRate, double[] audio) = WavFile.ReadMono("hal.wav");
-int fftSize = 8192;
-var spec = new Spectrogram(sampleRate, fftSize, stepSize: 200, maxFreq: 3000);
-spec.Add(audio);
-spec.SetColormap(Colormap.Jet);
-spec.SaveImage($"hal-Jet.png", intensity: .5);
+(double[] audio, int sampleRate) = ReadWAV("hal.wav");
+var sg = new SpectrogramGenerator(sampleRate, fftSize: 8192, stepSize: 200, maxFreq: 3000);
+sg.Add(audio);
+sg.SetColormap(Colormap.Jet);
+sg.SaveImage($"jet.png");
 ```
 
 Viridis | Greens | Blues | Grayscale | GrayscaleR
@@ -139,16 +141,15 @@ Cropped Linear Scale (0-3kHz) | Mel Scale (0-22 kHz)
 Amplitude perception in humans, like frequency perception, is logarithmic. Therefore, Mel spectrograms typically display log-transformed spectral power and are presented using Decibel units.
 
 ```cs
-// Load "I'm sorry dave, I'm afraid I can't do that" audio
-(int sampleRate, double[] audio) = WavFile.ReadMono("hal.wav");
+(double[] audio, int sampleRate) = ReadWAV("hal.wav");
+var sg = new SpectrogramGenerator(sampleRate, fftSize: 4096, stepSize: 500, maxFreq: 3000);
+sg.Add(audio);
 
-// Create a traditional (linear) Spectrogram with dB units
-var spec = new Spectrogram(sampleRate, fftSize: 4096, stepSize: 500, maxFreq: 3000);
-spec.Add(audio);
-spec.SaveImage("hal.png", intensity: 4);
+// Create a traditional (linear) Spectrogram
+sg.SaveImage("hal.png");
 
-// Create a Mel Spectrogram with dB units
-Bitmap bmp = spec.GetBitmapMel(melSizePoints: 250, intensity: 4);
+// Create a Mel Spectrogram
+Bitmap bmp = sg.GetBitmapMel(melSizePoints: 250);
 bmp.Save("halMel.png", ImageFormat.Png);
 ```
 
@@ -166,10 +167,9 @@ This example creates a spectrogram but saves it using the SFF file format instea
 
 ```cs
 (int sampleRate, double[] audio) = WavFile.ReadMono("hal.wav");
-int fftSize = 1 << 12;
-var spec = new Spectrogram(sampleRate, fftSize, stepSize: 700, maxFreq: 2000);
-spec.Add(audio);
-spec.SaveData("hal.sff");
+var sg = new SpectrogramGenerator(sampleRate, fftSize: 4096, stepSize: 700, maxFreq: 2000);
+sg.Add(audio);
+sg.SaveData("hal.sff");
 ```
 
 ### Display SFF Files with C#
@@ -204,3 +204,23 @@ plt.show()
 * [MP3Sharp](https://github.com/ZaneDubya/MP3Sharp) - a library I use to read MP3 files during testing
 * [FSKview](https://github.com/swharden/FSKview) - a real-time spectrogram for viewing frequency-shift-keyed (FSK) signals from audio transmitted over radio frequency.
 * [NAudio](https://github.com/naudio/NAudio) - an open source .NET library which makes it easy to get samples from the microphone or sound card in real time
+
+## Read data from a WAV File
+
+You should customize your file-reading method to suit your specific application. I frequently use the NAudio package to read data from WAV and MP3 files. This function reads audio data from a mono WAV file and will be used for the examples on this page.
+
+```cs
+(double[] audio, int sampleRate) ReadWAV(string filePath, double multiplier = 16_000)
+{
+    using var afr = new NAudio.Wave.AudioFileReader(filePath);
+    int sampleRate = afr.WaveFormat.SampleRate;
+    int sampleCount = (int)(afr.Length / afr.WaveFormat.BitsPerSample / 8);
+    int channelCount = afr.WaveFormat.Channels;
+    var audio = new List<double>(sampleCount);
+    var buffer = new float[sampleRate * channelCount];
+    int samplesRead = 0;
+    while ((samplesRead = afr.Read(buffer, 0, buffer.Length)) > 0)
+        audio.AddRange(buffer.Take(samplesRead).Select(x => x * multiplier));
+    return (audio.ToArray(), sampleRate);
+}
+```

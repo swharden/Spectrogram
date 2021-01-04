@@ -9,7 +9,7 @@ namespace Spectrogram.Tests
         [Test]
         public void Test_Make_CommonColormaps()
         {
-            (double[] audio, int sampleRate) = WavFile.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
+            (double[] audio, int sampleRate) = AudioFile.ReadWAV("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 1 << 12;
             var spec = new SpectrogramGenerator(sampleRate, fftSize, stepSize: 700, maxFreq: 2000);
             spec.SetWindow(FftSharp.Window.Hanning(fftSize / 3)); // sharper window than typical
