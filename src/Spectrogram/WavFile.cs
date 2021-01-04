@@ -1,7 +1,4 @@
-﻿// Simple WAV file reader by Scott Harden released under a MIT license
-// Format here is based on http://soundfile.sapp.org/doc/WaveFormat/
-
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 
@@ -31,10 +28,10 @@ namespace Spectrogram
             {
                 // The first chunk is RIFF section
                 // Length should be the number of bytes in the file minus 4
-                var riffChunk = ChunkInfo(br, 0);
-                Console.WriteLine($"First chunk '{riffChunk.id}' indicates {riffChunk.length:N0} bytes");
-                if (riffChunk.id != "RIFF")
-                    throw new InvalidOperationException($"Unsupported WAV format (first chunk ID was '{riffChunk.id}', not 'RIFF')");
+                var (id, length) = ChunkInfo(br, 0);
+                Console.WriteLine($"First chunk '{id}' indicates {length:N0} bytes");
+                if (id != "RIFF")
+                    throw new InvalidOperationException($"Unsupported WAV format (first chunk ID was '{id}', not 'RIFF')");
 
                 // The second chunk is FORMAT section
                 var fmtChunk = ChunkInfo(br, 12);
