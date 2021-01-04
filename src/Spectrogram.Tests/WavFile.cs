@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Spectrogram.Tests
 {
-    public static class TestTools
+    public static class WavFile
     {
-        public static (double[] audio, int sampleRate) ReadWavWithNAudio(string filePath)
+        public static (double[] audio, int sampleRate) ReadWavWithNAudio(string filePath, double multiplier = 16_000)
         {
             using var afr = new NAudio.Wave.AudioFileReader(filePath);
             int sampleRate = afr.WaveFormat.SampleRate;
@@ -17,7 +17,7 @@ namespace Spectrogram.Tests
             var buffer = new float[sampleRate * channelCount];
             int samplesRead = 0;
             while ((samplesRead = afr.Read(buffer, 0, buffer.Length)) > 0)
-                audio.AddRange(buffer.Take(samplesRead).Select(x => (double)x));
+                audio.AddRange(buffer.Take(samplesRead).Select(x => x * multiplier));
             return (audio.ToArray(), sampleRate);
         }
     }

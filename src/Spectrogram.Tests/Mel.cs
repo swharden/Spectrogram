@@ -12,15 +12,15 @@ namespace Spectrogram.Tests
         [Test]
         public void Test_MelSpectrogram_MelScale()
         {
-            (double[] audio, int sampleRate) = TestTools.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
+            (double[] audio, int sampleRate) = WavFile.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 4096;
             var spec = new Spectrogram(sampleRate, fftSize, stepSize: 500);
             spec.Add(audio);
 
-            Bitmap bmpMel = spec.GetBitmapMel(250, 8_000);
+            Bitmap bmpMel = spec.GetBitmapMel(250);
             bmpMel.Save("../../../../../dev/graphics/halMel-MelScale.png", ImageFormat.Png);
 
-            Bitmap bmpRaw = spec.GetBitmap(8_000);
+            Bitmap bmpRaw = spec.GetBitmap();
             Bitmap bmpCropped = new Bitmap(bmpRaw.Width, bmpMel.Height);
             using (Graphics gfx = Graphics.FromImage(bmpCropped))
             {
@@ -93,7 +93,7 @@ namespace Spectrogram.Tests
         [Test]
         public void Test_SaveEmpty_Throws()
         {
-            (double[] audio, int sampleRate) = TestTools.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
+            (double[] audio, int sampleRate) = WavFile.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 4096;
             var spec = new Spectrogram(sampleRate, fftSize, stepSize: 500);
             //spec.Add(audio);

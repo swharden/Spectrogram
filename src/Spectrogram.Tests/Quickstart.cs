@@ -24,11 +24,11 @@ namespace Spectrogram.Tests
         [Test]
         public void Test_Quickstart_Hal()
         {
-            (double[] audio, int sampleRate) = TestTools.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
+            (double[] audio, int sampleRate) = WavFile.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 4096;
             var spec = new Spectrogram(sampleRate, fftSize, stepSize: 500, maxFreq: 3000);
             spec.Add(audio);
-            spec.SaveImage("../../../../../dev/graphics/hal.png", intensity: 8_000);
+            spec.SaveImage("../../../../../dev/graphics/hal.png");
             
             Console.WriteLine(spec);
         }
@@ -36,11 +36,11 @@ namespace Spectrogram.Tests
         [Test]
         public void Test_Readme_HeaderImage()
         {
-            (double[] audio, int sampleRate) = TestTools.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
+            (double[] audio, int sampleRate) = WavFile.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 2048;
             var spec = new Spectrogram(sampleRate, fftSize, stepSize: 400, maxFreq: 6000);
             spec.Add(audio);
-            spec.SaveImage("../../../../../dev/graphics/hal-spectrogram.png", intensity: 10, dB: true, dBScale: 500);
+            spec.SaveImage("../../../../../dev/graphics/hal-spectrogram.png", intensity: 10, dB: true, dBScale: .05);
 
             Console.WriteLine(spec);
         }
@@ -57,7 +57,7 @@ namespace Spectrogram.Tests
 
             var spec = new Spectrogram(sampleRate, fftSize, stepSize, maxFreq: 2200);
             spec.Add(audio);
-            spec.SaveImage("../../../../../dev/spectrogram-song.jpg", intensity: 5, dB: true);
+            spec.SaveImage("../../../../../dev/graphics/spectrogram-song.png", intensity: 5, dB: true);
 
             Console.WriteLine(spec);
             /*

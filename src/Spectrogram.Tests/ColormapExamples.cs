@@ -9,7 +9,7 @@ namespace Spectrogram.Tests
         [Test]
         public void Test_Make_CommonColormaps()
         {
-            (double[] audio, int sampleRate) = TestTools.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
+            (double[] audio, int sampleRate) = WavFile.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 1 << 12;
             var spec = new Spectrogram(sampleRate, fftSize, stepSize: 700, maxFreq: 2000);
             spec.SetWindow(FftSharp.Window.Hanning(fftSize / 3)); // sharper window than typical
@@ -22,7 +22,7 @@ namespace Spectrogram.Tests
             foreach (var cmap in Colormap.GetColormaps())
             {
                 spec.SetColormap(cmap);
-                spec.SaveImage($"../../../../../dev/graphics/hal-{cmap.Name}.png", intensity: 16_000);
+                spec.SaveImage($"../../../../../dev/graphics/hal-{cmap.Name}.png");
                 Debug.WriteLine($"![](dev/graphics/hal-{cmap.Name}.png)");
             }
         }

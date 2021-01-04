@@ -91,7 +91,7 @@ spec.SaveImage("spectrogram-song.jpg", intensity: 5, dB: true);
 
 Notice the optional conversion to Decibels while saving the image.
 
-![](dev/spectrogram-song.jpg)
+![](dev/graphics/spectrogram-song.png)
 
 If you [listen to the audio track](https://www.youtube.com/watch?v=Mza-xqk770k) while closely inspecting the spectrogram you can identify individual piano notes and chords, and may be surprised by the interesting patterns that emerge around trills and glissandos.
 
