@@ -10,7 +10,14 @@ namespace Spectrogram
 {
     public static class Image
     {
-        public static Bitmap GetBitmap(List<double[]> ffts, Colormap cmap, double intensity = 1, bool dB = false, bool roll = false, int rollOffset = 0)
+        public static Bitmap GetBitmap(
+            List<double[]> ffts,
+            Colormap cmap,
+            double intensity = 1,
+            bool dB = false,
+            double dBScale = 1,
+            bool roll = false,
+            int rollOffset = 0)
         {
             if (ffts.Count == 0)
                 throw new ArgumentException("This Spectrogram contains no FFTs (likely because no signal was added)");
@@ -40,7 +47,7 @@ namespace Spectrogram
                 {
                     double value = ffts[sourceCol][row];
                     if (dB)
-                        value = 20 * Math.Log10(value + 1);
+                        value = 20 * Math.Log10(value * dBScale + 1);
                     value *= intensity;
                     value = Math.Min(value, 255);
                     int bytePosition = (Height - 1 - row) * stride + col;

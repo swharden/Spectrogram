@@ -136,22 +136,22 @@ namespace Spectrogram
                 throw new InvalidOperationException("cannot get Mel spectrogram unless minimum frequency is 0Hz");
 
             var fftsMel = new List<double[]>();
-            foreach(var fft in ffts)
+            foreach (var fft in ffts)
                 fftsMel.Add(FftSharp.Transform.MelScale(fft, SampleRate, melBinCount));
 
             return fftsMel;
         }
 
-        public Bitmap GetBitmap(double intensity = 1, bool dB = false, bool roll = false) =>
-            Image.GetBitmap(ffts, cmap, intensity, dB, roll, NextColumnIndex);
+        public Bitmap GetBitmap(double intensity = 1, bool dB = false, double dBScale = 1, bool roll = false) =>
+            Image.GetBitmap(ffts, cmap, intensity, dB, dBScale, roll, NextColumnIndex);
 
-        public Bitmap GetBitmapMel(int melBinCount = 25, double intensity = 1, bool dB = false, bool roll = false) =>
-            Image.GetBitmap(GetMelFFTs(melBinCount), cmap, intensity, dB, roll, NextColumnIndex);
+        public Bitmap GetBitmapMel(int melBinCount = 25, double intensity = 1, bool dB = false, double dBScale = 1, bool roll = false) =>
+            Image.GetBitmap(GetMelFFTs(melBinCount), cmap, intensity, dB, dBScale, roll, NextColumnIndex);
 
         [Obsolete("use SaveImage()", true)]
         public void SaveBitmap(Bitmap bmp, string fileName) { }
 
-        public void SaveImage(string fileName, double intensity = 1, bool dB = false, bool roll = false)
+        public void SaveImage(string fileName, double intensity = 1, bool dB = false, double dBScale = 1, bool roll = false)
         {
             if (ffts.Count == 0)
                 throw new InvalidOperationException("Spectrogram contains no data. Use Add() to add signal data.");
@@ -170,10 +170,10 @@ namespace Spectrogram
             else
                 throw new ArgumentException("unknown file extension");
 
-            Image.GetBitmap(ffts, cmap, intensity, dB, roll, NextColumnIndex).Save(fileName, fmt);
+            Image.GetBitmap(ffts, cmap, intensity, dB, dBScale, roll, NextColumnIndex).Save(fileName, fmt);
         }
 
-        public Bitmap GetBitmapMax(double intensity = 1, bool dB = false, bool roll = false, int reduction = 4)
+        public Bitmap GetBitmapMax(double intensity = 1, bool dB = false, double dBScale = 1, bool roll = false, int reduction = 4)
         {
             List<double[]> ffts2 = new List<double[]>();
             for (int i = 0; i < ffts.Count; i++)
@@ -185,7 +185,7 @@ namespace Spectrogram
                         d2[j] = Math.Max(d2[j], d1[j * reduction + k]);
                 ffts2.Add(d2);
             }
-            return Image.GetBitmap(ffts2, cmap, intensity, dB, roll, NextColumnIndex);
+            return Image.GetBitmap(ffts2, cmap, intensity, dB, dBScale, roll, NextColumnIndex);
         }
 
         public void SaveData(string filePath, int melBinCount = 0)

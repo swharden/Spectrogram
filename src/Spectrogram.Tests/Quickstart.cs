@@ -34,6 +34,18 @@ namespace Spectrogram.Tests
         }
 
         [Test]
+        public void Test_Readme_HeaderImage()
+        {
+            (double[] audio, int sampleRate) = TestTools.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
+            int fftSize = 2048;
+            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 400, maxFreq: 6000);
+            spec.Add(audio);
+            spec.SaveImage("../../../../../dev/graphics/hal-spectrogram.png", intensity: 10, dB: true, dBScale: 500);
+
+            Console.WriteLine(spec);
+        }
+
+        [Test]
         public void Test_Quickstart_Handel()
         {
             double[] audio = Mp3.Read("../../../../../data/Handel - Air and Variations.mp3");

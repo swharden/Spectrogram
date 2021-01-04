@@ -3,11 +3,11 @@
 [![](https://img.shields.io/azure-devops/build/swharden/swharden/9?label=Build&logo=azure%20pipelines)](https://dev.azure.com/swharden/swharden/_build/latest?definitionId=9&branchName=master)
 [![Nuget](https://img.shields.io/nuget/v/Spectrogram?label=NuGet&logo=nuget)](https://www.nuget.org/packages/Spectrogram/)
 
-**Spectrogram** is a .NET library for creating spectrograms from pre-recorded signals or live audio from the sound card.  Spectrogram uses FFT algorithms and window functions provided by the [FftSharp](https://github.com/swharden/FftSharp) project, and it targets .NET Standard 2.0 so it can be used in .NET Framework and .NET Core projects.
+**Spectrogram** is a .NET library for creating spectrograms from pre-recorded signals or live audio from the sound card.  Spectrogram uses FFT algorithms and window functions provided by the [FftSharp](https://github.com/swharden/FftSharp) project, and it targets .NET Standard so it can be used in .NET Framework and .NET Core projects.
 
 <div align="center">
 
-![](dev/spectrogram.png)
+![](dev/graphics/hal-spectrogram.png)
 
 _"I'm sorry Dave... I'm afraid I can't do that"_
 
