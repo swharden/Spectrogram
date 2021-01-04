@@ -60,7 +60,7 @@ namespace Spectrogram
             CalculateFrequencies();
         }
 
-        public SFF(Spectrogram spec, int melBinCount = 0)
+        public SFF(SpectrogramGenerator spec, int melBinCount = 0)
         {
             SampleRate = spec.SampleRate;
             StepSize = spec.StepSize;

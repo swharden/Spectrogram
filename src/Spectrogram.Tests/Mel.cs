@@ -14,7 +14,7 @@ namespace Spectrogram.Tests
         {
             (double[] audio, int sampleRate) = WavFile.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 4096;
-            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 500);
+            var spec = new SpectrogramGenerator(sampleRate, fftSize, stepSize: 500);
             spec.Add(audio);
 
             Bitmap bmpMel = spec.GetBitmapMel(250);
@@ -95,7 +95,7 @@ namespace Spectrogram.Tests
         {
             (double[] audio, int sampleRate) = WavFile.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 4096;
-            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 500);
+            var spec = new SpectrogramGenerator(sampleRate, fftSize, stepSize: 500);
             //spec.Add(audio);
             Assert.Throws<InvalidOperationException>(() => { spec.SaveImage("empty.png"); });
         }

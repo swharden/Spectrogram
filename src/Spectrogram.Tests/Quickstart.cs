@@ -26,7 +26,7 @@ namespace Spectrogram.Tests
         {
             (double[] audio, int sampleRate) = WavFile.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 4096;
-            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 500, maxFreq: 3000);
+            var spec = new SpectrogramGenerator(sampleRate, fftSize, stepSize: 500, maxFreq: 3000);
             spec.Add(audio);
             spec.SaveImage("../../../../../dev/graphics/hal.png");
             
@@ -38,7 +38,7 @@ namespace Spectrogram.Tests
         {
             (double[] audio, int sampleRate) = WavFile.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 2048;
-            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 400, maxFreq: 6000);
+            var spec = new SpectrogramGenerator(sampleRate, fftSize, stepSize: 400, maxFreq: 6000);
             spec.Add(audio);
             spec.SaveImage("../../../../../dev/graphics/hal-spectrogram.png", intensity: 10, dB: true, dBScale: .05);
 
@@ -55,7 +55,7 @@ namespace Spectrogram.Tests
             int targetWidthPx = 3000;
             int stepSize = audio.Length / targetWidthPx;
 
-            var spec = new Spectrogram(sampleRate, fftSize, stepSize, maxFreq: 2200);
+            var spec = new SpectrogramGenerator(sampleRate, fftSize, stepSize, maxFreq: 2200);
             spec.Add(audio);
             spec.SaveImage("../../../../../dev/graphics/spectrogram-song.png", intensity: 5, dB: true);
 

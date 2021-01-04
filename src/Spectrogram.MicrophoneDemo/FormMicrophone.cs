@@ -48,7 +48,7 @@ namespace Spectrogram.MicrophoneDemo
         private void cbDevice_SelectedIndexChanged(object sender, EventArgs e) => StartListening();
         private void cbFftSize_SelectedIndexChanged(object sender, EventArgs e) => StartListening();
 
-        private Spectrogram spec;
+        private SpectrogramGenerator spec;
         private Listener listener;
         private void StartListening()
         {
@@ -60,8 +60,7 @@ namespace Spectrogram.MicrophoneDemo
             pbSpectrogram.Image = null;
             listener?.Dispose();
             listener = new Listener(cbDevice.SelectedIndex, sampleRate);
-            spec = new Spectrogram(sampleRate, fftSize, stepSize);
-            //spec.SetWindow(FftSharp.Window.Rectangular(fftSize));
+            spec = new SpectrogramGenerator(sampleRate, fftSize, stepSize);
             pbSpectrogram.Height = spec.Height;
 
             pbScaleVert.Image?.Dispose();
@@ -82,7 +81,7 @@ namespace Spectrogram.MicrophoneDemo
                 spec.Process();
                 spec.SetFixedWidth(pbSpectrogram.Width);
                 Bitmap bmpSpec = new Bitmap(spec.Width, spec.Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
-                using (var bmpSpecIndexed = spec.GetBitmap(multiplier, cbDecibels.Checked, cbRoll.Checked))
+                using (var bmpSpecIndexed = spec.GetBitmap(multiplier, cbDecibels.Checked, roll: cbRoll.Checked))
                 using (var gfx = Graphics.FromImage(bmpSpec))
                 using (var pen = new Pen(Color.White))
                 {

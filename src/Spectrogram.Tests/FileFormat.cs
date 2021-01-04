@@ -13,7 +13,7 @@ namespace Spectrogram.Tests
         {
             (double[] audio, int sampleRate) = WavFile.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 1 << 12;
-            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 700, maxFreq: 2000);
+            var spec = new SpectrogramGenerator(sampleRate, fftSize, stepSize: 700, maxFreq: 2000);
             spec.SetWindow(FftSharp.Window.Hanning(fftSize / 3)); // sharper window than typical
             spec.Add(audio);
             spec.SaveData("../../../../../dev/sff/hal.sff");
@@ -33,7 +33,7 @@ namespace Spectrogram.Tests
         {
             (double[] audio, int sampleRate) = WavFile.ReadWavWithNAudio("../../../../../data/cant-do-that-44100.wav");
             int fftSize = 1 << 12;
-            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 700);
+            var spec = new SpectrogramGenerator(sampleRate, fftSize, stepSize: 700);
             spec.SetWindow(FftSharp.Window.Hanning(fftSize / 3)); // sharper window than typical
             spec.Add(audio);
 
@@ -62,7 +62,7 @@ namespace Spectrogram.Tests
 
             // save the SFF
             int fftSize = 1 << 12;
-            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 300, maxFreq: 2000);
+            var spec = new SpectrogramGenerator(sampleRate, fftSize, stepSize: 300, maxFreq: 2000);
             spec.Add(audio);
             spec.SaveData("testDoor.sff");
 
@@ -87,7 +87,7 @@ namespace Spectrogram.Tests
             Assert.AreEqual(48000, sampleRate);
 
             int fftSize = 1 << 12;
-            var spec = new Spectrogram(sampleRate, fftSize, stepSize: 300, maxFreq: 7999);
+            var spec = new SpectrogramGenerator(sampleRate, fftSize, stepSize: 300, maxFreq: 7999);
             spec.Add(audio);
             spec.SaveData("testDoorBig.sff");
         }
