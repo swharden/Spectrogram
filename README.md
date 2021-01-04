@@ -135,7 +135,7 @@ Analytical spectrograms aimed at achieving maximum frequency resolution are pres
 **To visualize frequency in a way that mimics human perception** we create a spectrogram that represents lower frequencies using a large portion of the image, and condense higher frequency ranges into smaller rows of pixels toward the top of the image. The [Mel Scale](https://en.wikipedia.org/wiki/Mel_scale) is commonly used to represent power spectral density this way, and the resulting _Mel Spectrogram_ has greatly reduced vertical resolution but is a better representation of human frequency perception. 
 
 Cropped Linear Scale (0-3kHz) | Mel Scale (0-22 kHz)
----|---|---
+---|---
 ![](dev/graphics/halMel-LinearCropped.png)|![](dev/graphics/halMel-MelScale.png)
 
 Amplitude perception in humans, like frequency perception, is logarithmic. Therefore, Mel spectrograms typically display log-transformed spectral power and are presented using Decibel units.
@@ -166,7 +166,7 @@ SFF files be saved using `Complex` data format (with real and imaginary values f
 This example creates a spectrogram but saves it using the SFF file format instead of saving it as an image. The SFF file can then be read in any language.
 
 ```cs
-(int sampleRate, double[] audio) = WavFile.ReadMono("hal.wav");
+(double[] audio, int sampleRate) = ReadWAV("hal.wav");
 var sg = new SpectrogramGenerator(sampleRate, fftSize: 4096, stepSize: 700, maxFreq: 2000);
 sg.Add(audio);
 sg.SaveData("hal.sff");
