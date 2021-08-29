@@ -25,14 +25,16 @@ namespace Spectrogram
 
         private readonly Settings settings;
         private readonly List<double[]> ffts = new List<double[]>();
-        private readonly List<double> newAudio = new List<double>();
+        private readonly List<double> newAudio;
         private Colormap cmap = Colormap.Viridis;
 
         public SpectrogramGenerator(int sampleRate, int fftSize, int stepSize,
             double minFreq = 0, double maxFreq = double.PositiveInfinity,
-            int? fixedWidth = null, int offsetHz = 0)
+            int? fixedWidth = null, int offsetHz = 0, List<double> initialAudioList = null)
         {
             settings = new Settings(sampleRate, fftSize, stepSize, minFreq, maxFreq, offsetHz);
+
+            newAudio = initialAudioList ?? new List<double>();
 
             if (fixedWidth.HasValue)
                 SetFixedWidth(fixedWidth.Value);
