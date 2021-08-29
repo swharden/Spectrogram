@@ -82,7 +82,7 @@ namespace Spectrogram
         [Obsolete("use the Add() method", true)]
         public void AddScroll(float[] values) { }
 
-        public void Add(double[] audio, bool process = true)
+        public void Add(IEnumerable<double> audio, bool process = true)
         {
             newAudio.AddRange(audio);
             if (process)
