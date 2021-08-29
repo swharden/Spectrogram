@@ -21,7 +21,7 @@ _"I'm sorry Dave... I'm afraid I can't do that"_
 * Source code for the WAV reading method is at the bottom of this page.
 
 ```cs
-(IEnumerable<double> audio, int sampleRate) = ReadWAV("hal.wav");
+(List<double> audio, int sampleRate) = ReadWAV("hal.wav");
 var sg = new SpectrogramGenerator(sampleRate, fftSize: 4096, stepSize: 500, maxFreq: 3000);
 sg.Add(audio);
 sg.SaveImage("hal.png");
@@ -81,7 +81,7 @@ Review the source code of the demo application for additional details and consid
 This example demonstrates how to convert a MP3 file to a spectrogram image. A sample MP3 audio file in the [data folder](data) contains the audio track from Ken Barker's excellent piano performance of George Frideric Handel's Suite No. 5 in E major for harpsichord ([_The Harmonious Blacksmith_](https://en.wikipedia.org/wiki/The_Harmonious_Blacksmith)). This audio file is included [with permission](dev/Handel%20-%20Air%20and%20Variations.txt), and the [original video can be viewed on YouTube](https://www.youtube.com/watch?v=Mza-xqk770k).
 
 ```cs
-(IEnumerable<double> audio, int sampleRate) = ReadWAV("song.wav");
+(List<double> audio, int sampleRate) = ReadWAV("song.wav");
 
 int fftSize = 16384;
 int targetWidthPx = 3000;
@@ -117,7 +117,7 @@ Spectrogram (2993, 817)
 These examples demonstrate the identical spectrogram analyzed with a variety of different colormaps. Spectrogram colormaps can be changed by calling the `SetColormap()` method:
 
 ```cs
-(IEnumerable<double> audio, int sampleRate) = ReadWAV("hal.wav");
+(List<double> audio, int sampleRate) = ReadWAV("hal.wav");
 var sg = new SpectrogramGenerator(sampleRate, fftSize: 8192, stepSize: 200, maxFreq: 3000);
 sg.Add(audio);
 sg.SetColormap(Colormap.Jet);
@@ -141,7 +141,7 @@ Cropped Linear Scale (0-3kHz) | Mel Scale (0-22 kHz)
 Amplitude perception in humans, like frequency perception, is logarithmic. Therefore, Mel spectrograms typically display log-transformed spectral power and are presented using Decibel units.
 
 ```cs
-(IEnumerable<double> audio, int sampleRate) = ReadWAV("hal.wav");
+(List<double> audio, int sampleRate) = ReadWAV("hal.wav");
 var sg = new SpectrogramGenerator(sampleRate, fftSize: 4096, stepSize: 500, maxFreq: 3000);
 sg.Add(audio);
 
@@ -166,7 +166,7 @@ SFF files be saved using `Complex` data format (with real and imaginary values f
 This example creates a spectrogram but saves it using the SFF file format instead of saving it as an image. The SFF file can then be read in any language.
 
 ```cs
-(IEnumerable<double> audio, int sampleRate) = ReadWAV("hal.wav");
+(List<double> audio, int sampleRate) = ReadWAV("hal.wav");
 var sg = new SpectrogramGenerator(sampleRate, fftSize: 4096, stepSize: 700, maxFreq: 2000);
 sg.Add(audio);
 sg.SaveData("hal.sff");
@@ -210,7 +210,7 @@ plt.show()
 You should customize your file-reading method to suit your specific application. I frequently use the NAudio package to read data from WAV and MP3 files. This function reads audio data from a mono WAV file and will be used for the examples on this page.
 
 ```cs
-(IEnumerable<double> audio, int sampleRate) ReadWAV(string filePath, double multiplier = 16_000)
+(List<double> audio, int sampleRate) ReadWAV(string filePath, double multiplier = 16_000)
 {
     using var afr = new NAudio.Wave.AudioFileReader(filePath);
     int sampleRate = afr.WaveFormat.SampleRate;
