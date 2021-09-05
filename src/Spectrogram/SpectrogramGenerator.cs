@@ -73,12 +73,27 @@ namespace Spectrogram
         /// <summary>
         /// The spectrogram is trimmed to cut-off frequencies above this value.
         /// </summary>
-        public double FreqMin { get { return settings.FreqMin; } }
+        public double FreqMin { get => Settings.FreqMin; }
 
-        private readonly Settings settings;
-        private readonly List<double[]> ffts = new List<double[]>();
-        private readonly List<double> newAudio;
-        private Colormap cmap = Colormap.Viridis;
+        /// <summary>
+        /// This module contains detailed FFT/Spectrogram settings
+        /// </summary>
+        private readonly Settings Settings;
+
+        /// <summary>
+        /// This is the list of FFTs which is translated to the spectrogram image when it is requested.
+        /// The length of this list is the spectrogram width.
+        /// The length of the arrays in this list is the spectrogram height.
+        /// </summary>
+        private readonly List<double[]> FFTs = new List<double[]>();
+
+        /// <summary>
+        /// This list contains data values which have not yet been processed.
+        /// Process() processes all unprocessed data.
+        /// This list may not be empty after processing if there aren't enough values to fill a full FFT (FftSize).
+        /// </summary>
+        private readonly List<double> UnprocessedData;
+
         /// <summary>
         /// Colormap to use when generating future FFTs.
         /// </summary>
@@ -107,9 +122,9 @@ namespace Spectrogram
             int offsetHz = 0,
             List<double> initialAudioList = null)
         {
-            settings = new Settings(sampleRate, fftSize, stepSize, minFreq, maxFreq, offsetHz);
+            Settings = new Settings(sampleRate, fftSize, stepSize, minFreq, maxFreq, offsetHz);
 
-            newAudio = initialAudioList ?? new List<double>();
+            UnprocessedData = initialAudioList ?? new List<double>();
 
             if (fixedWidth.HasValue)
                 SetFixedWidth(fixedWidth.Value);
@@ -117,20 +132,20 @@ namespace Spectrogram
 
         public override string ToString()
         {
-            double processedSamples = ffts.Count * settings.StepSize + settings.FftSize;
-            double processedSec = processedSamples / settings.SampleRate;
+            double processedSamples = FFTs.Count * Settings.StepSize + Settings.FftSize;
+            double processedSec = processedSamples / Settings.SampleRate;
             string processedTime = (processedSec < 60) ? $"{processedSec:N2} sec" : $"{processedSec / 60.0:N2} min";
 
             return $"Spectrogram ({Width}, {Height})" +
                    $"\n  Vertical ({Height} px): " +
-                   $"{settings.FreqMin:N0} - {settings.FreqMax:N0} Hz, " +
-                   $"FFT size: {settings.FftSize:N0} samples, " +
-                   $"{settings.HzPerPixel:N2} Hz/px" +
+                   $"{Settings.FreqMin:N0} - {Settings.FreqMax:N0} Hz, " +
+                   $"FFT size: {Settings.FftSize:N0} samples, " +
+                   $"{Settings.HzPerPixel:N2} Hz/px" +
                    $"\n  Horizontal ({Width} px): " +
                    $"{processedTime}, " +
-                   $"window: {settings.FftLengthSec:N2} sec, " +
-                   $"step: {settings.StepLengthSec:N2} sec, " +
-                   $"overlap: {settings.StepOverlapFrac * 100:N0}%";
+                   $"window: {Settings.FftLengthSec:N2} sec, " +
+                   $"step: {Settings.StepLengthSec:N2} sec, " +
+                   $"overlap: {Settings.StepOverlapFrac * 100:N0}%";
         }
 
         [Obsolete("Assign to the Colormap field")]
@@ -148,14 +163,14 @@ namespace Spectrogram
         /// </summary>
         public void SetWindow(double[] newWindow)
         {
-            if (newWindow.Length > settings.FftSize)
+            if (newWindow.Length > Settings.FftSize)
                 throw new ArgumentException("window length cannot exceed FFT size");
 
-            for (int i = 0; i < settings.FftSize; i++)
-                settings.Window[i] = 0;
+            for (int i = 0; i < Settings.FftSize; i++)
+                Settings.Window[i] = 0;
 
-            int offset = (settings.FftSize - newWindow.Length) / 2;
-            Array.Copy(newWindow, 0, settings.Window, offset, newWindow.Length);
+            int offset = (Settings.FftSize - newWindow.Length) / 2;
+            Array.Copy(newWindow, 0, Settings.Window, offset, newWindow.Length);
         }
 
         [Obsolete("use the Add() method", true)]
@@ -172,7 +187,7 @@ namespace Spectrogram
         /// </summary>
         public void Add(IEnumerable<double> audio, bool process = true)
         {
-            newAudio.AddRange(audio);
+            UnprocessedData.AddRange(audio);
             if (process)
                 Process();
         }
@@ -207,23 +222,23 @@ namespace Spectrogram
 
             Parallel.For(0, newFftCount, newFftIndex =>
             {
-                FftSharp.Complex[] buffer = new FftSharp.Complex[settings.FftSize];
-                int sourceIndex = newFftIndex * settings.StepSize;
-                for (int i = 0; i < settings.FftSize; i++)
-                    buffer[i].Real = newAudio[sourceIndex + i] * settings.Window[i];
+                FftSharp.Complex[] buffer = new FftSharp.Complex[Settings.FftSize];
+                int sourceIndex = newFftIndex * Settings.StepSize;
+                for (int i = 0; i < Settings.FftSize; i++)
+                    buffer[i].Real = UnprocessedData[sourceIndex + i] * Settings.Window[i];
 
                 FftSharp.Transform.FFT(buffer);
 
-                newFfts[newFftIndex] = new double[settings.Height];
-                for (int i = 0; i < settings.Height; i++)
-                    newFfts[newFftIndex][i] = buffer[settings.FftIndex1 + i].Magnitude / settings.FftSize;
+                newFfts[newFftIndex] = new double[Settings.Height];
+                for (int i = 0; i < Settings.Height; i++)
+                    newFfts[newFftIndex][i] = buffer[Settings.FftIndex1 + i].Magnitude / Settings.FftSize;
             });
 
             foreach (var newFft in newFfts)
-                ffts.Add(newFft);
+                FFTs.Add(newFft);
             FftsProcessed += newFfts.Length;
 
-            newAudio.RemoveRange(0, newFftCount * settings.StepSize);
+            UnprocessedData.RemoveRange(0, newFftCount * Settings.StepSize);
             PadOrTrimForFixedWidth();
 
             return newFfts;
@@ -235,11 +250,11 @@ namespace Spectrogram
         /// <param name="melBinCount">Total number of output bins to use. Choose a value significantly smaller than Height.</param>
         public List<double[]> GetMelFFTs(int melBinCount)
         {
-            if (settings.FreqMin != 0)
+            if (Settings.FreqMin != 0)
                 throw new InvalidOperationException("cannot get Mel spectrogram unless minimum frequency is 0Hz");
 
             var fftsMel = new List<double[]>();
-            foreach (var fft in ffts)
+            foreach (var fft in FFTs)
                 fftsMel.Add(FftSharp.Transform.MelScale(fft, SampleRate, melBinCount));
 
             return fftsMel;
@@ -255,7 +270,7 @@ namespace Spectrogram
         /// Roll (true) adds new columns on the left overwriting the oldest ones.
         /// Scroll (false) slides the whole image to the left and adds new columns to the right.</param>
         public Bitmap GetBitmap(double intensity = 1, bool dB = false, double dBScale = 1, bool roll = false) =>
-            Image.GetBitmap(ffts, cmap, intensity, dB, dBScale, roll, NextColumnIndex);
+            Image.GetBitmap(FFTs, Colormap, intensity, dB, dBScale, roll, NextColumnIndex);
 
         /// <summary>
         /// Create a Mel-scaled spectrogram.
@@ -268,7 +283,7 @@ namespace Spectrogram
         /// Roll (true) adds new columns on the left overwriting the oldest ones.
         /// Scroll (false) slides the whole image to the left and adds new columns to the right.</param>
         public Bitmap GetBitmapMel(int melBinCount = 25, double intensity = 1, bool dB = false, double dBScale = 1, bool roll = false) =>
-            Image.GetBitmap(GetMelFFTs(melBinCount), cmap, intensity, dB, dBScale, roll, NextColumnIndex);
+            Image.GetBitmap(GetMelFFTs(melBinCount), Colormap, intensity, dB, dBScale, roll, NextColumnIndex);
 
         [Obsolete("use SaveImage()", true)]
         public void SaveBitmap(Bitmap bmp, string fileName) { }
@@ -285,7 +300,7 @@ namespace Spectrogram
         /// Scroll (false) slides the whole image to the left and adds new columns to the right.</param>
         public void SaveImage(string fileName, double intensity = 1, bool dB = false, double dBScale = 1, bool roll = false)
         {
-            if (ffts.Count == 0)
+            if (FFTs.Count == 0)
                 throw new InvalidOperationException("Spectrogram contains no data. Use Add() to add signal data.");
 
             string extension = Path.GetExtension(fileName).ToLower();
@@ -302,7 +317,7 @@ namespace Spectrogram
             else
                 throw new ArgumentException("unknown file extension");
 
-            Image.GetBitmap(ffts, cmap, intensity, dB, dBScale, roll, NextColumnIndex).Save(fileName, fmt);
+            Image.GetBitmap(FFTs, Colormap, intensity, dB, dBScale, roll, NextColumnIndex).Save(fileName, fmt);
         }
 
         /// <summary>
@@ -317,16 +332,16 @@ namespace Spectrogram
         public Bitmap GetBitmapMax(double intensity = 1, bool dB = false, double dBScale = 1, bool roll = false, int reduction = 4)
         {
             List<double[]> ffts2 = new List<double[]>();
-            for (int i = 0; i < ffts.Count; i++)
+            for (int i = 0; i < FFTs.Count; i++)
             {
-                double[] d1 = ffts[i];
+                double[] d1 = FFTs[i];
                 double[] d2 = new double[d1.Length / reduction];
                 for (int j = 0; j < d2.Length; j++)
                     for (int k = 0; k < reduction; k++)
                         d2[j] = Math.Max(d2[j], d1[j * reduction + k]);
                 ffts2.Add(d2);
             }
-            return Image.GetBitmap(ffts2, cmap, intensity, dB, dBScale, roll, NextColumnIndex);
+            return Image.GetBitmap(ffts2, Colormap, intensity, dB, dBScale, roll, NextColumnIndex);
         }
 
         /// <summary>
@@ -360,10 +375,10 @@ namespace Spectrogram
             {
                 int overhang = Width - fixedWidth;
                 if (overhang > 0)
-                    ffts.RemoveRange(0, overhang);
+                    FFTs.RemoveRange(0, overhang);
 
-                while (ffts.Count < fixedWidth)
-                    ffts.Insert(0, new double[Height]);
+                while (FFTs.Count < fixedWidth)
+                    FFTs.Insert(0, new double[Height]);
             }
         }
 
@@ -376,7 +391,7 @@ namespace Spectrogram
         /// <param name="reduction">bin size for vertical data reduction</param>
         public Bitmap GetVerticalScale(int width, int offsetHz = 0, int tickSize = 3, int reduction = 1)
         {
-            return Scale.Vertical(width, settings, offsetHz, tickSize, reduction);
+            return Scale.Vertical(width, Settings, offsetHz, tickSize, reduction);
         }
 
         /// <summary>
@@ -384,18 +399,19 @@ namespace Spectrogram
         /// </summary>
         public int PixelY(double frequency, int reduction = 1)
         {
-            int pixelsFromZeroHz = (int)(settings.PxPerHz * frequency / reduction);
-            int pixelsFromMinFreq = pixelsFromZeroHz - settings.FftIndex1 / reduction + 1;
-            int pixelRow = settings.Height / reduction - 1 - pixelsFromMinFreq;
+            int pixelsFromZeroHz = (int)(Settings.PxPerHz * frequency / reduction);
+            int pixelsFromMinFreq = pixelsFromZeroHz - Settings.FftIndex1 / reduction + 1;
+            int pixelRow = Settings.Height / reduction - 1 - pixelsFromMinFreq;
             return pixelRow - 1;
         }
 
         /// <summary>
-        /// Return a list of the FFTs in memory underlying the spectrogram
+        /// Return the list of FFTs in memory underlying the spectrogram.
+        /// This list may continue to evolve after it is returned.
         /// </summary>
         public List<double[]> GetFFTs()
         {
-            return ffts;
+            return FFTs;
         }
 
         /// <summary>
@@ -404,13 +420,13 @@ namespace Spectrogram
         /// <param name="latestFft">If true, only the latest FFT will be assessed.</param>
         public (double freqHz, double magRms) GetPeak(bool latestFft = true)
         {
-            if (ffts.Count == 0)
+            if (FFTs.Count == 0)
                 return (double.NaN, double.NaN);
 
             if (latestFft == false)
                 throw new NotImplementedException("peak of mean of all FFTs not yet supported");
 
-            double[] freqs = ffts[ffts.Count - 1];
+            double[] freqs = FFTs[FFTs.Count - 1];
 
             int peakIndex = 0;
             double peakMagnitude = 0;
