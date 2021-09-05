@@ -10,14 +10,18 @@ namespace Spectrogram.Tests
         /// <summary>
         /// Compare values read from the WAV reader against those read by Python's SciPy module (see script in /dev folder)
         /// </summary>
-        [Test]
-        public void Test_AudioFile_KnownValues()
+        [TestCase("cant-do-that-44100.wav", 44_100, 166_671, 1)]
+        [TestCase("03-02-03-01-02-01-19.wav", 48_000, 214_615, 1)]
+        [TestCase("qrss-10min.wav", 6_000, 3_600_000, 1)]
+        [TestCase("cant-do-that-11025-stereo.wav", 11_025, 41668, 2)]
+        [TestCase("asehgal-original.wav", 40_000, 1_600_000, 1)]
+        public void Test_AudioFile_LengthAndSampleRate(string filename, int knownRate, int knownLength, int channels)
         {
-            (double[] audio, int sampleRate) = AudioFile.ReadWAV("../../../../../data/cant-do-that-44100.wav", multiplier: 32_000);
+            string filePath = $"../../../../../data/{filename}";
+            (double[] audio, int sampleRate) = AudioFile.ReadWAV(filePath);
 
-            Assert.AreEqual(44100, sampleRate);
-            Assert.AreEqual(166671, audio.Length);
-            Assert.AreEqual(4435, audio[12345], 1000);
+            Assert.AreEqual(knownRate, sampleRate);
+            Assert.AreEqual(knownLength, audio.Length / channels);
         }
     }
 }
