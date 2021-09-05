@@ -79,6 +79,10 @@ namespace Spectrogram
         private readonly List<double[]> ffts = new List<double[]>();
         private readonly List<double> newAudio;
         private Colormap cmap = Colormap.Viridis;
+        /// <summary>
+        /// Colormap to use when generating future FFTs.
+        /// </summary>
+        public Colormap Colormap = Colormap.Viridis;
 
         /// <summary>
         /// Instantiate a spectrogram generator.
@@ -129,12 +133,13 @@ namespace Spectrogram
                    $"overlap: {settings.StepOverlapFrac * 100:N0}%";
         }
 
+        [Obsolete("Assign to the Colormap field")]
         /// <summary>
         /// Set the colormap to use for future renders
         /// </summary>
         public void SetColormap(Colormap cmap)
         {
-            this.cmap = cmap ?? this.cmap;
+            Colormap = cmap ?? this.Colormap;
         }
 
         /// <summary>

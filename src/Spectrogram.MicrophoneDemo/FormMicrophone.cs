@@ -105,7 +105,7 @@ namespace Spectrogram.MicrophoneDemo
 
         private void cbColormap_SelectedIndexChanged(object sender, EventArgs e)
         {
-            spec.SetColormap(cmaps[cbColormap.SelectedIndex]);
+            spec.Colormap = cmaps[cbColormap.SelectedIndex];
         }
 
         private void btnResetRoll_Click(object sender, EventArgs e)

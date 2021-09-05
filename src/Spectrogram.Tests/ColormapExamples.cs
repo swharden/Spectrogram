@@ -21,7 +21,7 @@ namespace Spectrogram.Tests
 
             foreach (var cmap in Colormap.GetColormaps())
             {
-                spec.SetColormap(cmap);
+                spec.Colormap = cmap;
                 spec.SaveImage($"../../../../../dev/graphics/hal-{cmap.Name}.png");
                 Debug.WriteLine($"![](dev/graphics/hal-{cmap.Name}.png)");
             }
