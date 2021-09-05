@@ -7,11 +7,15 @@ namespace Spectrogram.Tests
 {
     public static class AudioFile
     {
+        /// <summary>
+        /// Use NAudio to read the contents of a WAV file.
+        /// </summary>
         public static (double[] audio, int sampleRate) ReadWAV(string filePath, double multiplier = 16_000)
         {
             using var afr = new NAudio.Wave.AudioFileReader(filePath);
             int sampleRate = afr.WaveFormat.SampleRate;
-            int sampleCount = (int)(afr.Length / afr.WaveFormat.BitsPerSample / 8);
+            int bytesPerSample = afr.WaveFormat.BitsPerSample / 8;
+            int sampleCount = (int)afr.Length / bytesPerSample;
             int channelCount = afr.WaveFormat.Channels;
             var audio = new List<double>(sampleCount);
             var buffer = new float[sampleRate * channelCount];
@@ -21,6 +25,9 @@ namespace Spectrogram.Tests
             return (audio.ToArray(), sampleRate);
         }
 
+        /// <summary>
+        /// Use MP3Sharp to read the contents of an MP3 file.
+        /// </summary>
         public static double[] ReadMP3(string filePath, int bufferSize = 4096)
         {
             List<double> audio = new List<double>();
