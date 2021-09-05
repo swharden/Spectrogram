@@ -12,32 +12,32 @@ namespace Spectrogram
         /// <summary>
         /// Number of pixel columns (FFT samples) in the spectrogram image
         /// </summary>
-        public int Width { get { return ffts.Count; } }
+        public int Width { get => FFTs.Count; }
 
         /// <summary>
         /// Number of pixel rows (frequency bins) in the spectrogram image
         /// </summary>
-        public int Height { get { return settings.Height; } }
+        public int Height { get => Settings.Height; }
 
         /// <summary>
         /// Number of samples to use for each FFT (must be a power of 2)
         /// </summary>
-        public int FftSize { get { return settings.FftSize; } }
+        public int FftSize { get => Settings.FftSize; }
 
         /// <summary>
         /// Vertical resolution (frequency bin size depends on FftSize and SampleRate)
         /// </summary>
-        public double HzPerPx { get { return settings.HzPerPixel; } }
+        public double HzPerPx { get => Settings.HzPerPixel; }
 
         /// <summary>
         /// Horizontal resolution (seconds per pixel depends on StepSize)
         /// </summary>
-        public double SecPerPx { get { return settings.StepLengthSec; } }
+        public double SecPerPx { get => Settings.StepLengthSec; }
 
         /// <summary>
         /// Number of FFTs that remain to be processed for data which has been added but not yet analuyzed
         /// </summary>
-        public int FftsToProcess { get { return (newAudio.Count - settings.FftSize) / settings.StepSize; } }
+        public int FftsToProcess { get => (UnprocessedData.Count - Settings.FftSize) / Settings.StepSize; }
 
         /// <summary>
         /// Total number of FFT steps processed
@@ -47,28 +47,28 @@ namespace Spectrogram
         /// <summary>
         /// Index of the pixel column which will be populated next. Location of vertical line for wrap-around displays.
         /// </summary>
-        public int NextColumnIndex { get { return (FftsProcessed + rollOffset) % Width; } }
+        public int NextColumnIndex { get => (FftsProcessed + rollOffset) % Width; }
 
         /// <summary>
         /// This value is added to displayed frequency axis tick labels
         /// </summary>
-        public int OffsetHz { get { return settings.OffsetHz; } set { settings.OffsetHz = value; } }
+        public int OffsetHz { get => Settings.OffsetHz; set { Settings.OffsetHz = value; } }
 
         /// <summary>
         /// Number of samples per second
         /// </summary>
-        public int SampleRate { get { return settings.SampleRate; } }
+        public int SampleRate { get => Settings.SampleRate; }
 
         /// <summary>
         /// Number of samples to step forward after each FFT is processed.
         /// This value controls the horizontal resolution of the spectrogram.
         /// </summary>
-        public int StepSize { get { return settings.StepSize; } }
+        public int StepSize { get => Settings.StepSize; }
 
         /// <summary>
         /// The spectrogram is trimmed to cut-off frequencies below this value.
         /// </summary>
-        public double FreqMax { get { return settings.FreqMax; } }
+        public double FreqMax { get => Settings.FreqMax; }
 
         /// <summary>
         /// The spectrogram is trimmed to cut-off frequencies above this value.
