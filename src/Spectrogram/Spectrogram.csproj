@@ -11,11 +11,9 @@
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/swharden/Spectrogram</RepositoryUrl>
     <PackageTags>spectrogram spectrum fft frequency audio microphone signal</PackageTags>
-    <PackageReleaseNotes>Quickstart: https://github.com/swharden/Spectrogram
-Release Notes: https://github.com/swharden/Spectrogram/releases</PackageReleaseNotes>
+    <PackageReleaseNotes>https://github.com/swharden/Spectrogram/releases</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	<IncludeSymbols>true</IncludeSymbols>
-	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>
 
   <ItemGroup>
