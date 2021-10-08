@@ -15,7 +15,7 @@ jobs:
   package:
     # build, test, and deploy the core package on Linux
     name: Package
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     env:
       CSPROJ_CORE: src/Spectrogram/Spectrogram.csproj
       CSPROJ_TESTS: src/Spectrogram.Tests/Spectrogram.Tests.csproj
