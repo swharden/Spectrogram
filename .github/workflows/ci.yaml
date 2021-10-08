@@ -15,13 +15,17 @@ jobs:
   package:
     # build, test, and deploy the core package on Linux
     name: Package
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     env:
       CSPROJ_CORE: src/Spectrogram/Spectrogram.csproj
       CSPROJ_TESTS: src/Spectrogram.Tests/Spectrogram.Tests.csproj
     steps:
       - name: 🛒 Checkout
         uses: actions/checkout@v2
+      - name: ✨ Setup .NET Core 3.1
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "3.1.x"
       - name: ✨ Setup .NET 6
         uses: actions/setup-dotnet@v1
         with:
