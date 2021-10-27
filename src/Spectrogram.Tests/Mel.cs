@@ -41,7 +41,7 @@ namespace Spectrogram.Tests
             double[] power = ScottPlot.DataGen.RandomWalk(rand, specPoints, .02, .5);
 
             var plt1 = new ScottPlot.Plot(800, 300);
-            plt1.PlotScatter(freq, power, markerSize: 0);
+            plt1.AddScatter(freq, power, markerSize: 0);
 
             int filterSize = 25;
 
@@ -64,7 +64,7 @@ namespace Spectrogram.Tests
                 double freqCenter = binStartFreqs[binIndex + 1];
                 double freqHigh = binStartFreqs[binIndex + 2];
 
-                var sctr = plt1.PlotScatter(
+                var sctr = plt1.AddScatter(
                     xs: new double[] { freqLow, freqCenter, freqHigh },
                     ys: new double[] { 0, 1, 0 },
                     markerSize: 0, lineWidth: 2);
@@ -84,7 +84,7 @@ namespace Spectrogram.Tests
                     binValue += power[indexLow + i] * frac;
                 }
                 binValue /= binScaleSum;
-                plt1.PlotPoint(freqCenter, binValue, sctr.color, 10);
+                plt1.AddPoint(freqCenter, binValue, sctr.Color, 10);
             }
 
             plt1.SaveFig("mel1.png");

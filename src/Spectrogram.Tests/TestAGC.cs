@@ -78,7 +78,8 @@ namespace Spectrogram.Tests
         {
             // return a copy of the input array with the moving window subtracted
 
-            double[] window = FftSharp.Window.Hanning(windowSizePx);
+            var hanningWindow = new FftSharp.Windows.Hanning();
+            double[] window = hanningWindow.Create(windowSizePx);
             double windowSum = window.Sum();
 
             double[] windowed = new double[input.Length];

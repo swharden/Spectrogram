@@ -7,9 +7,12 @@
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="FftSharp" Version="1.0.8" />
+    <ProjectReference Include="..\Spectrogram\Spectrogram.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="FftSharp" Version="1.1.2" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Spectrogram" Version="1.2.6" />
+    <PackageReference Include="NAudio" Version="1.10.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
   </ItemGroup>
