@@ -2,7 +2,7 @@
 
 namespace Spectrogram
 {
-    [Obsolete("This class has been replaced by SpectrogramGenerator")]
+    [Obsolete("This class has been replaced by SpectrogramGenerator", true)]
     public class Spectrogram : SpectrogramGenerator
     {
         public Spectrogram(int sampleRate, int fftSize, int stepSize, double minFreq = 0, double maxFreq = double.PositiveInfinity, int? fixedWidth = null, int offsetHz = 0) :
