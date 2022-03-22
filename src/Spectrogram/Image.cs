@@ -20,7 +20,7 @@ namespace Spectrogram
             int rollOffset = 0)
         {
             if (ffts.Count == 0)
-                throw new ArgumentException("This Spectrogram contains no FFTs (likely because no signal was added)");
+                throw new ArgumentException("Not enough data in FFTs to generate an image yet.");
 
             int Width = ffts.Count;
             int Height = ffts[0].Length;

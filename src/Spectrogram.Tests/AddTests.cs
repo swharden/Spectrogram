@@ -13,7 +13,7 @@ namespace Spectrogram.Tests
         public void Test_No_Data()
         {
             SpectrogramGenerator sg = new(44100, 2048, 1000);
-            var bmp = sg.GetBitmap();
+            Assert.Throws<InvalidOperationException>(() => sg.GetBitmap());
         }
     }
 }

@@ -269,8 +269,14 @@ namespace Spectrogram
         /// <param name="roll">Behavior of the spectrogram when it is full of data. 
         /// Roll (true) adds new columns on the left overwriting the oldest ones.
         /// Scroll (false) slides the whole image to the left and adds new columns to the right.</param>
-        public Bitmap GetBitmap(double intensity = 1, bool dB = false, double dBScale = 1, bool roll = false) =>
-            Image.GetBitmap(FFTs, Colormap, intensity, dB, dBScale, roll, NextColumnIndex);
+        public Bitmap GetBitmap(double intensity = 1, bool dB = false, double dBScale = 1, bool roll = false)
+        {
+            if (FFTs.Count == 0)
+                throw new InvalidOperationException("Not enough data to create an image. " +
+                    $"Ensure {nameof(Width)} is >0 before calling {nameof(GetBitmap)}().");
+
+            return Image.GetBitmap(FFTs, Colormap, intensity, dB, dBScale, roll, NextColumnIndex);
+        }
 
         /// <summary>
         /// Create a Mel-scaled spectrogram.
