@@ -47,7 +47,7 @@ namespace Spectrogram
         /// <summary>
         /// Index of the pixel column which will be populated next. Location of vertical line for wrap-around displays.
         /// </summary>
-        public int NextColumnIndex { get => (FftsProcessed + rollOffset) % Width; }
+        public int NextColumnIndex { get => Width > 0 ? (FftsProcessed + rollOffset) % Width : 0; }
 
         /// <summary>
         /// This value is added to displayed frequency axis tick labels
