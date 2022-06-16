@@ -153,58 +153,6 @@ Bitmap bmp = sg.GetBitmapMel(melSizePoints: 250);
 bmp.Save("halMel.png", ImageFormat.Png);
 ```
 
-## Spectrogram File Format (SFF)
-
-The Spectrogram library has methods which can read and write SFF files, a file format specifically designed for storing spectrogram data. SFF files contain 2D spectrogram data (repeated FFTs) with a [small header](dev/sff) describing the audio and FFT settings suitable for deriving scale information. 
-
-SFF files store `double` values (8-byte floating-point data) which is far superior to saving spectrograms as indexed color images (which represent intensity with a single `byte` per pixel).
-
-SFF files be saved using `Complex` data format (with real and imaginary values for each point) to faithfully represent the FFT output, or `double` format to represent magnitude (with an optional pre-conversion to Decibels to represent power). 
-
-### Create SFF Files with C#
-
-This example creates a spectrogram but saves it using the SFF file format instead of saving it as an image. The SFF file can then be read in any language.
-
-```cs
-(double[] audio, int sampleRate) = ReadWavMono("hal.wav");
-var sg = new SpectrogramGenerator(sampleRate, fftSize: 4096, stepSize: 700, maxFreq: 2000);
-sg.Add(audio);
-sg.SaveData("hal.sff");
-```
-
-### Display SFF Files with C#
-Spectrogram data can be loaded from SFF files to facilitate rapid recall of data which can otherwise be resource-intensive to calculate. Spectrogram's `SFF` module facilitates this operation and has methods which can directly convert spectrograms to Bitmaps with options to customize the colormap, intensity, and Decibel scaling.
-
-![](dev/sff/SffViewer/screenshot.png)
-
-A simple SFF file viewer has been added to [dev/sff](dev/sff) and serves as a demonstration of how the `SFF` module can be used to generate spectrogram images from SFF files.
-
-### Read SFF Files with Python
-A Python module to read SFF files has been created (in [dev/sff/python](dev/sff/python)) which allows Spectrograms created by this library and stored in SFF format to be loaded as 2D numpy arrays in Python. 
-
-This example demonstrates how the SFF file created in the previous C# example can be loaded into Python and displayed with matplotlib. This example has a few lines related to styling omitted for brevity, but the full Python demo can be found in [dev/sff/python](dev/sff/python).
-
-```python
-import matplotlib.pyplot as plt
-import sffLib
-
-# load spectrogram data as a 2D numpy array
-sf = sffLib.SpectrogramFile("hal.sff")
-
-# display the spectrogram as a pseudocolor mesh 
-plt.pcolormesh(freqs, times, sf.values)
-plt.colorbar()
-plt.show()
-```
-
-![](dev/sff/python/hal.sff.png)
-
-## Resources
-* [FftSharp](https://github.com/swharden/FftSharp) - the module which actually performs the FFT and related transformations
-* [MP3Sharp](https://github.com/ZaneDubya/MP3Sharp) - a library I use to read MP3 files during testing
-* [FSKview](https://github.com/swharden/FSKview) - a real-time spectrogram for viewing frequency-shift-keyed (FSK) signals from audio transmitted over radio frequency.
-* [NAudio](https://github.com/naudio/NAudio) - an open source .NET library which makes it easy to get samples from the microphone or sound card in real time
-
 ## Read data from a WAV File
 
 You should customize your file-reading method to suit your specific application. I frequently use the NAudio package to read data from WAV and MP3 files. This function reads audio data from a mono WAV file and will be used for the examples on this page.

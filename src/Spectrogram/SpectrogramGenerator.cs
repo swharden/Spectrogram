@@ -350,6 +350,10 @@ namespace Spectrogram
             return Image.GetBitmap(ffts2, Colormap, intensity, dB, dBScale, roll, NextColumnIndex);
         }
 
+        [Obsolete("The SFF file format is obsolete. " +
+            "Users are encouraged to write their own IO routines specific to their application. " +
+            "To get a copy of the original SFF reader/writer see https://github.com/swharden/Spectrogram/issues/44",
+            error: true)]
         /// <summary>
         /// Export spectrogram data using the Spectrogram File Format (SFF)
         /// </summary>

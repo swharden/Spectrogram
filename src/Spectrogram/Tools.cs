@@ -7,6 +7,10 @@ namespace Spectrogram
 {
     public static class Tools
     {
+        [Obsolete("The SFF file format is obsolete. " +
+            "Users are encouraged to write their own IO routines specific to their application. " +
+            "To get a copy of the original SFF reader/writer see https://github.com/swharden/Spectrogram/issues/44",
+            error: true)]
         /// <summary>
         /// Collapse the 2D spectrogram into a 1D array (mean power of each frequency)
         /// </summary>
@@ -31,6 +35,11 @@ namespace Spectrogram
             return mean;
         }
 
+
+        [Obsolete("The SFF file format is obsolete. " +
+            "Users are encouraged to write their own IO routines specific to their application. " +
+            "To get a copy of the original SFF reader/writer see https://github.com/swharden/Spectrogram/issues/44",
+            error: true)]
         /// <summary>
         /// Collapse the 2D spectrogram into a 1D array (mean power of each time point)
         /// </summary>
@@ -48,6 +57,10 @@ namespace Spectrogram
             return power;
         }
 
+        [Obsolete("The SFF file format is obsolete. " +
+            "Users are encouraged to write their own IO routines specific to their application. " +
+            "To get a copy of the original SFF reader/writer see https://github.com/swharden/Spectrogram/issues/44",
+            error: true)]
         public static double GetPeakFrequency(SFF sff, bool firstFftOnly = false)
         {
             double[] freqs = firstFftOnly ? sff.Ffts[0] : SffMeanFFT(sff, false);

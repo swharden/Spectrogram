@@ -8,7 +8,10 @@ using System.Text;
 
 namespace Spectrogram
 {
-    // Spectrogram File Format reader/writer
+    [Obsolete("The SFF file format is obsolete. " + 
+        "Users are encouraged to write their own IO routines specific to their application. "+
+        "To get a copy of the original SFF reader/writer see https://github.com/swharden/Spectrogram/issues/44",
+        error: true)]
     public class SFF
     {
         public readonly byte VersionMajor = 1;
