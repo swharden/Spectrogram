@@ -82,9 +82,13 @@ namespace Spectrogram
 
                 for (int row = 0; row < Height; row++)
                 {
-                    double value = IsRotated ? ffts[row][sourceCol] : ffts[sourceCol][row];
+                    double value = IsRotated
+                        ? ffts[Height - row - 1][sourceCol]
+                        : ffts[sourceCol][row];
+
                     if (IsDecibel)
                         value = 20 * Math.Log10(value * DecibelScaleFactor + 1);
+
                     value *= Intensity;
                     value = Math.Min(value, 255);
                     int bytePosition = (Height - 1 - row) * stride + col;
