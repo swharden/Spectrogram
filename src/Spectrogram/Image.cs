@@ -10,55 +10,22 @@ namespace Spectrogram
 {
     public static class Image
     {
-        public static Bitmap GetBitmap(
-            List<double[]> ffts,
-            Colormap cmap,
-            double intensity = 1,
-            bool dB = false,
-            double dBScale = 1,
-            bool roll = false,
-            int rollOffset = 0)
+        public static Bitmap GetBitmap(List<double[]> ffts, Colormap cmap, double intensity = 1,
+            bool dB = false, double dBScale = 1, bool roll = false, int rollOffset = 0, bool rotate = false)
         {
-            if (ffts.Count == 0)
-                throw new ArgumentException("Not enough data in FFTs to generate an image yet.");
 
-            int Width = ffts.Count;
-            int Height = ffts[0].Length;
-
-            Bitmap bmp = new Bitmap(Width, Height, PixelFormat.Format8bppIndexed);
-            cmap.Apply(bmp);
-
-            var lockRect = new Rectangle(0, 0, Width, Height);
-            BitmapData bitmapData = bmp.LockBits(lockRect, ImageLockMode.ReadOnly, bmp.PixelFormat);
-            int stride = bitmapData.Stride;
-
-            byte[] bytes = new byte[bitmapData.Stride * bmp.Height];
-            Parallel.For(0, Width, col =>
+            ImageMaker maker = new()
             {
-                int sourceCol = col;
-                if (roll)
-                {
-                    sourceCol += Width - rollOffset % Width;
-                    if (sourceCol >= Width)
-                        sourceCol -= Width;
-                }
+                Colormap = cmap,
+                Intensity = intensity,
+                IsDecibel = dB,
+                DecibelScaleFactor = dBScale,
+                IsRoll = roll,
+                RollOffset = rollOffset,
+                IsRotated = rotate,
+            };
 
-                for (int row = 0; row < Height; row++)
-                {
-                    double value = ffts[sourceCol][row];
-                    if (dB)
-                        value = 20 * Math.Log10(value * dBScale + 1);
-                    value *= intensity;
-                    value = Math.Min(value, 255);
-                    int bytePosition = (Height - 1 - row) * stride + col;
-                    bytes[bytePosition] = (byte)value;
-                }
-            });
-
-            Marshal.Copy(bytes, 0, bitmapData.Scan0, bytes.Length);
-            bmp.UnlockBits(bitmapData);
-
-            return bmp;
+            return maker.GetBitmap(ffts);
         }
     }
 }

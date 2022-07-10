@@ -19,16 +19,10 @@ jobs:
       - name: 🛒 Checkout
         uses: actions/checkout@v2
 
-      - name: ✨ Setup .NET 5
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: "5.0.x"
-
       - name: ✨ Setup .NET 6
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: "6.0.x"
-          include-prerelease: true
 
       - name: 🚚 Restore
         run: dotnet restore src
@@ -42,22 +36,12 @@ jobs:
       - name: 📦 Pack
         run: dotnet pack src --configuration Release --no-build
 
-      - name: 💾 Store Release Package
-        if: github.event_name == 'release'
-        uses: actions/upload-artifact@v2
-        with:
-          name: Packages
-          retention-days: 1
-          path: |
-            src/Spectrogram/bin/Release/*.nupkg
-            src/Spectrogram/bin/Release/*.snupkg
-
-      - name: 🔑 Configure NuGet Secrets
+      - name: 🔑 Configure Secrets
         if: github.event_name == 'release'
         uses: nuget/setup-nuget@v1
         with:
           nuget-api-key: ${{ secrets.NUGET_API_KEY }}
 
-      - name: 🚀 Deploy Release Package
+      - name: 🚀 Deploy Package
         if: github.event_name == 'release'
         run: nuget push "src\Spectrogram\bin\Release\*.nupkg" -SkipDuplicate -Source https://api.nuget.org/v3/index.json

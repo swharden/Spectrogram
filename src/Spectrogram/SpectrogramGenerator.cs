@@ -267,15 +267,16 @@ namespace Spectrogram
         /// <param name="dB">If true, output will be log-transformed.</param>
         /// <param name="dBScale">If dB scaling is in use, this multiplier will be applied before log transformation.</param>
         /// <param name="roll">Behavior of the spectrogram when it is full of data. 
+        /// <param name="rotate">If True, the image will be rotated so time flows from top to bottom (rather than left to right). 
         /// Roll (true) adds new columns on the left overwriting the oldest ones.
         /// Scroll (false) slides the whole image to the left and adds new columns to the right.</param>
-        public Bitmap GetBitmap(double intensity = 1, bool dB = false, double dBScale = 1, bool roll = false)
+        public Bitmap GetBitmap(double intensity = 1, bool dB = false, double dBScale = 1, bool roll = false, bool rotate = false)
         {
             if (FFTs.Count == 0)
                 throw new InvalidOperationException("Not enough data to create an image. " +
                     $"Ensure {nameof(Width)} is >0 before calling {nameof(GetBitmap)}().");
 
-            return Image.GetBitmap(FFTs, Colormap, intensity, dB, dBScale, roll, NextColumnIndex);
+            return Image.GetBitmap(FFTs, Colormap, intensity, dB, dBScale, roll, NextColumnIndex, rotate);
         }
 
         /// <summary>
