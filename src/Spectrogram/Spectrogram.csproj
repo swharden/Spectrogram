@@ -21,6 +21,7 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <Deterministic>true</Deterministic>
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+	<LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
