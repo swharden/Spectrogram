@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net5.0-windows</TargetFramework>
     <OutputType>WinExe</OutputType>
@@ -11,6 +11,6 @@
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Spectrogram" Version="1.2.6" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-    <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="5.0.3" />
   </ItemGroup>
 </Project>
