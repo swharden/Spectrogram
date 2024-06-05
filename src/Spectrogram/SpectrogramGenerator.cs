@@ -57,7 +57,7 @@ namespace Spectrogram
         /// <summary>
         /// Number of samples per second
         /// </summary>
-        public int SampleRate { get => Settings.SampleRate; }
+        public double SampleRate { get => Settings.SampleRate; }
 
         /// <summary>
         /// Number of samples to step forward after each FFT is processed.
@@ -255,7 +255,7 @@ namespace Spectrogram
 
             var fftsMel = new List<double[]>();
             foreach (var fft in FFTs)
-                fftsMel.Add(FftSharp.Transform.MelScale(fft, SampleRate, melBinCount));
+                fftsMel.Add(FftSharp.Mel.Scale(fft, (int)Math.Round(SampleRate), melBinCount));
 
             return fftsMel;
         }

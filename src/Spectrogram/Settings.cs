@@ -6,7 +6,7 @@ namespace Spectrogram
 {
     class Settings
     {
-        public readonly int SampleRate;
+        public readonly double SampleRate;
 
         // vertical information
         public readonly int FftSize;
@@ -29,7 +29,7 @@ namespace Spectrogram
         public readonly double StepOverlapFrac;
         public readonly double StepOverlapSec;
 
-        public Settings(int sampleRate, int fftSize, int stepSize, double minFreq, double maxFreq, int offsetHz)
+        public Settings(double sampleRate, int fftSize, int stepSize, double minFreq, double maxFreq, int offsetHz)
         {
             if (FftSharp.Transform.IsPowerOfTwo(fftSize) == false)
                 throw new ArgumentException("FFT size must be a power of 2");
@@ -43,7 +43,7 @@ namespace Spectrogram
             // vertical
             minFreq = Math.Max(minFreq, 0);
             FreqNyquist = sampleRate / 2;
-            HzPerPixel = (double)sampleRate / fftSize;
+            HzPerPixel = sampleRate / fftSize;
             PxPerHz = (double)fftSize / sampleRate;
             FftIndex1 = (minFreq == 0) ? 0 : (int)(minFreq / HzPerPixel);
             FftIndex2 = (maxFreq >= FreqNyquist) ? fftSize / 2 : (int)(maxFreq / HzPerPixel);
