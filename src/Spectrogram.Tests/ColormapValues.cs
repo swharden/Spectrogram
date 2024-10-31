@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Drawing;
 using SkiaSharp;
 
 namespace Spectrogram.Tests
@@ -49,13 +48,13 @@ namespace Spectrogram.Tests
             {
                 byte[] bytes = BitConverter.GetBytes(ints[i]);
 
-                Color color1 = Color.FromArgb(bytes[2], bytes[1], bytes[0]);
+                SKColor color1 = new SKColor(bytes[2], bytes[1], bytes[0]);
 
-                Color color2 = Color.FromArgb(rgb[i, 0], rgb[i, 1], rgb[i, 2]);
+                SKColor color2 = new SKColor(rgb[i, 0], rgb[i, 1], rgb[i, 2]);
 
-                Assert.AreEqual(color2.R, color1.R, 1);
-                Assert.AreEqual(color2.G, color1.G, 1);
-                Assert.AreEqual(color2.B, color1.B, 1);
+                Assert.AreEqual(color2.Red, color1.Red, 1);
+                Assert.AreEqual(color2.Green, color1.Green, 1);
+                Assert.AreEqual(color2.Blue, color1.Blue, 1);
             }
         }
 
