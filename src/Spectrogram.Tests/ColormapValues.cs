@@ -1,9 +1,7 @@
-﻿using Microsoft.VisualStudio.TestPlatform.Utilities;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
+using SkiaSharp;
 
 namespace Spectrogram.Tests
 {
@@ -36,9 +34,9 @@ namespace Spectrogram.Tests
             var (r, g, b) = cmap.GetRGB(pixelIntensity);
             int int32 = cmap.GetInt32(pixelIntensity);
 
-            Color color1 = Color.FromArgb(255, r, g, b);
-            Color color2 = Color.FromArgb(int32);
-            Color color3 = cmap.GetColor(pixelIntensity);
+            SKColor color1 = new SKColor(r, g, b, 255);
+            SKColor color2 = new SKColor((uint)int32);
+            SKColor color3 = cmap.GetColor(pixelIntensity);
 
             Assert.AreEqual(color1, color2);
             Assert.AreEqual(color1, color3);

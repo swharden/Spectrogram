@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Drawing;
 using System.Linq;
+using SkiaSharp;
 
 namespace Spectrogram
 {
@@ -74,22 +74,24 @@ namespace Spectrogram
             return 255 << 24 | r << 16 | g << 8 | b;
         }
 
-        public Color GetColor(byte value)
+        public SKColor GetColor(byte value)
         {
-            return Color.FromArgb(GetInt32(value));
+            var color =  GetInt32(value);
+            return new SKColor((uint)color);
         }
 
-        public Color GetColor(double fraction)
+        public SKColor GetColor(double fraction)
         {
-            return Color.FromArgb(GetInt32(fraction));
+            var color = GetInt32(fraction);
+            return new SKColor((uint)color);
         }
 
-        public void Apply(Bitmap bmp)
+        public void Apply(SKBitmap bmp)
         {
-            System.Drawing.Imaging.ColorPalette pal = bmp.Palette;
+            var pal = bmp.Pixels;
             for (int i = 0; i < 256; i++)
-                pal.Entries[i] = GetColor((byte)i);
-            bmp.Palette = pal;
+                pal[i] = GetColor((byte)i);
+            bmp.Pixels = pal;
         }
     }
 }

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
+using SkiaSharp;
 
 namespace Spectrogram
 {
@@ -270,7 +269,7 @@ namespace Spectrogram
         /// <param name="rotate">If True, the image will be rotated so time flows from top to bottom (rather than left to right). 
         /// Roll (true) adds new columns on the left overwriting the oldest ones.
         /// Scroll (false) slides the whole image to the left and adds new columns to the right.</param>
-        public Bitmap GetBitmap(double intensity = 1, bool dB = false, double dBScale = 1, bool roll = false, bool rotate = false)
+        public SKBitmap GetBitmap(double intensity = 1, bool dB = false, double dBScale = 1, bool roll = false, bool rotate = false)
         {
             if (FFTs.Count == 0)
                 throw new InvalidOperationException("Not enough data to create an image. " +
@@ -289,11 +288,11 @@ namespace Spectrogram
         /// <param name="roll">Behavior of the spectrogram when it is full of data. 
         /// Roll (true) adds new columns on the left overwriting the oldest ones.
         /// Scroll (false) slides the whole image to the left and adds new columns to the right.</param>
-        public Bitmap GetBitmapMel(int melBinCount = 25, double intensity = 1, bool dB = false, double dBScale = 1, bool roll = false) =>
+        public SKBitmap GetBitmapMel(int melBinCount = 25, double intensity = 1, bool dB = false, double dBScale = 1, bool roll = false) =>
             Image.GetBitmap(GetMelFFTs(melBinCount), Colormap, intensity, dB, dBScale, roll, NextColumnIndex);
 
         [Obsolete("use SaveImage()", true)]
-        public void SaveBitmap(Bitmap bmp, string fileName) { }
+        public void SaveBitmap(SKBitmap bmp, string fileName) { }
 
         /// <summary>
         /// Generate the spectrogram and save it as an image file.
@@ -312,19 +311,22 @@ namespace Spectrogram
 
             string extension = Path.GetExtension(fileName).ToLower();
 
-            ImageFormat fmt;
+            SKEncodedImageFormat  fmt;
             if (extension == ".bmp")
-                fmt = ImageFormat.Bmp;
+                fmt = SKEncodedImageFormat .Bmp;
             else if (extension == ".png")
-                fmt = ImageFormat.Png;
+                fmt = SKEncodedImageFormat .Png;
             else if (extension == ".jpg" || extension == ".jpeg")
-                fmt = ImageFormat.Jpeg;
+                fmt = SKEncodedImageFormat .Jpeg;
             else if (extension == ".gif")
-                fmt = ImageFormat.Gif;
+                fmt = SKEncodedImageFormat .Gif;
             else
                 throw new ArgumentException("unknown file extension");
 
-            Image.GetBitmap(FFTs, Colormap, intensity, dB, dBScale, roll, NextColumnIndex).Save(fileName, fmt);
+            using var image = Image.GetBitmap(FFTs, Colormap, intensity, dB, dBScale, roll, NextColumnIndex);
+            using var encodedImage = image.Encode(fmt, 80);
+            using var fileStream = new FileStream(fileName, FileMode.Create);
+            encodedImage.SaveTo(fileStream);
         }
 
         /// <summary>
@@ -336,7 +338,7 @@ namespace Spectrogram
         /// <param name="dBScale">If dB scaling is in use, this multiplier will be applied before log transformation.</param>
         /// <param name="roll">Behavior of the spectrogram when it is full of data. 
         /// <param name="reduction"></param>
-        public Bitmap GetBitmapMax(double intensity = 1, bool dB = false, double dBScale = 1, bool roll = false, int reduction = 4)
+        public SKBitmap GetBitmapMax(double intensity = 1, bool dB = false, double dBScale = 1, bool roll = false, int reduction = 4)
         {
             List<double[]> ffts2 = new List<double[]>();
             for (int i = 0; i < FFTs.Count; i++)
@@ -386,7 +388,7 @@ namespace Spectrogram
         /// <param name="offsetHz">number to add to each tick label</param>
         /// <param name="tickSize">length of each tick mark (pixels)</param>
         /// <param name="reduction">bin size for vertical data reduction</param>
-        public Bitmap GetVerticalScale(int width, int offsetHz = 0, int tickSize = 3, int reduction = 1)
+        public SKBitmap GetVerticalScale(int width, int offsetHz = 0, int tickSize = 3, int reduction = 1)
         {
             return Scale.Vertical(width, Settings, offsetHz, tickSize, reduction);
         }
