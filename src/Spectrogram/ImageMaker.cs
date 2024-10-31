@@ -88,7 +88,7 @@ namespace Spectrogram
                     value *= Intensity;
                     value = Math.Min(value, 255);
 
-                    int bytePosition = row * width + col;
+                    int bytePosition = (height - 1 - row) * width + col;
                     pixelBuffer[bytePosition] = (byte)value;
                 }
             });
