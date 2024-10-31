@@ -51,7 +51,7 @@ namespace Spectrogram
         {
 
         }
-
+        
         public SKBitmap GetBitmap(List<double[]> ffts)
         {
             if (ffts.Count == 0)
@@ -63,7 +63,9 @@ namespace Spectrogram
             var imageInfo = new SKImageInfo(width, height, SKColorType.Gray8);
             var bitmap = new SKBitmap(imageInfo);
 
-            var pixelBuffer = bitmap.Bytes;
+            int pixelCount = width * height;
+            byte[] pixelBuffer = new byte[pixelCount];
+
             Parallel.For(0, width, col =>
             {
                 int sourceCol = col;
@@ -85,14 +87,15 @@ namespace Spectrogram
 
                     value *= Intensity;
                     value = Math.Min(value, 255);
+
                     int bytePosition = row * width + col;
                     pixelBuffer[bytePosition] = (byte)value;
                 }
             });
 
-            
-            var gcHandle = GCHandle.Alloc(pixelBuffer, GCHandleType.Pinned);
-            bitmap.InstallPixels(imageInfo, gcHandle.AddrOfPinnedObject(), imageInfo.RowBytes, delegate { gcHandle.Free(); }, null);
+            IntPtr pixelPtr = bitmap.GetPixels();
+            Marshal.Copy(pixelBuffer, 0, pixelPtr, pixelBuffer.Length);
+
             return bitmap;
         }
     }
