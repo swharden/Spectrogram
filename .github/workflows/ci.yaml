@@ -17,31 +17,24 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: 🛒 Checkout
-        uses: actions/checkout@v2
-
-      - name: ✨ Setup .NET 6
-        uses: actions/setup-dotnet@v1
+        uses: actions/checkout@v4
+      - name: ✨ Setup .NET 8
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "6.0.x"
-
+          dotnet-version: "8.0.x"
       - name: 🚚 Restore
         run: dotnet restore src
-
       - name: 🛠️ Build
-        run: dotnet build src --configuration Release --no-restore
-
+        run: dotnet build src --configuration Release
       - name: 🧪 Test
-        run: dotnet test src --configuration Release --no-build
-
+        run: dotnet test src --configuration Release
       - name: 📦 Pack
-        run: dotnet pack src --configuration Release --no-build
-
+        run: dotnet pack src --configuration Release
       - name: 🔑 Configure Secrets
         if: github.event_name == 'release'
         uses: nuget/setup-nuget@v1
         with:
           nuget-api-key: ${{ secrets.NUGET_API_KEY }}
-
-      - name: 🚀 Deploy Package
+      - name: 🚀 Deploy NuGet Package
         if: github.event_name == 'release'
         run: nuget push "src\Spectrogram\bin\Release\*.nupkg" -SkipDuplicate -Source https://api.nuget.org/v3/index.json

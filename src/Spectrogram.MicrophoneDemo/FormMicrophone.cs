@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using SkiaSharp.Views.Desktop;
 
 namespace Spectrogram.MicrophoneDemo
 {
@@ -64,7 +65,7 @@ namespace Spectrogram.MicrophoneDemo
             pbSpectrogram.Height = spec.Height;
 
             pbScaleVert.Image?.Dispose();
-            pbScaleVert.Image = spec.GetVerticalScale(pbScaleVert.Width);
+            pbScaleVert.Image = spec.GetVerticalScale(pbScaleVert.Width).ToBitmap();
             pbScaleVert.Height = spec.Height;
         }
 
@@ -85,7 +86,7 @@ namespace Spectrogram.MicrophoneDemo
                 using (var gfx = Graphics.FromImage(bmpSpec))
                 using (var pen = new Pen(Color.White))
                 {
-                    gfx.DrawImage(bmpSpecIndexed, 0, 0);
+                    gfx.DrawImage(bmpSpecIndexed.ToBitmap(), 0, 0);
                     if (cbRoll.Checked)
                     {
                         gfx.DrawLine(pen, spec.NextColumnIndex, 0, spec.NextColumnIndex, pbSpectrogram.Height);

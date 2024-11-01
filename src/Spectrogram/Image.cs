@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using SkiaSharp;
 
 namespace Spectrogram
 {
     public static class Image
     {
-        public static Bitmap GetBitmap(List<double[]> ffts, Colormap cmap, double intensity = 1,
+        public static SKBitmap GetBitmap(List<double[]> ffts, Colormap cmap, double intensity = 1,
             bool dB = false, double dBScale = 1, bool roll = false, int rollOffset = 0, bool rotate = false)
         {
 
