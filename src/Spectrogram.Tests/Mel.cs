@@ -56,11 +56,11 @@ namespace Spectrogram.Tests
             double maxMel = 2595 * Math.Log10(1 + maxFreq / 700);
 
             Random rand = new Random(1);
-            double[] freq = ScottPlot.DataGen.Consecutive(specPoints, maxFreq / specPoints);
-            double[] power = ScottPlot.DataGen.RandomWalk(rand, specPoints, .02, .5);
+            double[] freq = ScottPlot.Generate.Consecutive(specPoints, maxFreq / specPoints);
+            double[] power = ScottPlot.Generate.RandomWalk(specPoints, .02, .5);
 
-            var plt1 = new ScottPlot.Plot(800, 300);
-            plt1.AddScatter(freq, power, markerSize: 0);
+            var plt1 = new ScottPlot.Plot();
+            plt1.Add.ScatterLine(freq, power);
 
             int filterSize = 25;
 
@@ -83,10 +83,9 @@ namespace Spectrogram.Tests
                 double freqCenter = binStartFreqs[binIndex + 1];
                 double freqHigh = binStartFreqs[binIndex + 2];
 
-                var sctr = plt1.AddScatter(
-                    xs: new double[] { freqLow, freqCenter, freqHigh },
-                    ys: new double[] { 0, 1, 0 },
-                    markerSize: 0, lineWidth: 2);
+                double[] xs = [freqLow, freqCenter, freqHigh];
+                double[] ys = [0, 1, 0];
+                var sctr = plt1.Add.ScatterLine(xs, ys);
 
                 int indexLow = (int)(specPoints * freqLow / maxFreq);
                 int indexHigh = (int)(specPoints * freqHigh / maxFreq);
@@ -103,10 +102,10 @@ namespace Spectrogram.Tests
                     binValue += power[indexLow + i] * frac;
                 }
                 binValue /= binScaleSum;
-                plt1.AddPoint(freqCenter, binValue, sctr.Color, 10);
+                plt1.Add.Marker(freqCenter, binValue, ScottPlot.MarkerShape.FilledCircle, 10, sctr.Color);
             }
 
-            plt1.SaveFig("mel1.png");
+            plt1.SavePng("mel1.png", 800, 300);
         }
 
         [Test]

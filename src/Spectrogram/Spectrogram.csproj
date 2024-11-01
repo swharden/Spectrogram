@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
-        <Version>1.6.1</Version>
+        <Version>2.0</Version>
         <Description>A .NET Standard library for creating spectrograms</Description>
         <Authors>Scott Harden</Authors>
         <Company>Harden Technologies, LLC</Company>
@@ -31,10 +31,7 @@
 
     <ItemGroup>
         <PackageReference Include="FftSharp" Version="2.1.0" />
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
+        <PackageReference Include="ScottPlot" Version="5.0.42" />
         <PackageReference Include="SkiaSharp" Version="2.88.8" />
     </ItemGroup>
 

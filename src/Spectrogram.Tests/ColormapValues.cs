@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using SkiaSharp;
+using FluentAssertions;
 
 namespace Spectrogram.Tests
 {
@@ -17,10 +18,10 @@ namespace Spectrogram.Tests
                 Console.WriteLine($"{frac}: {cmap.GetRGB(frac)}");
 
                 if (frac <= 0)
-                    Assert.AreEqual(cmap.GetRGB(0), cmap.GetRGB(frac));
+                    cmap.GetRGB(0).Should().Be(cmap.GetRGB(frac));
 
                 if (frac >= 1)
-                    Assert.AreEqual(cmap.GetRGB(1.0), cmap.GetRGB(frac));
+                    cmap.GetRGB(1.0).Should().Be(cmap.GetRGB(frac));
             }
         }
 
@@ -37,8 +38,8 @@ namespace Spectrogram.Tests
             SKColor color2 = new SKColor((uint)int32);
             SKColor color3 = cmap.GetColor(pixelIntensity);
 
-            Assert.AreEqual(color1, color2);
-            Assert.AreEqual(color1, color3);
+            color1.Should().Be(color2);
+            color1.Should().Be(color3);
         }
 
         [Test]
@@ -52,9 +53,9 @@ namespace Spectrogram.Tests
 
                 SKColor color2 = new SKColor(rgb[i, 0], rgb[i, 1], rgb[i, 2]);
 
-                Assert.AreEqual(color2.Red, color1.Red, 1);
-                Assert.AreEqual(color2.Green, color1.Green, 1);
-                Assert.AreEqual(color2.Blue, color1.Blue, 1);
+                color2.Red.Should().BeCloseTo(color1.Red, 1);
+                color2.Green.Should().BeCloseTo(color1.Green, 1);
+                color2.Blue.Should().BeCloseTo(color1.Blue, 1);
             }
         }
 

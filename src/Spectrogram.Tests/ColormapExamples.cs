@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using NUnit.Framework;
 using System;
 using System.Diagnostics;
 
@@ -35,7 +36,7 @@ namespace Spectrogram.Tests
             Console.WriteLine(string.Join(", ", names));
 
             Colormap viridisCmap = Colormap.GetColormap("viridis");
-            Assert.AreEqual("Viridis", viridisCmap.Name);
+            viridisCmap.Name.Should().Be("Viridis");
         }
     }
 }

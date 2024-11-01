@@ -1,7 +1,5 @@
-﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using FluentAssertions;
+using NUnit.Framework;
 
 namespace Spectrogram.Tests
 {
@@ -20,8 +18,8 @@ namespace Spectrogram.Tests
             string filePath = $"../../../../../data/{filename}";
             (double[] audio, int sampleRate) = AudioFile.ReadWAV(filePath);
 
-            Assert.AreEqual(knownRate, sampleRate);
-            Assert.AreEqual(knownLength, audio.Length / channels);
+            sampleRate.Should().Be(knownRate);
+            (audio.Length / channels).Should().Be(knownLength);
         }
     }
 }
