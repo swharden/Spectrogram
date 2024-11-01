@@ -262,32 +262,33 @@ public class SpectrogramGenerator
     /// <param name="intensity">Multiply the output by a fixed value to change its brightness.</param>
     /// <param name="dB">If true, output will be log-transformed.</param>
     /// <param name="dBScale">If dB scaling is in use, this multiplier will be applied before log transformation.</param>
-    /// <param name="roll">Behavior of the spectrogram when it is full of data. 
-    /// Roll (true) adds new columns on the left overwriting the oldest ones.
-    /// Scroll (false) slides the whole image to the left and adds new columns to the right.</param>
+    /// <param name="roll">Controls overflow behavior. True wraps new data around to the start. False slides new data in.</param>
     public void SaveImage(string fileName, double intensity = 1, bool dB = false, double dBScale = 1, bool roll = false)
+    {
+        string extension = Path.GetExtension(fileName).ToLower();
+        byte[] bytes = GetImageBytes(extension, intensity, dB, dBScale, roll);
+        File.WriteAllBytes(fileName, bytes);
+    }
+
+    public byte[] GetImageBytes(string extension, double intensity = 1, bool dB = false, double dBScale = 1, bool roll = false)
     {
         if (FFTs.Count == 0)
             throw new InvalidOperationException("Spectrogram contains no data. Use Add() to add signal data.");
 
-        string extension = Path.GetExtension(fileName).ToLower();
+        SKEncodedImageFormat fmt = extension.ToLower() switch
+        {
+            ".bmp" => SKEncodedImageFormat.Bmp,
+            ".png" => SKEncodedImageFormat.Png,
+            ".gif" => SKEncodedImageFormat.Gif,
+            ".jpg" => SKEncodedImageFormat.Jpeg,
+            ".jpeg" => SKEncodedImageFormat.Jpeg,
+            _ => throw new ArgumentException("unknown file extension"),
+        };
 
-        SKEncodedImageFormat fmt;
-        if (extension == ".bmp")
-            fmt = SKEncodedImageFormat.Bmp;
-        else if (extension == ".png")
-            fmt = SKEncodedImageFormat.Png;
-        else if (extension == ".jpg" || extension == ".jpeg")
-            fmt = SKEncodedImageFormat.Jpeg;
-        else if (extension == ".gif")
-            fmt = SKEncodedImageFormat.Gif;
-        else
-            throw new ArgumentException("unknown file extension");
-
-        using var image = Image.GetBitmap(FFTs, Colormap, intensity, dB, dBScale, roll, NextColumnIndex);
-        using var encodedImage = image.Encode(fmt, 80);
-        using var fileStream = new FileStream(fileName, FileMode.Create);
-        encodedImage.SaveTo(fileStream);
+        using SKBitmap image = Image.GetBitmap(FFTs, Colormap, intensity, dB, dBScale, roll, NextColumnIndex);
+        using SKData encodedImage = image.Encode(fmt, 80);
+        byte[] bytes = encodedImage.ToArray();
+        return bytes;
     }
 
     /// <summary>
