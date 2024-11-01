@@ -218,7 +218,7 @@ public class SpectrogramGenerator
 
         var fftsMel = new List<double[]>();
         foreach (var fft in FFTs)
-            fftsMel.Add(FftSharp.Mel.Scale(fft, SampleRate, melBinCount));
+            fftsMel.Add(FftSharp.Mel.Scale(fft, (int)SampleRate, melBinCount));
 
         return fftsMel;
     }
