@@ -2,7 +2,6 @@
     <PropertyGroup>
         <TargetFramework>net8.0-windows</TargetFramework>
         <OutputType>WinExe</OutputType>
-        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <UseWindowsForms>true</UseWindowsForms>
         <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
         <NoWarn>NU1701</NoWarn>
