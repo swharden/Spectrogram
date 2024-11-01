@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
+using SkiaSharp;
 
 namespace Spectrogram
 {
@@ -53,37 +51,35 @@ namespace Spectrogram
         {
 
         }
-
-        public Bitmap GetBitmap(List<double[]> ffts)
+        
+        public SKBitmap GetBitmap(List<double[]> ffts)
         {
             if (ffts.Count == 0)
                 throw new ArgumentException("Not enough data in FFTs to generate an image yet.");
 
-            int Width = IsRotated ? ffts[0].Length : ffts.Count;
-            int Height = IsRotated ? ffts.Count : ffts[0].Length;
+            int width = IsRotated ? ffts[0].Length : ffts.Count;
+            int height = IsRotated ? ffts.Count : ffts[0].Length;
 
-            Bitmap bmp = new(Width, Height, PixelFormat.Format8bppIndexed);
-            Colormap.Apply(bmp);
+            var imageInfo = new SKImageInfo(width, height, SKColorType.Gray8);
+            var bitmap = new SKBitmap(imageInfo);
+            
+            int pixelCount = width * height;
+            byte[] pixelBuffer = new byte[pixelCount];
 
-            Rectangle lockRect = new(0, 0, Width, Height);
-            BitmapData bitmapData = bmp.LockBits(lockRect, ImageLockMode.ReadOnly, bmp.PixelFormat);
-            int stride = bitmapData.Stride;
-
-            byte[] bytes = new byte[bitmapData.Stride * bmp.Height];
-            Parallel.For(0, Width, col =>
+            Parallel.For(0, width, col =>
             {
                 int sourceCol = col;
                 if (IsRoll)
                 {
-                    sourceCol += Width - RollOffset % Width;
-                    if (sourceCol >= Width)
-                        sourceCol -= Width;
+                    sourceCol += width - RollOffset % width;
+                    if (sourceCol >= width)
+                        sourceCol -= width;
                 }
 
-                for (int row = 0; row < Height; row++)
+                for (int row = 0; row < height; row++)
                 {
                     double value = IsRotated
-                        ? ffts[Height - row - 1][sourceCol]
+                        ? ffts[height - row - 1][sourceCol]
                         : ffts[sourceCol][row];
 
                     if (IsDecibel)
@@ -91,15 +87,18 @@ namespace Spectrogram
 
                     value *= Intensity;
                     value = Math.Min(value, 255);
-                    int bytePosition = (Height - 1 - row) * stride + col;
-                    bytes[bytePosition] = (byte)value;
+
+                    int bytePosition = (height - 1 - row) * width + col;
+                    pixelBuffer[bytePosition] = (byte)value;
                 }
             });
 
-            Marshal.Copy(bytes, 0, bitmapData.Scan0, bytes.Length);
-            bmp.UnlockBits(bitmapData);
+            IntPtr pixelPtr = bitmap.GetPixels();
+            Marshal.Copy(pixelBuffer, 0, pixelPtr, pixelBuffer.Length);
 
-            return bmp;
+            SKBitmap newBitmap = Colormap.ApplyFilter(bitmap);
+            bitmap.Dispose();
+            return newBitmap;
         }
     }
 }

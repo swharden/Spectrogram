@@ -1,9 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Text;
+using SkiaSharp;
 
 namespace Spectrogram.Tests
 {
@@ -17,16 +14,38 @@ namespace Spectrogram.Tests
             var sg = new SpectrogramGenerator(sampleRate, fftSize, stepSize: 500);
             sg.Add(audio);
 
-            Bitmap bmpMel = sg.GetBitmapMel(250);
-            bmpMel.Save("../../../../../dev/graphics/halMel-MelScale.png", ImageFormat.Png);
-
-            Bitmap bmpRaw = sg.GetBitmap();
-            Bitmap bmpCropped = new Bitmap(bmpRaw.Width, bmpMel.Height);
-            using (Graphics gfx = Graphics.FromImage(bmpCropped))
+            // Ottieni l'immagine Mel-scaled come SKBitmap
+            SKBitmap bmpMel = sg.GetBitmapMel(250);  // Presuppone che sg abbia un metodo GetSKBitmapMel
+            using (var image = SKImage.FromBitmap(bmpMel))
+            using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
             {
-                gfx.DrawImage(bmpRaw, 0, bmpMel.Height - bmpRaw.Height);
+                // Salva l'immagine Mel-scaled
+                using (var stream = System.IO.File.OpenWrite("../../../../../dev/graphics/halMel-MelScale.png"))
+                {
+                    data.SaveTo(stream);
+                }
             }
-            bmpCropped.Save("../../../../../dev/graphics/halMel-LinearCropped.png", ImageFormat.Png);
+
+            // Ottieni l'immagine originale come SKBitmap
+            SKBitmap bmpRaw = sg.GetBitmap();  // Presuppone che sg abbia un metodo GetSKBitmap
+            SKBitmap bmpCropped = new SKBitmap(bmpRaw.Width, bmpMel.Height);
+
+            // Disegna bmpRaw su bmpCropped usando SKCanvas
+            using (var canvas = new SKCanvas(bmpCropped))
+            {
+                canvas.Clear(SKColors.Transparent);
+                canvas.DrawBitmap(bmpRaw, new SKRect(0, bmpMel.Height - bmpRaw.Height, bmpRaw.Width, bmpMel.Height));
+            }
+
+            using (var imageCropped = SKImage.FromBitmap(bmpCropped))
+            using (var dataCropped = imageCropped.Encode(SKEncodedImageFormat.Png, 100))
+            {
+                // Salva l'immagine croppata
+                using (var streamCropped = System.IO.File.OpenWrite("../../../../../dev/graphics/halMel-LinearCropped.png"))
+                {
+                    dataCropped.SaveTo(streamCropped);
+                }
+            }
         }
 
         [Test]
@@ -37,11 +56,11 @@ namespace Spectrogram.Tests
             double maxMel = 2595 * Math.Log10(1 + maxFreq / 700);
 
             Random rand = new Random(1);
-            double[] freq = ScottPlot.DataGen.Consecutive(specPoints, maxFreq / specPoints);
-            double[] power = ScottPlot.DataGen.RandomWalk(rand, specPoints, .02, .5);
+            double[] freq = ScottPlot.Generate.Consecutive(specPoints, maxFreq / specPoints);
+            double[] power = ScottPlot.Generate.RandomWalk(specPoints, .02, .5);
 
-            var plt1 = new ScottPlot.Plot(800, 300);
-            plt1.AddScatter(freq, power, markerSize: 0);
+            var plt1 = new ScottPlot.Plot();
+            plt1.Add.ScatterLine(freq, power);
 
             int filterSize = 25;
 
@@ -64,10 +83,9 @@ namespace Spectrogram.Tests
                 double freqCenter = binStartFreqs[binIndex + 1];
                 double freqHigh = binStartFreqs[binIndex + 2];
 
-                var sctr = plt1.AddScatter(
-                    xs: new double[] { freqLow, freqCenter, freqHigh },
-                    ys: new double[] { 0, 1, 0 },
-                    markerSize: 0, lineWidth: 2);
+                double[] xs = [freqLow, freqCenter, freqHigh];
+                double[] ys = [0, 1, 0];
+                var sctr = plt1.Add.ScatterLine(xs, ys);
 
                 int indexLow = (int)(specPoints * freqLow / maxFreq);
                 int indexHigh = (int)(specPoints * freqHigh / maxFreq);
@@ -84,10 +102,10 @@ namespace Spectrogram.Tests
                     binValue += power[indexLow + i] * frac;
                 }
                 binValue /= binScaleSum;
-                plt1.AddPoint(freqCenter, binValue, sctr.Color, 10);
+                plt1.Add.Marker(freqCenter, binValue, ScottPlot.MarkerShape.FilledCircle, 10, sctr.Color);
             }
 
-            plt1.SaveFig("mel1.png");
+            plt1.SavePng("mel1.png", 800, 300);
         }
 
         [Test]

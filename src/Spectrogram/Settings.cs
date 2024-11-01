@@ -31,7 +31,9 @@ namespace Spectrogram
 
         public Settings(double sampleRate, int fftSize, int stepSize, double minFreq, double maxFreq, int offsetHz)
         {
-            if (FftSharp.Transform.IsPowerOfTwo(fftSize) == false)
+            static bool IsPowerOfTwo(int x) => ((x & (x - 1)) == 0) && (x > 0);
+
+            if (IsPowerOfTwo(fftSize) == false)
                 throw new ArgumentException("FFT size must be a power of 2");
 
             // FFT info

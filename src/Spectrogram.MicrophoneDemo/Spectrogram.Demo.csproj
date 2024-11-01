@@ -1,19 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net6.0-windows</TargetFramework>
+        <TargetFramework>net8.0-windows</TargetFramework>
         <OutputType>WinExe</OutputType>
-        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <UseWindowsForms>true</UseWindowsForms>
         <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+        <NoWarn>NU1701</NoWarn>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\Spectrogram\Spectrogram.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="FftSharp" Version="2.0.0" />
-        <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-        <PackageReference Include="NAudio" Version="1.10.0" />
-        <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-        <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
+        <PackageReference Include="FftSharp" Version="2.1.0" />
+        <PackageReference Include="NAudio" Version="2.2.1" />
+        <PackageReference Include="SkiaSharp.Views" Version="2.88.8" />
     </ItemGroup>
 </Project>

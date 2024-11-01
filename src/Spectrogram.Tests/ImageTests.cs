@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using SkiaSharp;
 
 namespace Spectrogram.Tests;
 
@@ -12,10 +13,10 @@ internal class ImageTests
         SpectrogramGenerator sg = new(sampleRate, 4096, 500, maxFreq: 3000);
         sg.Add(audio);
 
-        System.Drawing.Bitmap bmp1 = sg.GetBitmap(rotate: false);
-        bmp1.Save("test-image-original.png");
+        SKBitmap bmp1 = sg.GetBitmap(rotate: false); 
+        bmp1.SaveTo("test-image-original.png", SKEncodedImageFormat.Png);
 
-        System.Drawing.Bitmap bmp2 = sg.GetBitmap(rotate: true);
-        bmp2.Save("test-image-rotated.png");
+        SKBitmap bmp2 = sg.GetBitmap(rotate: true);
+        bmp2.SaveTo("test-image-rotated.png", SKEncodedImageFormat.Png);
     }
 }
