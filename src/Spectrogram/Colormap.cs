@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
 using SkiaSharp;
 
 namespace Spectrogram
@@ -86,12 +88,32 @@ namespace Spectrogram
             return new SKColor((uint)color);
         }
 
-        public void Apply(SKBitmap bmp)
+        public SKBitmap ApplyFilter(SKBitmap bmp)
         {
-            var pal = bmp.Pixels;
+            SKImageInfo info = new SKImageInfo(bmp.Width, bmp.Height, SKColorType.Rgba8888);
+            SKBitmap newBitmap = new SKBitmap(info);
+            using SKCanvas canvas = new SKCanvas(newBitmap);
+            canvas.Clear();
+            
+            using SKPaint paint = new SKPaint();
+            
+            byte[] A = new byte[256];
+            byte[] R = new byte[256];
+            byte[] G = new byte[256];
+            byte[] B = new byte[256];
+
             for (int i = 0; i < 256; i++)
-                pal[i] = GetColor((byte)i);
-            bmp.Pixels = pal;
+            {
+                var color = GetColor((byte)i);
+                A[i] = color.Alpha;
+                R[i] = color.Red;
+                G[i] = color.Green;
+                B[i] = color.Blue;
+            }
+            paint.ColorFilter = SKColorFilter.CreateTable(A, R, G, B);
+
+            canvas.DrawBitmap(bmp, 0, 0, paint);
+            return newBitmap;
         }
     }
 }

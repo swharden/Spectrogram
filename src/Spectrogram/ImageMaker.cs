@@ -62,7 +62,7 @@ namespace Spectrogram
 
             var imageInfo = new SKImageInfo(width, height, SKColorType.Gray8);
             var bitmap = new SKBitmap(imageInfo);
-
+            
             int pixelCount = width * height;
             byte[] pixelBuffer = new byte[pixelCount];
 
@@ -96,7 +96,9 @@ namespace Spectrogram
             IntPtr pixelPtr = bitmap.GetPixels();
             Marshal.Copy(pixelBuffer, 0, pixelPtr, pixelBuffer.Length);
 
-            return bitmap;
+            SKBitmap newBitmap = Colormap.ApplyFilter(bitmap);
+            bitmap.Dispose();
+            return newBitmap;
         }
     }
 }
