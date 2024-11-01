@@ -96,7 +96,7 @@ public class SpectrogramGenerator
     /// <summary>
     /// Colormap to use when generating future FFTs.
     /// </summary>
-    public Colormap Colormap = Colormap.Viridis;
+    public Colormap Colormap = new(new ScottPlot.Colormaps.Viridis());
 
     /// <summary>
     /// Instantiate a spectrogram generator.
