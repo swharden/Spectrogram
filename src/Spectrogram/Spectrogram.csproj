@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+        <TargetFrameworks>netstandard2.0</TargetFrameworks>
         <Version>2.0</Version>
         <Description>A .NET Standard library for creating spectrograms</Description>
         <Authors>Scott Harden</Authors>
@@ -23,16 +22,13 @@
         <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
-
     <ItemGroup>
         <None Include="icon.png" Pack="true" PackagePath="\" />
         <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
-
     <ItemGroup>
         <PackageReference Include="FftSharp" Version="2.1.0" />
         <PackageReference Include="ScottPlot" Version="5.0.42" />
         <PackageReference Include="SkiaSharp" Version="2.88.8" />
     </ItemGroup>
-
 </Project>
