@@ -112,7 +112,7 @@ public class SpectrogramGenerator
     /// <param name="offsetHz">This value will be added to displayed frequency axis tick labels</param>
     /// <param name="initialAudioList">Analyze this data immediately (alternative to calling Add() later)</param>
     public SpectrogramGenerator(
-        int sampleRate,
+        double sampleRate,
         int fftSize,
         int stepSize,
         double minFreq = 0,
